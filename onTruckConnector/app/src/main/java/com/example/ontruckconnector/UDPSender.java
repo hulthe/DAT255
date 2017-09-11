@@ -17,4 +17,30 @@ public class UDPSender {
     private static UDPSender instance;
 
 
+    private UDPSender(){}
+
+    static UDPSender getInstance(){
+        if(instance == null){
+            instance = new UDPSender();}
+        return instance;
+    }
+
+    private void sendMessage(byte[] input){
+        try{
+            DatagramSocket s = new DatagramSocket();
+            InetAddress local = InetAddress.getByName(ADDRESS);
+            DatagramPacket p = new DatagramPacket(input, input.length,local,SERVER_PORT);
+            s.send(p);
+        }
+        catch(SocketException e){
+            Log.e(this.getClass().getName(), "Unable to create DatagramSocket");
+            e.printStackTrace();
+        }catch(UnknownHostException e){
+            Log.e(this.getClass().getName(), "Unable to create InetAddress");
+            e.printStackTrace();
+        }catch(IOException e){
+            Log.e(this.getClass().getName(), "Unable to send message");
+            e.printStackTrace();
+        }
+    }
 }
