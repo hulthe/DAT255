@@ -4,7 +4,7 @@
 ### `<starter>`
 Size: 1 byte
 
-Content: `0x01` [(STH)](http://www.aciitable.com)
+Content: `0x01` [(STH)](http://www.asciitable.com)
 
 ### `<type>`
 Size: 1 byte
@@ -47,7 +47,7 @@ Content: First two bytes of `<type><payload>`:s md5-hash.
 ### `<terminator>`
 Size: 1 byte
 
-Content: 0x04 [(EOT)](http://www.aciitable.com)
+Content: 0x04 [(EOT)](http://www.asciitable.com)
 
 
 # Example
