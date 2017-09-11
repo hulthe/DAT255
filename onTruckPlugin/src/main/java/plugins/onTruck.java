@@ -1,52 +1,69 @@
 package plugins;
 
 import com.sun.squawk.VM;
-import sics.port.PluginPPort;
-import sics.port.PluginRPort;
 import sics.plugin.PlugInComponent;
 
+import java.io.IOException;
+import java.net.SocketException;
+
 public class onTruck extends PlugInComponent {
-    //private PluginPPort fs;
-    //private PluginRPort ff;
+
+	// Port number for UDP socket
+	private static final int UDP_PORT = 8721;
+
+	private UDPConnection udpConnection;
 	
     public onTruck() {}
 	
     public onTruck(String[] args) {
-	super(args);
+		super(args);
     }
 	
     public static void main(String[] args) {
-	onTruck plugin = new onTruck(args);
-	plugin.run();
+		onTruck plugin = new onTruck(args);
+		plugin.run();
     }
 
     public void init() {
-	//fs = new PluginPPort(this, "fs");
-	//ff = new PluginRPort(this, "ff");
-    }
+		try {
+			// Create new socket
+			udpConnection = new UDPConnection(UDP_PORT);
+		} catch (SocketException e) {
+			System.err.printf("Could not open socket on port %d:\n%s\n", UDP_PORT, e.getMessage());
+			System.exit(-1); // Exit application if socket couldn't create socket
+		}
+
+		// Add a data processor for logging
+		udpConnection.addDataProcessor(new UDPConnection.DataProcessor() {
+			public void process(byte[] data) {
+				System.out.printf("Processed data: %s\n", new String(data));
+			}
+		});
+
+	}
 	
     public void doFunction() throws InterruptedException{
-    }
-
-    private void interpretMessage(byte[] message){
-		if (verifyMessage(message)){
-			// ToDo
+    	// Random blocking call
+		try {
+			System.out.printf("Press enter to quit.\n");
+			System.in.read();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
-	private boolean verifyMessage(byte[] message){
-    	// ToDo
-		return true;
-	}
-
     public void run() {
-	init();
+		init();
 
-	try {
-	    doFunction();
-	} catch (InterruptedException e) {
-	    VM.println("**************** Interrupted.");
-	    return;
-	}
+		// Start listening
+		udpConnection.start();
+
+		try {
+			doFunction();
+		} catch (InterruptedException e) {
+			VM.println("**************** Interrupted.");
+			return;
+		}
     }
+
 }
