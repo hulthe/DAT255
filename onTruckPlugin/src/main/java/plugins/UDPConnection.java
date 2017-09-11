@@ -59,7 +59,7 @@ public class UDPConnection extends Thread {
 	}
 
 	private boolean validate(byte[] data){
-		return true; //Todo
+		return true; //Todo: write this when implementing protocol för UDP communication.
 	}
 
 	@Override
