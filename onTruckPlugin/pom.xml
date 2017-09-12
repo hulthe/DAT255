@@ -35,7 +35,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.github.ontruck.OnTruck</mainClass>
+							<mainClass>com.github.ontruck.MavenMain</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
