@@ -1,22 +1,20 @@
-package plugins;
+package com.github.ontruck;
 
 import com.sun.squawk.VM;
-import sics.port.PluginPPort;
-import sics.port.PluginRPort;
 import sics.plugin.PlugInComponent;
 
-public class onTruck extends PlugInComponent {
+public class OnTruck extends PlugInComponent {
     //private PluginPPort fs;
     //private PluginRPort ff;
 	
-    public onTruck() {}
+    public OnTruck() {}
 	
-    public onTruck(String[] args) {
+    public OnTruck(String[] args) {
 	super(args);
     }
 	
     public static void main(String[] args) {
-	onTruck plugin = new onTruck(args);
+	OnTruck plugin = new OnTruck(args);
 	plugin.run();
     }
 
