@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 
 public class UDPSender {
 
-    private final int SERVER_PORT = 8721;
+    private final int SERVER_PORT = 8722;
     private final String ADDRESS = "192.168.43.150";
 
     private static UDPSender instance;
@@ -25,7 +25,7 @@ public class UDPSender {
         return instance;
     }
 
-    private void sendMessage(byte[] input){
+    void sendMessage(byte[] input){
         try{
             DatagramSocket s = new DatagramSocket();
             InetAddress local = InetAddress.getByName(ADDRESS);
