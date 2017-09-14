@@ -21,6 +21,12 @@ public class TCPChecker extends AsyncTask<String, Void, TCPChecker> {
     private final int PORT;
     Socket socket = null;
 
+    @Override
+    protected TCPChecker doInBackground(String... strings) {
+        run();
+        return null;
+    }
+
     public TCPChecker(String ipAddress, int port){
         IP_ADDRESS = ipAddress;
         PORT = port;
