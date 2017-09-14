@@ -8,6 +8,9 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import static java.lang.Thread.sleep;
+
 /**
  * Created by nan on 9/12/17.
  */
@@ -17,6 +20,25 @@ public class TCPChecker extends AsyncTask<String, Void, TCPChecker> {
     private final String IP_ADDRESS;
     private final int PORT;
     Socket socket = null;
+
+    public void run() {
+        try{
+            while(true){
+                check();
+                sleep(100);
+            }
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }finally {
+            if(socket != null && !socket.isClosed()){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     private void check() {
         try {
