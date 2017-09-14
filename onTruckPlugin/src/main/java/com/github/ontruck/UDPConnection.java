@@ -36,6 +36,9 @@ public class UDPConnection extends Thread {
 				// Read and then process the message
 				socket.receive(packet);
 				process(message);
+
+				// Clear buffer
+				for(int i = 0; i < message.length; i++) { message[i] = 0; }
 			}catch (IOException ex){
 				System.err.printf("Error while reading from socket: %s \n", ex.getMessage());
 			}
