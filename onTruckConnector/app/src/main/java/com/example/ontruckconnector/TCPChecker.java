@@ -21,6 +21,11 @@ public class TCPChecker extends AsyncTask<String, Void, TCPChecker> {
     private final int PORT;
     Socket socket = null;
 
+    public TCPChecker(String ipAddress, int port){
+        IP_ADDRESS = ipAddress;
+        PORT = port;
+    }
+
     public void run() {
         try{
             while(true){
