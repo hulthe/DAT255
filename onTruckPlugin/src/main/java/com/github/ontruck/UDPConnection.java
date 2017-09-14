@@ -1,4 +1,4 @@
-package plugins;
+package com.github.ontruck;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
