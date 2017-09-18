@@ -3,11 +3,11 @@
 <h2>How to get this shit online</h2>
 
 <h3>Step 0: Download Android Studio</h3>
-[Use google](http://bfy.tw/43JI) to download the latest version of Android Studio which fits your operativsystem.
+<href = "http://bfy.tw/43JI">Use google</a>to download the latest version of Android Studio which fits your operativsystem.
 
 <h3>Step 1: Git Clone</h3>
-* Navigate to the <href = https://github.com/hulthe/DAT255>GitHub project page</a>.
-* Press the green "Clone or download ↓" button. <href = https://i.imgur.com/NWvVLpx.png>Image for clarification.</a>
+* Navigate to the <href =" https://github.com/hulthe/DAT255">GitHub project page</a>.
+* Press the green "Clone or download ↓" button. <href = "https://i.imgur.com/NWvVLpx.png">Image for clarification.</a>
 * Copy the text there to your clipboard. (Should be "https://github.com/hulthe/DAT255.git")
 
 <h3>Step 2: Git Checkout</h3>
