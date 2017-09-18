@@ -114,6 +114,6 @@ public class TCPChecker extends AsyncTask<String, Void, TCPChecker> {
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
-			mainActivity.setConnection(connection);
+		ConnectionTextHolder.getInstance().setConnection(connection);
 	}
 }

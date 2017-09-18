@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 		messageText = (EditText)findViewById(R.id.messageText);
 		connectionText = (TextView)findViewById(R.id.connectionText);
 
+		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
+		connectionTextHolder.setTextView(connectionText);
 
 		sendButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -33,26 +35,9 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 
-
-		//TODO: Sending MainActivity like this = bad
-        new TCPChecker("192.168.43.150", 8721, this).execute();
+		//Excecutes the TCP-connection
+        new TCPChecker("192.168.43.150", 8721).execute();
     }
 
-
-	public void setConnection(boolean connection){
-		if(connection){
-			updateConnectionText("Connected");}
-		else{
-			updateConnectionText("Disconnected");
-		}
-	}
-
-	private void updateConnectionText(final String text){
-		runOnUiThread(new Runnable(){
-			public void run(){
-				connectionText.setText(text);
-			}
-		});
-	}
 
 }
