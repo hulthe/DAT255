@@ -1,7 +1,7 @@
 <h1>onTruckConnector</h1>
 
 <h3>Step 0: Download Android Studio</h3>
-<a href = "http://bfy.tw/43JI">Use google</a> to download the latest version of Android Studio which fits your operativsystem.
+<a href = "http://bfy.tw/43JI">Use google</a> to download the latest version of Android Studio which fits your operative system.
 
 <h3>Step 1: Git Clone</h3>
 * Navigate to the <a href =" https://github.com/hulthe/DAT255">GitHub project page</a>.
@@ -16,7 +16,7 @@
 
 * Type "git clone" and then paste what you copied in Step 1, press enter.
 
-* It return "Cloning into '<folder name>'..." and NOT return any errors.
+* It should return "Cloning into '<folder name>'..." and NOT return any errors.
   
 <h3>Step 3: Checkout to the branch</h3>
 Now we need to hop off the master branch and into our development branch where this code actually lies.
@@ -34,7 +34,11 @@ Start Android Studio and close all pop-ups and tips.
 
 * Navigate to the folder were you cloned the project to.
 
-* Select the project's folder and click "OK".
+* Select the OnTruckConnector folder and click "OK".
+
+* If you get an error telling you to "Upgrade plugin to version X and sync project" then click that link.
+
+* If the link doesn't work then go to "Tools > Android > Sync Project with Gradle Files" and then press the new sync link.
 
 <h3>Step 6: Create New Virtual Device</h3>
 
@@ -57,3 +61,5 @@ Start Android Studio and close all pop-ups and tips.
 * Press the blue "Finish" button in the bottom right.
 
 * Now the Virtual Device should have been constructed. Select it and press "Ok". Then wait for it to finish building the project.
+
+* You might be prompted to download Instant Run. This is not necessary.
