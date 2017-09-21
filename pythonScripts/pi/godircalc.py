@@ -44,15 +44,15 @@ def godir(ppx, ppy, ang, x1, y1, ang1, w):
         cy = ppy + dir*dy
         if w:
             w.addcircle(cx, cy, R, "blue")
-        if cx > R and cx < 3.0-R and cy > 12.0+R and cy < 19.7-R:
+        if R < cx < 3.0-R and 12.0 + R < cy < 19.7 - R:
             turnings.append((dir, cx, cy, -180, 180))
         # convention: first angle to second angle, going clockwise, spans
         # the available arc (so min and max are not useful words)
-        elif cx < R and cy > 12.0+R and cy < 19.7-R:
+        elif cx < R and 12.0 + R < cy < 19.7 - R:
             turnings.append((dir, cx, cy,
                              -asin(cx/R)*180/pi,
                              180+asin(cx/R)*180/pi))
-        elif cx > 3.0-R and cy > 12.0+R and cy < 19.7-R:
+        elif cx > 3.0-R and 12.0 + R < cy < 19.7 - R:
             turnings.append((dir, cx, cy,
                              asin((3.0-cx)/R)*180/pi,
                              180-asin((3-cx)/R)*180/pi))
@@ -60,7 +60,7 @@ def godir(ppx, ppy, ang, x1, y1, ang1, w):
 
     print(turnings)
 
-    if turnings == []:
+    if not turnings:
         return False
 
     # On the line of circle centers which goes parallel to the final
@@ -114,7 +114,7 @@ def godir(ppx, ppy, ang, x1, y1, ang1, w):
                 cymid = (cy+cy2)/2
                 cang2 = acos(R/dist(cxmid, cymid, cx2, cy2))
                 print("cang cang2 %f %f" % (cang*180/pi, cang2*180/pi))
-                print((cang*180/pi, cang2*180/pi))
+                print(cang * 180 / pi, cang2 * 180 / pi)
                 cang += cang2
 
                 ang21 = ang-90
@@ -142,8 +142,6 @@ def godir(ppx, ppy, ang, x1, y1, ang1, w):
 
                 w.addcircle(cx2, cy2, R, "orange")
 
-                # TODO: we must also consider the twin circle to the right of the final
-                # line. use it if x2 > x1
                 w.addcircle(x1+R, cy2, R, "orange")
 
             print("angles %f %f %f %f" % tuple(l))
@@ -151,7 +149,7 @@ def godir(ppx, ppy, ang, x1, y1, ang1, w):
                 if not nbetween(l):
                     continue
 
-            print(((x2, y2), (x3, y3)))
+            print((x2, y2), (x3, y3))
             return [(ppx, ppy, -1),
                     (x2, y2, -1),
                     (x3, y3, -1),

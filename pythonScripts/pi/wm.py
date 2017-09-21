@@ -1,19 +1,15 @@
-import time
+import random
 import re
 import subprocess
-import random
-
+import time
 from math import sqrt, sin, cos, pi
 
-from nav_tc import send_to_ground_control
+import navScripts.nav_mqtt
+from navScripts.nav_log import tolog, tolog0
+from navScripts.nav_tc import send_to_ground_control
+from navScripts.nav_util import dist
 
-from nav_log import tolog, tolog0
-
-from nav_util import dist
-
-import nav_signal
-import driving
-import nav_mqtt
+from pi.navScripts import nav_signal
 
 mp = dict()
 
@@ -38,9 +34,10 @@ mp[7] = (2.179, 14.351)
 mp[25] = (2.255, 16.770)
 mp[4] = (2.225, 18.725)
 
+
 def pbool(p):
-#    print("1")
     return p
+
 
 def readmarker():
     while True:
@@ -50,6 +47,7 @@ def readmarker():
         except Exception as e:
             tolog("readmarker exception %s" % str(e))
             print("readmarker exception %s" % str(e))
+
 
 def readmarker0():
     TOOHIGHSPEED = 2.0
@@ -85,8 +83,6 @@ def readmarker0():
 
             doadjust = False
 
-            #nav_signal.blinkleds()
-
             g.markerno = int(m1[0])
             x = float(m1[1])
             y = float(m1[2])
@@ -98,13 +94,8 @@ def readmarker0():
             if odiff < -180:
                 odiff += 360
             accepted = False
-#            if g.angleknown and abs(odiff) > 45.0 and g.markerno != -1:
-#                tolog("wrong marker %d %f" % (g.markerno, odiff))
-#                g.markerno = -1
 
-#            if markertime == None or t-markertime > 5:
             if markertime == None:
-                #markertime = t
                 skipmarker = False
             else:
                 skipmarker = True
@@ -126,7 +117,7 @@ def readmarker0():
                         badmarker = True
                         break
 
-            if g.goodmarkers != None:
+            if g.goodmarkers is not None:
                 goodmarker = False
                 for (goodm, gooda, goodq) in g.goodmarkers:
                     if g.markerno == goodm:
@@ -144,21 +135,19 @@ def readmarker0():
 
             if (g.markerno > -1
                 and goodmarker
-                and ((x > -0.3 and x < 3.3 and y > 0 and y < 19.7)
-                     or (x > 3.0 and x < 30 and y > 2.3 and y < 5.5))):
+                and ((-0.3 < x < 3.3 and 0 < y < 19.7)
+                     or (3.0 < x < 30 and 2.3 < y < 5.5))):
                     tolog0("marker0 %s %f" % (m, quality))
 
             # complain somewhere if good and bad overlap
 
             if ((pbool(g.markerno > -1) and pbool(quality > minq)
-                 #and abs(g.steering) < 30
-                 #and (x < 1.0 or x > 2.0)
-                 and pbool(goodmarkertime == None or
+                 and pbool(goodmarkertime is None or
                       t-goodmarkertime > g.markertimesep)
                  and pbool(not badmarker)
                  and pbool(goodmarker)
-                 and ((x > -0.3 and x < 3.3 and y > 0 and y < 19.7)
-                      or (x > 3.0 and x < 30 and y > 2.3 and y < 5.5)))
+                 and ((-0.3 < x < 3.3 and 0 < y < 19.7)
+                      or (3.0 < x < 30 and 2.3 < y < 5.5)))
                 and not skipmarker):
 
                 close = True
@@ -173,7 +162,6 @@ def readmarker0():
                 if g.markerno in mp:
                     mdist = dist(x, y, mp[g.markerno][0], mp[g.markerno][1])
                     if mdist > g.maxmarkerdist:
-                        #print("dist = %f" % mdist)
                         continue
 
                 it0 = float(m1[5])
@@ -181,7 +169,7 @@ def readmarker0():
                 now = time.time()
                 delay1 = it1 - it0
                 delay2 = now - it1
-                #tolog0("delay %f delay2 %f" % (delay1, delay2))
+
                 # Since the Optipos client runs on the same machine,
                 # we can simply add the delays
                 delay = delay1 + delay2
@@ -192,17 +180,17 @@ def readmarker0():
                             it0, g.adjust_t))
                     send_to_ground_control("mpos %f %f %f %f 0 %f" % (x,y,g.ang,time.time()-g.t0, g.inspeed))
                     continue
-                elif g.oldpos != None and it0_10 in g.oldpos:
+                elif g.oldpos is not None and it0_10 in g.oldpos:
                     (thenx, theny, thenang) = g.oldpos[it0_10]
                     doadjust = True
                     tolog0("POS: position then: %f %f %f" % (thenx, theny,
                                                              thenang))
-                elif g.oldpos != None:
+                elif g.oldpos is not None:
                     tolog0("POS: can't use oldpos")                    
                     continue
 
                 if True:
-                    if g.lastpos != None:
+                    if g.lastpos is not None:
                         (xl, yl) = g.lastpos
                         dst = dist(thenx, theny, xl, yl)
                         tolog0("local speed %f" % (dst/(t-g.lastpost)))
@@ -238,8 +226,6 @@ def readmarker0():
                     g.px = x
                     g.py = y
                     if True:
-#                    if g.markercnt % 10 == 1:
-#                    if g.markercnt == 1:
                         if doadjust:
                             g.adjust_t = time.time()
                             tolog0("adjusting pos %f %f -> %f %f" % (g.ppx, g.ppy,
@@ -261,13 +247,10 @@ def readmarker0():
 # treat the marker as the truth, but when markers come soon after one
 # another, one is not more likely than the other to be right, so we go to the
 # middle point.
-                                    #ppxdiff1 /= 2
-                                    #ppydiff1 /= 2
-                                    #angdiff1 /= 2
+
                                     if True:
                                         g.ppxdiff = ppxdiff1
                                         g.ppydiff = ppydiff1
-                                    #print("3 ppydiff := %f" % g.ppydiff)
                                     g.angdiff = angdiff1
 
                                     adjdist = sqrt(
@@ -275,27 +258,22 @@ def readmarker0():
                                         ppydiff1*ppydiff1)
                                     if g.maxadjdist < adjdist:
                                         g.maxadjdist = adjdist
-#                                        print("new maxadjdist %f"
-#                                              % g.maxadjdist)
+
                                     if g.adjdistlimit != None and adjdist > g.adjdistlimit:
                                         g.poserror = True
                             else:
                                 g.ppx = x
                                 g.ppy = y
-                                #print("1 ppy := %f" % g.ppy)
                             g.angdiff = g.angdiff % 360
                             if g.angdiff > 180:
                                 g.angdiff -= 360
                         else:
                             g.ppx = x
                             g.ppy = y
-                            #print("2 ppy := %f" % g.ppy)
-                    #g.vx = sin(g.ang*pi/180)*g.inspeed/100
-                    #g.vy = cos(g.ang*pi/180)*g.inspeed/100
+
                     g.lastpost = it0
-                    #g.ang = ori
             else:
-                if g.adjust_t != None:
+                if g.adjust_t is not None:
                     markerage = time.time() - g.adjust_t
                     if markerage > 10:
                         tolog("marker age %f" % markerage)
@@ -329,7 +307,7 @@ def readspeed2():
             data = g.canSocket.recv(64)
             if (data[0], data[1]) == (100,4) and data[4] == 2:
                 # length of packet is 2
-                print((data[8], data[9]))
+                print(data[8], data[9])
                 g.rc_button = True
                 time.sleep(0.00001)
             elif (data[0], data[1]) == (100,4):
@@ -338,14 +316,13 @@ def readspeed2():
 
                     m = re.search("speed x([0-9 ]+)x([0-9 ]+)x([0-9 ]+)x([0-9 ]+)x([0-9 ]+)x([0-9 ]+)", parts)
                     if m:
-                        #print((time.time(),parts))
                         oinspeed = g.inspeed
                         g.inspeed = g.speedsign * int(m.group(1))
 
                         alpha = 0.8
                         g.inspeed_avg = (1-alpha)*g.inspeed + alpha*oinspeed
 
-                        if (g.inspeed == 0 and g.speedtime != None and
+                        if (g.inspeed == 0 and g.speedtime is not None and
                             time.time() - g.speedtime > 7.0):
                             nav_signal.speak("obstacle")
                             send_to_ground_control("obstacle")
@@ -355,13 +332,12 @@ def readspeed2():
                         if g.odometer != g.lastodometer:
                             send_to_ground_control("odometer %d" % (g.odometer))
                             g.lastodometer = g.odometer
-                        #print("rsp-odo %d %d" % (g.inspeed, g.odometer))
 
                         g.finspeed = int(m.group(3))
                         g.finspeed *= g.speedsign
 
                         g.fodometer = int(m.group(4))
-                        #print("fsp-odo %d %d" % (g.finspeed, g.fodometer))
+
                         g.leftspeed = int(m.group(5))
                         g.fleftspeed = int(m.group(6))
 
@@ -372,7 +348,7 @@ def readspeed2():
                 sp = data[8]
                 st = data[9]
                 if False:
-                    if g.last_send != None and (sp, st) != g.last_send:
+                    if g.last_send is not None and (sp, st) != g.last_send:
                         tolog("remote control")
                         g.remote_control = True
                 if sp > 128:
@@ -403,12 +379,9 @@ def readspeed2():
 
                         m = re.search("^([0-9]+) ([0-9]+) $", part2s2)
                         if m:
-                            #print((part2s2, len(part2), part2))
-                            #print(part2s2)
                             cnt = int(m.group(1))
                             d = int(m.group(2))
 
-                            #print((cnt,d))
                             g.can_ultra = d/100.0
                             # not used:
                             can_ultra_count = cnt
@@ -417,6 +390,7 @@ def readspeed2():
                 part2 += data[9:]
         except Exception as a:
             print(a)
+
 
 def wminit():
     g.outspeed = 0.0
@@ -433,11 +407,13 @@ def wminit():
     g.lastpos = None
     g.lastpost = None
 
+
 def putcar(x, y, ang):
     g.angleknown = True
     g.ppx = x
     g.ppy = y
     g.ang = ang
+
 
 def simulatecar():
     dt = 0.1
@@ -449,7 +425,7 @@ def simulatecar():
     while True:
 
         desiredspeed = g.outspeedcm
-        if g.limitspeed != None and desiredspeed > g.limitspeed:
+        if g.limitspeed is not None and desiredspeed > g.limitspeed:
             desiredspeed = g.limitspeed
 
         if abs(g.finspeed - desiredspeed) < 5 or g.simulmaxacc == 0.0:
@@ -465,7 +441,7 @@ def simulatecar():
         if acc != 0.0:
             ospeed = g.finspeed
             g.finspeed += 100*acc*dt
-            if ospeed > 0 and g.finspeed < 0:
+            if ospeed > 0 > g.finspeed:
                 g.finspeed = 0
 
         g.inspeed = g.finspeed

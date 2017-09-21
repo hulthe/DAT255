@@ -2,15 +2,17 @@ from math import cos, sin, pi, atan2, sqrt
 
 from nav_util import rev, dist
 
-import eight
+import pi.eight
+
 
 def roaddist(x0, y0):
     dmin = None
-    for (x, y) in eight.roadpoints:
+    for (x, y) in pi.eight.roadpoints:
         d = dist(x, y, x0, y0)
         if dmin == None or dmin > d:
             dmin = d
     return dmin
+
 
 def makepath(offset, path):
     path1 = []
@@ -46,10 +48,12 @@ def makepath(offset, path):
 
     return path1
 
+
 def piece2path(p, offset):
-    path1 = [(i, eight.nodes[i]) for i in p]
+    path1 = [(i, pi.eight.nodes[i]) for i in p]
     path = makepath(offset, path1)
     return path
+
 
 # A position of a car in the road network is indicated by what two nodes
 # A and B it is between, and how far as a fraction from A.
@@ -57,29 +61,32 @@ def piece2path(p, offset):
 def plan(p0, p1):
     return False
 
+
 def isdecisionpoint(n):
-    for (a, b) in eight.pieces:
+    for (a, b) in pi.eight.pieces:
         if a == n:
             return True
     return False
+
 
 # A piece goes from a over the list l to b
 # n0 is in l
 # Sum the distances from a to n0, and from n0 to b
 def partdist(n0, a, b, l):
     da = 0
-    db = eight.distances[(b, l[-1])]
+    db = pi.eight.distances[(b, l[-1])]
     before_n0 = True
     lastn = a
     for n in l:
         if before_n0:
-            da += eight.distances[(lastn, n)]
+            da += pi.eight.distances[(lastn, n)]
         else:
-            db += eight.distances[(lastn, n)]
+            db += pi.eight.distances[(lastn, n)]
         lastn = n
         if n == n0:
             before_n0 = False
-    return (da, db)
+    return da, db
+
 
 # Bug: going only within one piece doesn't work.
 
@@ -88,27 +95,23 @@ def partdist(n0, a, b, l):
 def paths_p(n0, n1, n2=None, nz=None):
     extra0 = None
     n0x = n0
-    for (a, b) in eight.pieces:
-        (l, dtot) = eight.pieces[(a, b)]
+    for (a, b) in pi.eight.pieces:
+        (l, dtot) = pi.eight.pieces[(a, b)]
         if n0 in l:
             (da, db) = partdist(n0, a, b, l)
-            #print(("dist", da, db, dtot))
             extra0 = (a, b, da, db)
             n0x = a
             break
 
     extra1 = None
     n1x = n1
-    for (a, b) in eight.pieces:
-        (l, dtot) = eight.pieces[(a, b)]
+    for (a, b) in pi.eight.pieces:
+        (l, dtot) = pi.eight.pieces[(a, b)]
         if n1 in l:
             (da, db) = partdist(n1, a, b, l)
-            #print(("dist", da, db, dtot))
             extra1 = (a, b, da, db)
             n1x = b
             break
-
-    #print (extra0, extra1, n0x, n1x)
 
     pl0 = extendpath_p([n0x], n1x, 0.0, n2, nz, [])
     pl = []
@@ -134,32 +137,33 @@ def paths_p(n0, n1, n2=None, nz=None):
 
     return pl
 
+
 def neighbours_p(n):
     l = []
-    for (a, b) in eight.pieces:
+    for (a, b) in pi.eight.pieces:
         if a == n:
-            (_, d) = eight.pieces[(a, b)]
+            (_, d) = pi.eight.pieces[(a, b)]
             l.append((b, d))
     return l
+
 
 # for the selected segment, the biggest of di and dj must be minimal
 def findpos(x, y, ang, knownnodes = None):
     minq = 1000
     mindidjmax = 1000
     found = None
-    if x == None or y == None:
+    if x is None or y is None:
         return None
 
-    if knownnodes != None and knownnodes != []:
+    if knownnodes is not None and knownnodes != []:
         distances1 = knownnodes
-        #print("knownnodes = %s" % str(knownnodes))
     else:
-        distances1 = eight.distances
+        distances1 = pi.eight.distances
 
     for (i, j) in distances1:
-        d = eight.distances[(i, j)]
-        (xi, yi) = eight.nodes[i]
-        (xj, yj) = eight.nodes[j]
+        d = pi.eight.distances[(i, j)]
+        (xi, yi) = pi.eight.nodes[i]
+        (xj, yj) = pi.eight.nodes[j]
         di = dist(xi, yi, x, y)
         dj = dist(xj, yj, x, y)
         p = (di+dj)/d
@@ -177,10 +181,8 @@ def findpos(x, y, ang, knownnodes = None):
             da1 = 180-da1
         q = didjmax/0.5 + da1/30 + (di+dj)
 
-        #print((i, j, q, di, dj, d, (a,ang%360), (xi, yi), (x, y), (xj, yj)))
-
-        if ((found == None or minq > q) and
-#            di < 1.2*d and dj < 1.2*d and
+        if ((found is None or minq > q) and
+            # di < 1.2*d and dj < 1.2*d and
             (
                 (dj*dj < di*di+d*d and di*di < dj*dj+d*d) or
                 (dj < 0.5 or di < 0.5)
@@ -192,8 +194,8 @@ def findpos(x, y, ang, knownnodes = None):
     if not found:
         return None
     (i, j, p2) = found
-    (xi, yi) = eight.nodes[i]
-    (xj, yj) = eight.nodes[j]
+    (xi, yi) = pi.eight.nodes[i]
+    (xj, yj) = pi.eight.nodes[j]
     a = atan2(xj-xi, yj-yi)*180/pi
 
     da = a-ang
@@ -201,22 +203,23 @@ def findpos(x, y, ang, knownnodes = None):
     if da > 180:
         da -= 360
     if abs(da) < 45:
-        return (i, j, p2)
+        return i, j, p2
     elif abs(da) > 180-45:
-        return (j, i, p2)
+        return j, i, p2
     else:
-        return (i, j, "unknown", da)
+        return i, j, "unknown", da
+
 
 # a and b are known to be in the same piece
 # Return a list l of waypoints where l[0] == a and l[-1] == b
 def insert_waypoints(a, b):
-    if (a, b) in eight.pieces:
-        (l, _) = eight.pieces[(a, b)]
+    if (a, b) in pi.eight.pieces:
+        (l, _) = pi.eight.pieces[(a, b)]
         l = [a] + l + [b]
         return l
 
-    for (a1, b1) in eight.pieces:
-        (l, _) = eight.pieces[(a1, b1)]
+    for (a1, b1) in pi.eight.pieces:
+        (l, _) = pi.eight.pieces[(a1, b1)]
         l = [a1] + l + [b1]
         if a not in l:
             continue
@@ -231,6 +234,7 @@ def insert_waypoints(a, b):
     # what should we do? throw exception?
     return None
 
+
 # Apply insert_waypoints to successive pairs in l0
 def insert_waypoints_l(l0):
     lastn = l0[0]
@@ -242,13 +246,14 @@ def insert_waypoints_l(l0):
 
     return l
 
+
 # We are between nodes a and b, coming from a, proportion q from a
 # Return the endpoints of the piece and at what proportion from the
 # starting point we are.
 def findpiece(a, b, q):
     found = None
-    for (a1, b1) in eight.pieces:
-        (l, _) = eight.pieces[(a1, b1)]
+    for (a1, b1) in pi.eight.pieces:
+        (l, _) = pi.eight.pieces[(a1, b1)]
         l = [a1] + l + [b1]
         if a in l and b in l:
             ia = l.index(a)
@@ -258,9 +263,9 @@ def findpiece(a, b, q):
                 lastn = l[0]
                 for n in l[1:]:
                     if lastn == a:
-                        d += q * eight.distances[(lastn,n)]
+                        d += q * pi.eight.distances[(lastn, n)]
                         break
-                    d += eight.distances[(lastn,n)]
+                    d += pi.eight.distances[(lastn, n)]
                     lastn = n
                 found = ((a1, b1), d)
             else:
@@ -268,9 +273,9 @@ def findpiece(a, b, q):
                 lastn = l[0]
                 for n in l[1:]:
                     if lastn == a:
-                        d += q * eight.distances[(lastn,n)]
+                        d += q * pi.eight.distances[(lastn, n)]
                         break
-                    d += eight.distances[(lastn,n)]
+                    d += pi.eight.distances[(lastn, n)]
                     lastn = n
                 found = ((b1, a1), d)
             break

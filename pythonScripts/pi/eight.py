@@ -1,8 +1,8 @@
 from math import cos, sin, pi, atan2, sqrt
 
-from nav_util import rev, dist
+from navScripts.nav_util import rev, dist
 
-import nav_map
+import navScripts.nav_map
 
 def eightpoint(cy, ang):
     cx = 1.5
@@ -32,7 +32,6 @@ def fillinlist(l, add):
         l[j:j] = [add+l[j]]
     return l
 
-#interleave = 1
 interleave = 2
 
 if interleave == 2:
@@ -93,11 +92,6 @@ def eightpath(y1, y2, y3):
     # 0.5 fits with the constants in 'eightpoint'
     nodes[3] = (0.5, 8.0)
 
-    for nr in nodes:
-#        print("%d %f %f" % (nr, nodes[nr][0], nodes[nr][1]))
-        pass
-
-
 
 roadpoints = dict()
 
@@ -153,7 +147,6 @@ def extendpath_p(p, goaln, d0, n2, nz, acc):
 
     if nlast1 == goaln:
         if nz == None or p[-2] == nz:
-            #print("%f %s" % (d0, str(p)))
             return acc + [(d0, p)]
 
     for (n, d) in nav_map.neighbours_p(nlast1):
@@ -231,8 +224,6 @@ def eightinit():
         pieces[(piece[0],piece[-1])] = (piece[1:-1], dtot)
         pieces[(piece[-1],piece[0])] = (rev(piece[1:-1]), dtot)
 
-#    for (x, y) in roadpoints.keys():
-#        print("%f %f" % (x, y))
 
 if __name__ == "__main__":
     eightinit()

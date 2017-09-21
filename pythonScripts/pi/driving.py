@@ -1,13 +1,13 @@
 import os
 import time
 
-import nav_signal
+from navScripts.nav_log import tolog
+from navScripts.nav_util import sign
 
-from nav_log import tolog, tolog0
-from nav_util import sign
+from pi.navScripts import nav_signal
+
 
 def dodrive(sp, st):
-    #print("dodrive %d %d" % (sp, st))
     g.send_sp = sp
     g.send_st = st
 
@@ -42,27 +42,15 @@ def drive(sp):
         tolog("motor %d steer %d" % (sp, g.steering))
         cmd = "/home/pi/can-utils/cansend can0 '101#%02x%02x'" % (
             sp, st)
-        #print (sp, g.steering, cmd)
         os.system(cmd)
 
 def steer(st):
     g.steering = st
     if g.simulate:
         return
-
     sp = g.outspeed
-#    if st < 0:
-#        st += 256
-#    if sp < 0:
-#        sp += 256
-
-#    tolog("motor %d steer %d" % (g.outspeed, st))
-#    cmd = "/home/pi/can-utils/cansend can0 '101#%02x%02x'" % (
-#        sp, st)
-    #print (g.outspeed, st, cmd)
     dodrive(sp, st)
-#    os.system(cmd)
-#    tolog("motor2 %d steer %d" % (g.outspeed, st))
+
 
 def stop(txt = ""):
     g.steering = 0
@@ -86,9 +74,6 @@ def senddrive():
 
         if g.send_sp != None:
 
-    #        if g.remote_control:
-    #            continue
-
             g.send_sp = int(g.send_sp)
             g.send_st = int(g.send_st)
 
@@ -99,21 +84,16 @@ def senddrive():
             if st < 0:
                 st += 256
 
-            #print(g.last_send)
             if not g.senddriveinhibited:
                 if (sp == 0 and not first0done) or g.last_send != (sp, st):
-#                if True:
                     cmd = "/home/pi/can-utils/cansend can0 '101#%02x%02x'" % (
                         sp, st)
-                    #tolog("senddrive %d %d" % (g.send_sp, g.send_st))
-                    #print("senddrive %d %d" % (g.send_sp, g.send_st))
                     g.last_send = (sp, st)
                     os.system(cmd)
                     if sp == 0:
                         first0done = True
         if g.ledcmd:
             (mask, code) = g.ledcmd
-            #print("doing setleds %d %d" % (mask, code))
             cmd = "/home/pi/can-utils/cansend can0 '461#060000006D3%d3%d00'" % (
                 mask, code)
             os.system(cmd)
@@ -124,7 +104,7 @@ def senddrive():
 # do something with dang - it is the most reliable variable
 def braketest(v0, v1):
     steer(-100)
-    nav_signal.setleds(0,7)
+    nav_signal.setleds(0, 7)
     drive(v0/3)
     time.sleep(2)
     drive(v0*2/3)
@@ -134,7 +114,7 @@ def braketest(v0, v1):
     while True:
         time.sleep(0.0001)
         if g.ang%360 < 5:
-            nav_signal.setleds(0,0)
+            nav_signal.setleds(0, 0)
             o0 = g.odometer
             a0 = g.ang
             drive(v1)

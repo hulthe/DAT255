@@ -1,14 +1,13 @@
 import time
+from math import pi, cos, sin, atan2
 
-import nav_signal
 import nav_map
-import driving
+import nav_signal
 import nav_tc
-
-from nav_log import tolog, tolog0, tolog2
+import pi.driving
+from nav_log import tolog, tolog2
 from nav_util import sign, dist, start_new_thread
 
-from math import pi, cos, sin, sqrt, atan2, acos, asin, log
 
 def checkbox1(x, y, tup, leftp):
     (lxprev, lyprev, lx, ly) = tup
@@ -190,7 +189,7 @@ def goto_1(x, y):
                 time.sleep(0.5)
     #            driving.drive(-1)
     #            time.sleep(0.2)
-                driving.drive(0)
+                pi.driving.drive(0)
             #print("adiff %f dist %f" % (adiff, dist))
             if dist < g.targetdist:
                 #print("dist < %f" % g.targetdist)
@@ -218,7 +217,7 @@ def goto_1(x, y):
             elif st_d < -10:
                 st = g.steering - 10
 
-        driving.steer(st)
+        pi.driving.steer(st)
 
         tolog("gotoa4 steer %f" % (st))
 
@@ -247,19 +246,19 @@ def goto(x, y, state):
 
 def gotoaux(x, y, state):
     print("gotoaux %f %f %s" % (x, y, state))
-    driving.drive(0)
+    pi.driving.drive(0)
     if state == "accident":
         g.signalling = True
         start_new_thread(signal, ())
 
     time.sleep(4)
-    driving.drive(30)
+    pi.driving.drive(30)
     status = nav2.goto_1(x, y)
     if status != 0:
         print("goto_1 returned %d for (%f, %f); we are at (%f, %f)" % (
                 status, x, y, g.ppx, g.ppy))
         return False
     g.signalling = False
-    driving.drive(0)
+    pi.driving.drive(0)
     return True
 

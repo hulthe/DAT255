@@ -85,9 +85,6 @@ address = 0x68
 bus.write_byte_data(address, 0x6b, 0)
 bus.read_byte_data(address, 0x75)
 
-#bus.write_byte_data(address, 0x1a, 5)
-#bus.write_byte_data(address, 0x1b, 0)
-
 bus.write_byte_data(address, 0x1a, 1)
 bus.write_byte_data(address, 0x1b, 16)
 
@@ -106,7 +103,6 @@ global vx, vy, vz
 ppx = 0
 ppy = 0
 
-#gscale = 32768.0/250
 gscale = 32768.0/1000
 ascale = 1670.0
 
@@ -121,16 +117,19 @@ rbias = 0
 
 t0 = None
 
+
 def make_word(high, low):
     x = high*256+low
     if x >= 32768:
         x -= 65536
     return x
 
+
 def readgyro():
     while True:
         tolog("starting readgyro")
         readgyro0()
+
 
 def readgyro0():
     global ang, dang
@@ -268,11 +267,14 @@ def tolog2(str0, stdout):
     if stdout:
         print(str)
 
+
 def tolog0(str):
     tolog2(str, False)
 
+
 def tolog(str):
     tolog2(str, True)
+
 
 global markermsg
 markermsg = None
@@ -294,6 +296,7 @@ global mqttc
 global gototarget
 gototarget = None
 
+
 def on_message(mosq, obj, msg):
     global battery, ultra
 
@@ -304,9 +307,6 @@ def on_message(mosq, obj, msg):
     # ignore our own position
     if VIN in msg.topic:
         return
-
-    #sys.stdout.write(msg.topic + " " + str(msg.qos) + " " + p + "\n")
-# "adc","current_value":"7.7142 7.630128199403445"
 
     m = re.search('"adc","current_value":"', p)
     if m:
@@ -431,10 +431,8 @@ def readmarker0():
             if odiff < -180:
                 odiff += 360
             accepted = False
-#            if angleknown and abs(odiff) > 45.0 and markerno != -1:
-#                tolog("wrong marker %d %f" % (markerno, odiff))
-#                markerno = -1
-            if (markerno > -1 and quality > 0.25 and markerno not in badmarkers):
+
+            if markerno > -1 and quality > 0.25 and markerno not in badmarkers:
                 close = True
                 if not angleknown:
                     ang = ori
@@ -445,7 +443,7 @@ def readmarker0():
                 now = time.time()
                 delay1 = it1 - it0
                 delay2 = now - it1
-                #tolog0("delay %f delay2 %f" % (delay1, delay2))
+
                 # Since the Optipos client runs on the same machine,
                 # we can simply add the delays
                 delay = delay1 + delay2
@@ -494,13 +492,10 @@ def readmarker0():
                     else:
                         doadjust_n = 0
                     send_to_ground_control("mpos %f %f %f %f %d %f" % (x,y,ang,time.time()-t0, doadjust_n, inspeed))
-                    #send_to_mqtt(x, y)
                     lastpos = (thenx,theny)
                     px = x
                     py = y
                     if True:
-#                    if markercnt % 10 == 1:
-#                    if markercnt == 1:
                         if doadjust:
                             adjust_t = time.time()
                             tolog0("adjusting pos %f %f -> %f %f" % (ppx, ppy,
@@ -520,7 +515,6 @@ def readmarker0():
 
                                     ppxdiff /= 2
                                     ppydiff /= 2
-                                    #angdiff /= 2
                             else:
                                 ppx = x
                                 ppy = y
@@ -529,19 +523,15 @@ def readmarker0():
                         else:
                             ppx = x
                             ppy = y
-                    #vx = math.sin(ang*math.pi/180)*inspeed/100
-                    #vy = math.cos(ang*math.pi/180)*inspeed/100
                     lastpost = it0
                     marker = m
                     age = 0
-                    #ang = ori
             else:
                 age += 1
             if not accepted:
                 send_to_ground_control("badmarker %f %f" % (x,y))
                 tolog0("marker5 %s %d %f %f" % (m, age, ang, ori))
-#            tolog0("marker2 %d %f %f %d %f %d %f" % (-1, px, py, int(ang), 0.5, age, ang))
-#            tolog0("marker3 %d %f %f %d %f %d %f" % (-1, ppx, ppy, int(ang), 0.5, age, ang))
+
 
 # The code here is a bit ad-hoc. We need to find out why the various
 # constants and offsets appear.
@@ -582,18 +572,15 @@ def readspeed2():
                     if odometer != lastodometer:
                         send_to_ground_control("odometer %d" % (odometer))
                         lastodometer = odometer
-                    #print("rsp-odo %d %d" % (inspeed, odometer))
 
                     finspeed = int(m.group(3))
                     finspeed *= speedsign
 
                     fodometer = int(m.group(4))
-                    #print("fsp-odo %d %d" % (finspeed, fodometer))
 
                 part = b""
             part += data[9:]
         elif (data[0], data[1]) == (1,1):
-            #print("CAN %d %d" % (data[8], data[9]))
             sp = data[8]
             if sp > 128:
                 sp -= 256
@@ -622,7 +609,6 @@ def readspeed2():
                     cnt = int(m.group(1))
                     d = int(m.group(2))
 
-                    #print((cnt,d))
                     can_ultra = d/100.0
                 part2 = b""
             part2 += data[9:]
@@ -669,7 +655,6 @@ def drive(sp):
         tolog("motor %d steer %d" % (sp, steering))
         cmd = "/home/pi/can-utils/cansend can0 '101#%02x%02x'" % (
             sp, st)
-        #print (sp, steering, cmd)
         os.system(cmd)
 
 def steercmd(cmd):
@@ -688,12 +673,10 @@ def steer(st):
     tolog("motor %d steer %d" % (outspeed, st))
     cmd = "/home/pi/can-utils/cansend can0 '101#%02x%02x'" % (
         sp, st)
-    #print (outspeed, st, cmd)
     if False:
         start_new_thread(steercmd, (cmd,))
     else:
         dodrive(sp, st)
-#    os.system(cmd)
     tolog("motor2 %d steer %d" % (outspeed, st))
 
 def stop(txt = ""):
@@ -778,14 +761,11 @@ def from_ground_control():
     while True:
         if ground_control:
             for data in linesplit(ground_control):
-                #print(data)
                 l = data.split(" ")
-                #print(l)
-                #print(data)
                 if l[0] == "go":
                     x = float(l[1])
                     y = float(l[2])
-                    print(("goto", x, y))
+                    print("goto", x, y)
                     goto(x, y)
                 elif l[0] == "path":
                     path = ast.literal_eval(data[5:])
@@ -813,6 +793,7 @@ def from_ground_control():
                     print("unknown control command %s" % data)
         time.sleep(1)
 
+
 def readvin():
     f = open("/home/pi/can-utils/java/settings.properties")
     for line0 in f:
@@ -821,6 +802,7 @@ def readvin():
         if m:
             return m.group(1)
     return None
+
 
 def heartbeat():
     while True:
@@ -845,8 +827,7 @@ def init():
 
     logf = open("navlog", "w")
     accf = open("acclog", "w")
-    #accf.write("%f %f %f %f %f %f %f %f %f %f %f %f %f\n" % (
-    #x, y, vx, vy, px, py, x0, y0, vvx, vvy, ppx, ppy, ang))
+
     accf.write("x y vx vy px py x0 y0 vvx vvy ppx ppy ang dang steering speed inspeed outspeed odometer z0 r rx ry\n")
 
     t0 = time.time()
@@ -905,12 +886,13 @@ def init():
     start_new_thread(senddrive, ())
     start_new_thread(keepspeed, ())
     start_new_thread(heartbeat, ())
-    #start_new_thread(report, ())
+
 
 def dodrive(sp, st):
     global send_sp, send_st
     send_sp = sp
     send_st = st
+
 
 def senddrive():
     global send_sp, send_st
@@ -962,7 +944,6 @@ def keepspeed():
 
 
         if outspeed == sp and sp != 0:
-#            pass
             continue
 
         outspeed = sp
@@ -993,7 +974,7 @@ def keepspeed():
 def keepangle():
     while True:
         time.sleep(0.1)
-        if targetangle == None:
+        if targetangle is None:
             continue
 
         adiff = (targetangle-ang)%360
@@ -1006,12 +987,13 @@ def keepangle():
             st = 80
         steer(st*s*speedsign - 10)
 
+
 # treats the car as a point
 def inarea(x, y):
     xmax = 3.0
     ymax = YMAX
 
-    if y > 17.0 and y < 19.0 and x < 9.5:
+    if 17.0 < y < 19.0 and x < 9.5:
         return True
 
     if x < 0 or x > xmax:
@@ -1024,7 +1006,7 @@ def inarea(x, y):
     if y < 4.0 and x > 2.0:
         return False
     # this should not be a rectangle (the leftmost point is at x=1.2)
-    if y > 13.5 and y < 17.0 and x > 1.5:
+    if 13.5 < y < 17.0 and x > 1.5:
         return False
     # we ought to cut out something here: the boundary is not a rectangle
 
@@ -1043,8 +1025,10 @@ def inarea(x, y):
 def comppath(x1, y1, ang1, x2, y2):
     pass
 
+
 def dist(x1, y1, x2, y2):
     return math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))
+
 
 def sign(x):
     if x < 0:
@@ -1052,6 +1036,7 @@ def sign(x):
     if x > 0:
         return 1
     return 0
+
 
 # special case: the northern wall
 # assume we turn at maximum steering (90)
@@ -1070,6 +1055,7 @@ def checkwall():
     if dd < d:
         tolog("will hit the wall %f %f %f %f" % (dd, d, steering, ang))
 
+
 def getdist(x2, y2):
     if False:
         m = marker.split(" ")
@@ -1084,8 +1070,8 @@ def getdist(x2, y2):
     tolog("we are at (%f, %f), distance to (%f, %f) is %f" % (
             x1, y1, x2, y2, d))
 
-#    checkwall()
     return d
+
 
 # rot > 0 -> turn left
 # a0 = current ang
@@ -1111,6 +1097,7 @@ def check_circle(x0, y0, a0, rot):
     if obs:
         print("obstacle if turning %f" % rot)
     return obs
+
 
 # Add to marker: how long ago we got an acceptable reading
 
@@ -1160,6 +1147,7 @@ def makepath(x2, y2):
 
     return adiff
 
+
 # find the center of the circle which the car will go in if turning now
 # radius of smallest possible circle is known = 83 cm
 def smallcircle(dir):
@@ -1173,6 +1161,7 @@ def smallcircle(dir):
     x = x1 + R*math.sin(a)
     y = y1 + R*math.cos(a)
     return (x, y)
+
 
 # angle = the amount to turn
 # ang is supposed to contain the correct orientation
@@ -1201,10 +1190,10 @@ def maketurn(angle, speed = TURNSPEED):
             adiff -= 360
         if adiff < -180:
             adiff += 360
-        #tolog("turning1 ang %f adiff %f" % (ang, adiff))
         if abs(adiff) < 10:
             return True
     return False
+
 
 # angle = the direction to face
 def goangle(angle, speed = TURNSPEED):
@@ -1230,7 +1219,6 @@ def goangle(angle, speed = TURNSPEED):
             adiff -= 360
         if adiff < -180:
             adiff += 360
-        #tolog("turning1 ang %f adiff %f" % (ang, adiff))
         if abs(adiff) < 10:
             return True
     return False
@@ -1248,14 +1236,11 @@ def turn(x2, y2, nostop, maxst, limit):
         tolog("turn1 %d" % (i))
         adiff = makepath(x2, y2)
         tolog("turn2 %d" % (i))
-        if adiff == False:
+        if adiff is False:
             tolog("can't turn towards target")
             stop()
             return False
 
-#        if adiff > 180:
-#            adiff -= 360
-# here, adiff may be between -360 and 360
         if adiff > 0:
             turn = -1
         else:
@@ -1279,14 +1264,11 @@ def turn(x2, y2, nostop, maxst, limit):
                 return False
 
         p = 6.0
-        #steer(turn*maxst)
         str = turn*min(p*abs(adiff), 80)
         str += -10
         tolog("steering %d adiff %d" % (str, adiff))
         steer(str)
-        #print adiff
-        # wrong: adiff will be for example 359, not -1
-        # so correct it
+
         if abs(adiff) < limit or abs(adiff-360) < limit:
             if not nostop:
                 stop("1")
@@ -1309,7 +1291,7 @@ def gotoc(x2, y2, speed = DEFAULTSPEED):
 def goto(x2, y2, speed = DEFAULTSPEED):
     global gototarget
 
-    if gototarget != None:
+    if gototarget is not None:
         print("Already going somewhere")
         return False
 
@@ -1356,8 +1338,6 @@ def goto0(x2, y2, nostop, speed):
             stop("5")
             return False
 
-        #steer(0)
-
         maxst = 50
         limit = 10
 
@@ -1379,11 +1359,13 @@ def goto0(x2, y2, nostop, speed):
         # todo: detect that we have gone outside the area, or will do so,
         # and do something about it
 
+
 # d > 0
 def backup(d):
     drive(-10)
     godist(d)
     stop()
+
 
 def godist(d):
     loops = 0
@@ -1402,6 +1384,7 @@ def godist(d):
             return True
         time.sleep(0.1)
 
+
 def trip1():
     while True:
         s = goto(0.5,17) and goto(1.5,19) and goto(2,18) and goto(0.7,17) and goto(1,11) and goto(0.5,6) and goto (1,4.5) and goto(2,5) and goto(2.5,5) and goto(2,7) and goto(0.5,9)
@@ -1416,12 +1399,14 @@ def trip2():
             stop("8")
             break
 
+
 def trip3():
     while True:
         s = gotoc(0.5,18.5) and gotoc(1.7,19.3) and gotoc(2.5,18.3) and gotoc(1.6,17.4) and gotoc(1.1,16.2) and gotoc(1.5,13) and gotoc(2.5,12) and gotoc(2.5,10.5) and gotoc(2.0,10.0) and gotoc(2.0,8.5) and gotoc(2.5,7) and gotoc(2.5,5) and gotoc(2.5,5) and gotoc(1.0,5)
         if not s:
             stop("8")
             break
+
 
 def trip4():
     s = gotoc(0.5,17.0) and gotoc(2.5,18.0) and gotoc(6.5,18.0)
@@ -1435,6 +1420,7 @@ path5 = [("gotoc", 0.7, 18.5),
          ("maketurn", -180),
          ("gotoc", 0.7, 9)]
 
+
 def trip5(p = 0):
     while True:
         for pp in path5[p:]:
@@ -1446,6 +1432,7 @@ def trip5(p = 0):
                 stop("8")
                 return
         p = 0
+
 
 def trip6():
     while True:
@@ -1461,29 +1448,26 @@ def trip6():
 import socket
 import sys
 
-HOST = 'localhost'    # The remote host
-HOST = '192.168.43.73'	# merkur on my hotspot
+# HOST = 'localhost'    # The remote host
+# HOST = '192.168.43.73'	# merkur on my hotspot
 HOST = '193.10.66.250'  # merkur on the SICS wifi net
 PORT = 50008              # The same port as used by the server
 
 s = None
 
+
 def open_socket():
     for res in socket.getaddrinfo(HOST, PORT, socket.AF_UNSPEC, socket.SOCK_STREAM):
         af, socktype, proto, canonname, sa = res
-        #print("res %s" % (res,))
         try:
             s = socket.socket(af, socktype, proto)
         except Exception as e:
-            #print("socket %s" % e)
             s = None
             continue
 
         try:
             s.connect(sa)
         except Exception as e:
-            #print("connect %s" % e)
-            #(socket.error, msg):
             s.close()
             s = None
             continue
@@ -1506,7 +1490,7 @@ def send_to_ground_control(str):
     except Exception as e:
         print("send1 %s" % e)
         ground_control = None
-#        connect_to_ground_control()
+
 
 def averagepos():
     pxa = 0
@@ -1521,6 +1505,7 @@ def averagepos():
             print("%.2f %.2f" % (pxa/n, pya/n))
             cnt = markercnt
 
+
 def initializeCAN(network):
     """
     Initializes the CAN network, and returns the resulting socket.
@@ -1529,6 +1514,7 @@ def initializeCAN(network):
     s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
     s.bind((network,))
     return s
+
 
 canNetwork = "can0"
 canFrameID = 1025
@@ -1552,13 +1538,11 @@ def trip10(n = 1):
 
     targetangle = None
 
+
 def goto_with_angle(x, y, angt = 90):
     while True:
         dist = getdist(x, y)
         if dist < TARGETDIST:
-            #stop("9")
-#            drive(-1)
-#            time.sleep(0.2)
             drive(0)
             return
 
@@ -1584,8 +1568,6 @@ def goto_with_angle(x, y, angt = 90):
 
         tolog("gotoa3 adiff %f" % (adiff))
 
-        #print(adiff)
-
         asgn = sign(adiff)
         aval = abs(adiff)
 
@@ -1601,6 +1583,7 @@ def goto_with_angle(x, y, angt = 90):
         send_to_ground_control("dpos %f %f %f %f 0 %f" % (ppx,ppy,ang,time.time()-t0, inspeed))
 
         time.sleep(0.1)
+
 
 def goto_1(x, y):
     global targetx, targety
@@ -1628,7 +1611,7 @@ def goto_1(x, y):
         else:
             brake_s = 0.6
 
-        if lastdist != None:
+        if lastdist is not None:
             if dist < lastdist - 0.01:
                 inc = -1
                 lastdist = dist
@@ -1641,13 +1624,9 @@ def goto_1(x, y):
 
         if dist < TARGETDIST or dist < brake_s or missed:
             if False:
-                #stop("9")
-    #            drive(-1)
                 # continue a little so it can pass the target if it wasn't
                 # there yet
                 time.sleep(0.5)
-    #            drive(-1)
-    #            time.sleep(0.2)
                 drive(0)
             return
 
@@ -1673,8 +1652,6 @@ def goto_1(x, y):
 
         tolog("gotoa3 adiff %f" % (adiff))
 
-        #print(adiff)
-
         asgn = sign(adiff)
         aval = abs(adiff)
 
@@ -1690,6 +1667,7 @@ def goto_1(x, y):
         send_to_ground_control("dpos %f %f %f %f 0 %f" % (ppx,ppy,ang,time.time()-t0, inspeed))
 
         time.sleep(0.1)
+
 
 # many assumptions: we are at a point ppx < x0 and ppy < y0,
 # far enough away so that the original angle doesn't matter (but it's between
@@ -1743,17 +1721,15 @@ def gopoint(x0, y0):
             # worst so far: 0.12
             if dist < 0.15 or missed:
                 if True:
-                    #stop("9")
-    #                drive(-1)
                     # continue a little so it can pass the target if it wasn't
                     # there yet
-    #                time.sleep(0.5)
                     braking = True
                     drive(-1)
                     time.sleep(0.2)
                     drive(0)
                     braking = False
                 return
+
 
 def trip11():
     while True:
@@ -1764,6 +1740,7 @@ def trip11():
         goto_with_angle(1.0, 7.2)
         time.sleep(2)
 
+
 def trip12():
     while True:
         drive(7);goto_with_angle(5.0, 5.0)
@@ -1773,6 +1750,7 @@ def trip12():
         drive(7);goto_with_angle(1.5, 13)
         drive(7);goto_with_angle(1.0, 5.5)
 
+
 def trip13():
     while True:
         drive(7)
@@ -1781,6 +1759,7 @@ def trip13():
         drive(-10)
         goto_with_angle(0.7, 10.0)
         time.sleep(1)
+
 
 def stopx(i, t = 3.0):
     global braking
@@ -1802,6 +1781,7 @@ def stopx(i, t = 3.0):
         time.sleep(t)
 
     braking = False
+
 
 def trip14():
     i = 0
@@ -1833,13 +1813,11 @@ def trip14():
 
         stopx(i)
 
+
 def trip15():
     i = 0
     sp1 = 7
     sp2 = -10
-
-#    sp1 = 20
-#    sp2 = -25
 
     while True:
         i += 1
@@ -1850,13 +1828,11 @@ def trip15():
         drive(sp2);goto_1(1.8,14);
         stopx(i)
 
+
 def trip15b():
     i = 0
     sp1 = 7
     sp2 = -10
-
-#    sp1 = 20
-#    sp2 = -25
 
     while True:
         i += 1
@@ -1867,18 +1843,17 @@ def trip15b():
         drive(sp2);goto_1(1.0,7);
         stopx(i)
 
+
 def trip16():
     i = 0
     sp1 = 7
     sp2 = -10
 
-#    sp1 = 20
-#    sp2 = -25
-
     drive(sp1);goto_1(1.0, 5.7);
     drive(sp1);goto_1(2.6, 5.1);
     drive(sp1);goto_1(20.0, 5.1);
     stopx(i)
+
 
 def dospeak(s, p):
     global speakcount
@@ -1887,19 +1862,18 @@ def dospeak(s, p):
         s = s.replace('#', str(speakcount))
     os.system("espeak -a500 -p%d '%s' >/dev/null 2>&1" % (p, s))
 
+
 def speak(str):
     p = 50
     if VIN == "car2":
         p = 80
     start_new_thread(dospeak, (str, p))
 
+
 def trip17():
     i = 0
     sp1 = 7
     sp2 = -10
-
-#    sp1 = 20
-#    sp2 = -25
 
     while True:
 
@@ -1921,10 +1895,12 @@ def trip17():
         stopx(i)
         speak('dumping done')
 
+
 def setleds(mask, code):
     cmd = "/home/pi/can-utils/cansend can0 '461#060000006D3%d3%d00'" % (
         mask, code)
     os.system(cmd)
+
 
 def trip(path, first=0):
     global paused
@@ -1979,7 +1955,6 @@ def trip(path, first=0):
         speakcount += 1
 
 
-
 def small():
     while True:
         drive(7)
@@ -1990,6 +1965,7 @@ def small():
         time.sleep(1)
         stop()
         time.sleep(1)
+
 
 def square():
     drive(7)

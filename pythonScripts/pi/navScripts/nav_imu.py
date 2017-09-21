@@ -1,9 +1,7 @@
-import smbus
 import time
+from math import sqrt, cos, sin, pi, asin
 
-import faulthandler
-
-from math import sqrt, cos, sin, pi, atan2, acos, asin
+import smbus
 
 import nav_log
 
