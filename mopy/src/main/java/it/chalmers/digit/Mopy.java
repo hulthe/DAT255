@@ -16,36 +16,44 @@ import static java.lang.System.out;
 public final class Mopy implements MopedController {
 
 	private static final String PATH = "/etc/onTruck/python/";
+	private static Mopy instance;
 
-	private final Executor executor;
-
-	public Mopy(Executor executor) {
-		this.executor = executor;
-	}
-
-	public Future<String> getSpeed() {
-		RunnableFuture<String> future = new FutureTask<>(() -> runCommand(Command.GET_SPEED));
-		executor.execute(future);
-		return future;
+	@Override
+	public RunnableFuture<String> getSpeed() {
+		return new FutureTask<>(() -> runCommand(Command.GET_SPEED));
 	}
 
 	@Override
-	public Future<Void> setSpeed(int speed) {
+	public RunnableFuture<Void> setSpeed(int speed) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public Future<Void> steer(double steeringVector) {
+	public RunnableFuture<Void> steer(double steeringVector) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public Future<String> getFrontSensorDistance() {
+	public RunnableFuture<String> getFrontSensorDistance() {
 		return null;
 	}
 
-	public Future<Void> stop() {
+	@Override
+	public RunnableFuture<Void> stop() {
 		throw new NotImplementedException();
+	}
+
+	public static Mopy getInstance() {
+		if (instance == null) {
+			// Synchronize to prevent threads to overlap during creation and
+			// outer check is not synchronized to prevent performance loss
+			synchronized (instance) {
+				if (instance == null) {
+					instance = new Mopy();
+				}
+			}
+		}
+		return instance;
 	}
 
 	/**
