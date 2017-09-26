@@ -1,4 +1,4 @@
-package it.chalmers.digit;
+package main.java.it.chalmers.digit;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
