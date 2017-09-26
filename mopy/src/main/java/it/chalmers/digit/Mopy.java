@@ -10,6 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.locks.Lock;
 
 import static java.lang.System.out;
 
@@ -17,6 +18,10 @@ public final class Mopy implements MopedController {
 
 	private static final String PATH = "/etc/onTruck/python/";
 	private static Mopy instance;
+	// Instantiated object to synchronize the creation of instance
+	private static Object lock = new Object();
+
+	private Mopy() {}
 
 	@Override
 	public RunnableFuture<String> getSpeed() {
@@ -47,7 +52,7 @@ public final class Mopy implements MopedController {
 		if (instance == null) {
 			// Synchronize to prevent threads to overlap during creation and
 			// outer check is not synchronized to prevent performance loss
-			synchronized (instance) {
+			synchronized (lock) {
 				if (instance == null) {
 					instance = new Mopy();
 				}
