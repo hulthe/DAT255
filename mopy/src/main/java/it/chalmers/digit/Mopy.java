@@ -10,42 +10,44 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.locks.Lock;
 
 import static java.lang.System.out;
 
 public final class Mopy implements MopedController {
 
 	private static final String PATH = "/etc/onTruck/python/";
+	private static Mopy instance = new Mopy();
 
-	private final Executor executor;
+	private Mopy() {}
 
-	public Mopy(Executor executor) {
-		this.executor = executor;
-	}
-
-	public Future<String> getSpeed() {
-		RunnableFuture<String> future = new FutureTask<>(() -> runCommand(Command.GET_SPEED));
-		executor.execute(future);
-		return future;
+	@Override
+	public RunnableFuture<String> getSpeed() {
+		return new FutureTask<>(() -> runCommand(Command.GET_SPEED));
 	}
 
 	@Override
-	public Future<Void> setSpeed(int speed) {
+	public RunnableFuture<Void> setSpeed(int speed) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public Future<Void> steer(double steeringVector) {
+	public RunnableFuture<Void> steer(double steeringVector) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public Future<String> getFrontSensorDistance() {
+	public RunnableFuture<String> getFrontSensorDistance() {
 		return null;
 	}
 
-	public Future<Void> stop() {
+	@Override
+	public RunnableFuture<Void> stop() {
 		throw new NotImplementedException();
+	}
+
+	public static Mopy getInstance() {
+		return instance;
 	}
 
 	/**

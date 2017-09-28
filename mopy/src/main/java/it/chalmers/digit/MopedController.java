@@ -1,12 +1,12 @@
 package main.java.it.chalmers.digit;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.RunnableFuture;
 
 public interface MopedController {
-	Future<String> getSpeed();
-	Future<Void> setSpeed(int speed);
-	Future<Void> steer(double steeringVector);
-	Future<String> getFrontSensorDistance();
-	Future<Void> stop();
+	RunnableFuture<String> getSpeed();
+	RunnableFuture<Void> setSpeed(int speed);
+	RunnableFuture<Void> steer(double steeringVector);
+	RunnableFuture<String> getFrontSensorDistance();
+	RunnableFuture<Void> stop();
 
 }

@@ -8,8 +8,9 @@ public class Main {
 
     public static void main(String[] args) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-		Mopy m = new Mopy(threadPoolExecutor);
-		Future<String> f = m.getSpeed();
+		MopedController m = Mopy.getInstance();
+		RunnableFuture<String> f = m.getSpeed();
+		threadPoolExecutor.execute(f);
 		while(!f.isDone()){
 			System.out.println("not done yet");
 			try {
