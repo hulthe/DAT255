@@ -14,38 +14,77 @@ import java.util.concurrent.locks.Lock;
 
 import static java.lang.System.out;
 
+
+/**
+ * Mopy
+ * Java class which implements @see MopedController and all its methods.
+ * This class is a singleton Java->Python adapter for a MOPED
+ */
 public final class Mopy implements MopedController {
 
+	/**
+	 * The path to the python files.
+	 */
 	private static final String PATH = "/etc/onTruck/python/";
+
+	/**
+	 * The singleton instance of Mopy
+	 */
 	private static Mopy instance = new Mopy();
 
+	/**
+	 * Private constructor to support singleton design pattern
+	 */
 	private Mopy() {}
 
+	/**
+	 * Gets the current speed of the MOPED
+	 * @return the current speed of the MOPED
+	 */
 	@Override
 	public RunnableFuture<String> getSpeed() {
 		return new FutureTask<>(() -> runCommand(Command.GET_SPEED));
 	}
 
+	/**
+	 * Sets the Moped's speed to the input value
+	 * @param speed The MOPED's speed will be set as this input speed
+	 */
 	@Override
 	public RunnableFuture<Void> setSpeed(int speed) {
 		throw new NotImplementedException();
 	}
 
+	/**
+	 * Steers the wheel in the direction of the steering vector input
+	 * @param steeringVector The vector which the wheels will turn towards
+	 */
 	@Override
 	public RunnableFuture<Void> steer(double steeringVector) {
 		throw new NotImplementedException();
 	}
 
+	/**
+	 * Returns the distance value from the MOPED's front-facing sensors
+	 * @return The distance to possible obstructions in the way of the MOPED
+	 */
 	@Override
 	public RunnableFuture<String> getFrontSensorDistance() {
 		return null;
 	}
 
+	/**
+	 * Stops the MOPED
+	 */
 	@Override
 	public RunnableFuture<Void> stop() {
 		throw new NotImplementedException();
 	}
 
+	/**
+	 * Returns the Mopy singleton instance
+	 * @return The mopy singleton instance
+	 */
 	public static Mopy getInstance() {
 		return instance;
 	}
@@ -54,7 +93,7 @@ public final class Mopy implements MopedController {
 	 * Runs a python file with {@code command}
 	 * @param command
 	 * @param args
-	 * @return
+	 * @return The output text
 	 * @throws IOException
 	 */
 	private static String runCommand(Command command, String... args) throws IOException {
@@ -109,6 +148,12 @@ public final class Mopy implements MopedController {
 		return outText;
 	}
 
+
+	/**
+	 * Internal enum with the filenames of the python files
+	 * Used because abstraction -> less places to refactor
+	 * Used in Mopy.java methods
+	 */
 	private enum Command {
 		GET_SPEED("get_speed.py"),
 		SET_SPEED("set_speed.py"),
