@@ -15,7 +15,8 @@ import static java.lang.System.out;
 
 public final class Mopy implements MopedController {
 
-	private static final String PATH = "/etc/onTruck/python/";
+	//Replace path with your own path to the python scripts folder
+	private static final String PATH = "/path/to/python_scripts/";
 
 	private final Executor executor;
 
@@ -59,8 +60,8 @@ public final class Mopy implements MopedController {
 		// Creates the command string
 		StringJoiner joiner = new StringJoiner(" ");
 		joiner.add("python");
-		joiner.add(PATH);
-		joiner.add(command.toString());
+		joiner.add(PATH + command.toString());
+
 		for (String argument : args) {
 			joiner.add(argument);
 		}

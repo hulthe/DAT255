@@ -4,6 +4,7 @@ import java.util.concurrent.*;
 
 public class Main {
 
+	//Path to python scripts (not used yet)
 	private static final String PATH = "/etc/onTruck/python";
 
     public static void main(String[] args) {
