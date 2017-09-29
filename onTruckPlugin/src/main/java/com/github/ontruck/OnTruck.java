@@ -1,7 +1,5 @@
 package com.github.ontruck;
 
-import com.github.moped.jcan.CAN;
-
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -11,7 +9,6 @@ public class OnTruck {
 	private static final int UDP_PORT = 8721;
 
 	private UDPConnection udpConnection;
-	private CAN can;
 
     public static void main(String[] args) {
 		OnTruck plugin = new OnTruck();
@@ -19,14 +16,6 @@ public class OnTruck {
 	}
 
 	public void init() {
-		String canInterface = System.getenv("CAN_INTERFACE");
-		try {
-			can = new CAN(canInterface);
-		} catch(IOException e) {
-			System.err.printf("Failed to connect to CAN interface [%s]%n", canInterface);
-			e.printStackTrace();
-			System.exit(-1);
-		}
 
 		try {
 			// Create new socket
@@ -60,14 +49,6 @@ public class OnTruck {
 
 		// Start listening
 		udpConnection.start();
-
-		try {
-			can.sendMotorValue((byte)100);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		try {
 			doFunction();
