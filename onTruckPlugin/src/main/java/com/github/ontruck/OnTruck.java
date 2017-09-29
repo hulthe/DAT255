@@ -9,6 +9,7 @@ public class OnTruck {
 	private static final int UDP_PORT = 8721;
 
 	private UDPConnection udpConnection;
+	private DriveProtocol driver;
 
     public static void main(String[] args) {
 		OnTruck plugin = new OnTruck();
@@ -18,6 +19,13 @@ public class OnTruck {
 	public void init() {
 
 		try {
+			driver = new DriveProtocol();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1); // Exit application if socket couldn't create socket
+		}
+
+		try {
 			// Create new socket
 			udpConnection = new UDPConnection(UDP_PORT);
 		} catch (SocketException e) {
@@ -25,13 +33,8 @@ public class OnTruck {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		// Add a data processor for logging
-		udpConnection.addDataProcessor(new UDPConnection.DataProcessor() {
-			public void process(byte[] data) {
-				System.out.printf("Processed data: %s\n", new String(data));
-			}
-		});
-
+		// Add a data processor for driving
+		udpConnection.addDataProcessor(driver::processEvent);
 	}
 
 	public void doFunction() throws InterruptedException{

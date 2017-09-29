@@ -18,7 +18,7 @@ public class UDPConnection extends Thread {
 	private final DatagramPacket packet= new DatagramPacket(message, message.length);
 
 	public interface DataProcessor{
-		void process(byte[] data);
+		void process(byte type, byte payload);
 	}
 
 	public UDPConnection(int port) throws SocketException{
@@ -58,7 +58,7 @@ public class UDPConnection extends Thread {
 			}
 
 			for (DataProcessor processor : ProcessorList) {
-				processor.process(data);
+				processor.process(data[1], data[2]);
 			}
 		}
 	}
