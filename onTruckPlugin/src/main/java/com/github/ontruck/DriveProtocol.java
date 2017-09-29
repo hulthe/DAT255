@@ -90,7 +90,7 @@ public class DriveProtocol {
 
 	private void steer(byte payload) {
 		try {
-			can.sendSteerValue(maxMinPayload(payload, (byte)-10, (byte)10));
+			can.sendSteerValue(maxMinPayload(payload, (byte)100, (byte)100));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
