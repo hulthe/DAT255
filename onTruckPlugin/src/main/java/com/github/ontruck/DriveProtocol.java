@@ -52,6 +52,15 @@ public class DriveProtocol {
 		return (byte)tmp;
 	}
 
+	private static int umaxPayload(byte payload, byte max) {
+		// The CAN accepts control values within a certain range, thus we convert the payload
+		int tmp = Byte.toUnsignedInt(payload);
+		tmp *= max;
+		tmp /= 255;
+		return tmp;
+	}
+
+
 	private void power(byte payload) {
 		byte powerLevel = maxMinPayload(payload, (byte)-100, (byte)100); // Over 9000?
 		// If different sign
@@ -82,12 +91,22 @@ public class DriveProtocol {
 	}
 
 	private void brake(byte payload) {
-		/*try {
-			can.sendBrakeValue(umaxPayload(payload, (byte)0, (byte)100));
-		} catch (IOException e) {
-			e.printStackTrace();
+		int brakeValue = umaxPayload(payload, (byte)100);
+
+		if(lastPowerValue > 0) {
+			// Engine will break if engine is set to the opposite direction it was driving.
+			// Therefore, if we are driving forward, we need to set the engine in reverse.
+			brakeValue = -brakeValue;
+		} else if(lastPowerValue < 0){
+			// The break value is positive, which is what we want.
+		} else {
+			// TODO: needs testing
+		}
+
+		try {
+			can.sendMotorValue((byte)brakeValue);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 }
