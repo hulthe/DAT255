@@ -11,6 +11,7 @@ public class DriveProtocol {
 	private static final byte BRAKE_OP_CODE = 0x42;
 
 	private CAN can;
+	private byte lastPowerValue = 0;
 
 	public DriveProtocol() throws IOException {
 		String canInterface = System.getenv("CAN_INTERFACE");
@@ -52,20 +53,29 @@ public class DriveProtocol {
 	}
 
 	private void power(byte payload) {
+		byte powerLevel = maxMinPayload(payload, (byte)-100, (byte)100); // Over 9000?
+		// If different sign
+		if(powerLevel * lastPowerValue < 0) {
+			try {
+				// If the user wants to reverse engine direction, then we need to tell it to stop first.
+				can.sendMotorValue((byte)0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		try {
-			can.sendMotorValue(maxMinPayload(payload, (byte)-100, (byte)100));
-		} catch (IOException e) {
-			e.printStackTrace();
+			can.sendMotorValue(powerLevel);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		lastPowerValue = powerLevel;
 	}
 
 	private void steer(byte payload) {
 		try {
 			can.sendSteerValue(maxMinPayload(payload, (byte)-10, (byte)10));
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
