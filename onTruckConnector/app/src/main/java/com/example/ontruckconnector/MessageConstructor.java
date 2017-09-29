@@ -6,11 +6,21 @@ import java.security.NoSuchAlgorithmException;
 
 public class MessageConstructor {
 
+    /**
+     *
+     * @param type is the type of movement
+     * @param payload is the value of that movement
+     */
     public void onMove(char type, byte payload) {
         byte[] message = constructMessage(type, payload);
     }
 
-    private byte[] constructMessage(char type, byte payload) {
+    /**
+     * This method constructs a byte array message with length 6
+     * @param type is the type of movement
+     * @param payload is the value of that movement
+     */
+    byte[] constructMessage(char type, byte payload) {
         byte[] message = new byte[6];
         message[0] = 1;
         message[1] = Byte.decode(String.valueOf(type));
@@ -22,6 +32,11 @@ public class MessageConstructor {
         return message;
     }
 
+    /**
+     * This method returns a MD5 hash of type and payload
+     * @param type is the type of movement
+     * @param payload is the value of that movement
+     */
     private byte[] createChecksum(byte type, byte payload) {
         byte[] checksum = new byte[2];
         try {
