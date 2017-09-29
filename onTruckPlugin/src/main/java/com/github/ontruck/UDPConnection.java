@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class UDPConnection extends Thread {
 		System.out.printf("UDP thread closed\n");
 	}
 
-	private void process(byte[] data){
+	private void process(byte[] data) {
 		if (validate(data)){
 			DataProcessor[] ProcessorList;
 
@@ -61,8 +63,27 @@ public class UDPConnection extends Thread {
 		}
 	}
 
-	private boolean validate(byte[] data){
-		return true; //Todo: write this when implementing protocol för UDP communication.
+	private boolean validate(byte[] data) {
+		if (data[0] != 1) return false;
+		if (data[5] != 4) return false;
+
+		byte[] verificationHash = new byte[2];
+		verificationHash[0] = data[3];
+		verificationHash[1] = data[4];
+		return (checksum(data[1], data[2]).equals(verificationHash));
+	}
+
+	private byte[] checksum(byte type, byte payload) {
+		byte[] bytes = new byte[2];
+		bytes[0] = type;
+		bytes[1] = payload;
+
+		try {
+			return MessageDigest.getInstance("MD5").digest(bytes);
+		} catch (NoSuchAlgorithmException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
