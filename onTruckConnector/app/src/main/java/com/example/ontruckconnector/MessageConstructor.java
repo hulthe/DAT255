@@ -3,13 +3,14 @@ package com.example.ontruckconnector;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by antonlevholm on 2017-09-29.
- */
 
 public class MessageConstructor {
 
-    public byte[] constructMessage(char type, byte payload) {
+    public void onMove(char type, byte payload) {
+        byte[] message = constructMessage(type, payload);
+    }
+
+    private byte[] constructMessage(char type, byte payload) {
         byte[] message = new byte[6];
         message[0] = 1;
         message[1] = Byte.decode(String.valueOf(type));
