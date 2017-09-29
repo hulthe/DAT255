@@ -3,13 +3,6 @@
 	<artifactId>onTruck</artifactId>
 	<groupId>com.github.onTruck</groupId>
 	<version>0.0.1</version>
-	<dependencies>
-		<dependency>
-			<groupId>se.sics.sse.fresta</groupId>
-			<artifactId>api</artifactId>
-			<version>1.0</version>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -35,7 +28,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.github.ontruck.MavenMain</mainClass>
+							<mainClass>com.github.ontruck.OnTruck</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

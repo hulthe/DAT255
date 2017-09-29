@@ -1,31 +1,17 @@
 package com.github.ontruck;
 
-import com.sun.squawk.VM;
-import sics.plugin.PlugInComponent;
-
 import java.io.IOException;
 import java.net.SocketException;
 
-public class OnTruck extends PlugInComponent {
-
-
-	//private PluginPPort fs;
-	//private PluginRPort ff;
-
+public class OnTruck {
 
 	// Port number for UDP socket
 	private static final int UDP_PORT = 8721;
 
 	private UDPConnection udpConnection;
 
-    public OnTruck() {}
-
-    public OnTruck(String[] args) {
-		super(args);
-    }
-	
     public static void main(String[] args) {
-		OnTruck plugin = new OnTruck(args);
+		OnTruck plugin = new OnTruck();
 		plugin.run();
     }
 
@@ -66,7 +52,7 @@ public class OnTruck extends PlugInComponent {
 		try {
 			doFunction();
 		} catch (InterruptedException e) {
-			VM.println("**************** Interrupted.");
+			System.out.println("**************** Interrupted.");
 			return;
 		}
     }
