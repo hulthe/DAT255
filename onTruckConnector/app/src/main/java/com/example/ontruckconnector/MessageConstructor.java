@@ -6,6 +6,16 @@ import java.security.NoSuchAlgorithmException;
 
 public class MessageConstructor {
 
+
+
+
+    public byte[] coordinatePowerToMessage(int y){
+        return new byte[6];
+    }
+    public byte[] coordinateSteeringToMessage(int x){
+        return new byte[6];
+    }
+
     /**
      *
      * @param type is the type of movement
