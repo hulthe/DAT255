@@ -2,18 +2,17 @@ package com.example.ontruckconnector;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 
 public class MainActivity extends AppCompatActivity {
 
 	//All UI-elements. Initializes in onCreate()
-	private Button sendButton;
-	private EditText messageText;
 	private TextView connectionText;
+	private JoystickPosition joystickPosition = new JoystickPosition();
+	private JoystickView joystickView;
 
 
 
@@ -23,22 +22,21 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		//Initializes the UI-elements
-		sendButton = (Button)findViewById(R.id.sendButton);
-		messageText = (EditText)findViewById(R.id.messageText);
 		connectionText = (TextView)findViewById(R.id.connectionText);
+		joystickView = (JoystickView)findViewById(R.id.joystick);
 
 		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPChecker
 		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
 		connectionTextHolder.setTextView(connectionText);
 
+		joystickView.setOnMoveListener(new JoystickView.OnMoveListener() {
 
-		//Gives the button the ability to send the textfield's text to the UDPChecker
-		sendButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				String message = messageText.getText().toString();
-				UDPSender.getInstance().sendMessage(message.getBytes());
+			@Override
+			public void onMove(int angle, int strength) {
+				joystickPosition.onUpdate(angle, strength);
 			}
 		});
+
 
 
 		//Excecutes the TCP-connection

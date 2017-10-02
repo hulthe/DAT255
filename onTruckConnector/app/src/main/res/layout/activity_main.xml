@@ -7,67 +7,56 @@
  android:layout_height="match_parent"
  tools:context="com.example.ontruckconnector.MainActivity">
 
+    <io.github.controlwear.virtual.joystick.android.JoystickView
+        android:id="@+id/joystick"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="405dp"
+        android:layout_height="397dp"
+        custom:JV_buttonColor="#FF6E40"
+        custom:JV_buttonSizeRatio="25%"
+        custom:JV_borderColor="#00796B"
+        custom:JV_backgroundColor="#009688"
+        custom:JV_borderWidth="4dp"
+        custom:JV_fixedCenter="false"
+        android:layout_marginRight="0dp"
+        custom:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        custom:layout_constraintLeft_toLeftOf="parent"
+        custom:layout_constraintHorizontal_bias="0.619"
+        android:layout_marginTop="70dp"
+        custom:layout_constraintTop_toBottomOf="@+id/connectionText"/>
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="212dp"
         android:layout_height="51dp"
         android:layout_margin="20dp"
-        android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="45dp"
         android:text="OnTruck"
         android:textAlignment="center"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/messageText"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95"/>
-
-    <EditText
-        android:id="@+id/messageText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="166dp"
-        app:layout_constraintHorizontal_bias="0.503"/>
-
-    <Button
-        android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="41dp"
-        android:text="Send"
-        app:layout_constraintTop_toBottomOf="@+id/messageText"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.102"/>
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
 
     <TextView
         android:id="@+id/connectionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:text="Disconnected"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendButton"
-        app:layout_constraintVertical_bias="0.483"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"/>
 
 </android.support.constraint.ConstraintLayout>
