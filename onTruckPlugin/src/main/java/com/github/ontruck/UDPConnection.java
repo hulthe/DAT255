@@ -63,23 +63,23 @@ public class UDPConnection extends Thread {
 		}
 	}
 
-	private boolean validate(byte[] data) {
+	static boolean validate(byte[] data) {
+		//Checks if starter, and then terminator is correct
 		if (data[0] != 1) return false;
 		if (data[5] != 4) return false;
 
-		byte[] verificationHash = new byte[2];
-		verificationHash[0] = data[3];
-		verificationHash[1] = data[4];
-		return (checksum(data[1], data[2]).equals(verificationHash));
+		//makes sure the checksum is correct
+		byte[] verificationHash = new byte[]{data[3], data[4]};
+		byte[] checksum = checksum(data[1], data[2]);
+		return verificationHash[0] == checksum[0] && verificationHash[1] == checksum[1];
 	}
 
-	private byte[] checksum(byte type, byte payload) {
-		byte[] bytes = new byte[2];
-		bytes[0] = type;
-		bytes[1] = payload;
+	private static byte[] checksum(byte type, byte payload) {
+		byte[] bytes = new byte[]{type, payload};
 
 		try {
-			return MessageDigest.getInstance("MD5").digest(bytes);
+			byte[] checksum = MessageDigest.getInstance("MD5").digest(bytes);
+			return new byte[] {checksum[0], checksum[1]};
 		} catch (NoSuchAlgorithmException e){
 			e.printStackTrace();
 			return null;
