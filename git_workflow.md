@@ -14,7 +14,7 @@ $ git checkout -b your/branch/name
 Group branches by one of the following key words:
   - `fix`
   - `bug`
-  - `feat`
+  - `feature`
   - `doc`
 
 Examples:
