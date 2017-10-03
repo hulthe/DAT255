@@ -2,7 +2,11 @@ package com.example.ontruckconnector;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
@@ -12,7 +16,9 @@ public class MainActivity extends AppCompatActivity {
 	//All UI-elements. Initializes in onCreate()
 	private TextView connectionText;
 	private JoystickPosition joystickPosition = new JoystickPosition();
+	private MessageConstructor messageConstructor = new MessageConstructor();
 	private JoystickView joystickView;
+	private UDPSender udpSender;
 
 
 
@@ -20,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		try{
+			udpSender = new UDPSender("192.168.43.150", 8722);}
+		catch(SocketException e){
+			e.printStackTrace();
+		} catch(UnknownHostException e){
+			Log.e(this.getClass().getName(), "Unable to create InetAddress");
+			e.printStackTrace();
+		}
 
 		//Initializes the UI-elements
 		connectionText = (TextView)findViewById(R.id.connectionText);
@@ -36,6 +51,23 @@ public class MainActivity extends AppCompatActivity {
 				joystickPosition.onUpdate(angle, strength);
 			}
 		});
+
+
+
+		final Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+						Log.i("threadMessage", "Sending x:"+joystickPosition.getX()+" | "+"Sending y:"+joystickPosition.getY());
+						udpSender.sendMessage(messageConstructor.coordinateSteeringToMessage(joystickPosition.getX()));
+						udpSender.sendMessage(messageConstructor.coordinatePowerToMessage(joystickPosition.getY()));
+					}
+			}
+		});
+
+		thread.start();
+
+
 
 
 

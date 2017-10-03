@@ -11,36 +11,31 @@ import java.net.UnknownHostException;
 
 public class UDPSender {
 
-    private final int SERVER_PORT = 8722;
-    private final String ADDRESS = "192.168.43.150";
+    private final int SERVER_PORT;
+    private final String ADDRESS;
+	private final DatagramSocket socket;
+	private final DatagramPacket packet;
 
-    private static UDPSender instance;
 
-
-    private UDPSender(){}
-
-    static UDPSender getInstance(){
-        if(instance == null){
-            instance = new UDPSender();}
-        return instance;
-    }
+    public UDPSender(String address, int port) throws SocketException, UnknownHostException {
+		ADDRESS = address;
+		SERVER_PORT = port;
+		socket = new DatagramSocket();
+		InetAddress iNetAddress = InetAddress.getByName(ADDRESS);
+		packet = new DatagramPacket(new byte[6], 6, iNetAddress, SERVER_PORT);
+	}
 
     void sendMessage(byte[] input){
+		synchronized (packet){
+			packet.setData(input);
         try{
-            DatagramSocket s = new DatagramSocket();
-            InetAddress local = InetAddress.getByName(ADDRESS);
-            DatagramPacket p = new DatagramPacket(input, input.length,local,SERVER_PORT);
-            s.send(p);
-        }
-        catch(SocketException e){
-            Log.e(this.getClass().getName(), "Unable to create DatagramSocket");
-            e.printStackTrace();
-        }catch(UnknownHostException e){
-            Log.e(this.getClass().getName(), "Unable to create InetAddress");
-            e.printStackTrace();
+            synchronized (socket){
+				socket.send(packet);}
         }catch(IOException e){
             Log.e(this.getClass().getName(), "Unable to send message");
             e.printStackTrace();
-        }
+        	}
+		}
     }
+
 }
