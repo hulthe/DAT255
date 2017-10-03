@@ -10,10 +10,10 @@ public class MessageConstructor {
 
 
     public byte[] coordinatePowerToMessage(int y){
-        return new byte[6];
+        return new byte[]{0x01, 0x50, 0x7F, 0x07, (byte)0x91, 0x04};
     }
     public byte[] coordinateSteeringToMessage(int x){
-        return new byte[6];
+        return new byte[]{0x01, 0x42, 0x3F, 0x03, 0x5D, 0x04};
     }
 
     /**
