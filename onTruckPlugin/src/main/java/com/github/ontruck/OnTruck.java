@@ -1,7 +1,5 @@
 package com.github.ontruck;
 
-import com.github.moped.jcan.CAN;
-
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -11,7 +9,7 @@ public class OnTruck {
 	private static final int UDP_PORT = 8721;
 
 	private UDPConnection udpConnection;
-	private CAN can;
+	private DriveProtocol driver;
 
     public static void main(String[] args) {
 		OnTruck plugin = new OnTruck();
@@ -19,13 +17,12 @@ public class OnTruck {
 	}
 
 	public void init() {
-		String canInterface = System.getenv("CAN_INTERFACE");
+
 		try {
-			can = new CAN(canInterface);
-		} catch(IOException e) {
-			System.err.printf("Failed to connect to CAN interface [%s]%n", canInterface);
+			driver = new DriveProtocol();
+		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1);
+			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
 		try {
@@ -36,13 +33,8 @@ public class OnTruck {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		// Add a data processor for logging
-		udpConnection.addDataProcessor(new UDPConnection.DataProcessor() {
-			public void process(byte[] data) {
-				System.out.printf("Processed data: %s\n", new String(data));
-			}
-		});
-
+		// Add a data processor for driving
+		udpConnection.addDataProcessor(driver::processEvent);
 	}
 
 	public void doFunction() throws InterruptedException{
@@ -60,14 +52,6 @@ public class OnTruck {
 
 		// Start listening
 		udpConnection.start();
-
-		try {
-			can.sendMotorValue((byte)100);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		try {
 			doFunction();
