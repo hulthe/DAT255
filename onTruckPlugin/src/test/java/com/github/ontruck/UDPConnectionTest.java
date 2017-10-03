@@ -1,5 +1,7 @@
 package com.github.ontruck;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UDPConnectionTest {
@@ -20,11 +22,11 @@ public class UDPConnectionTest {
 		assertTrue("Invalidated correct message", UDPConnection.validate(correct2));
 		assertTrue("Invalidated correct message", UDPConnection.validate(correct3));
 
-		assertTrue("Validated incorrect starter",!UDPConnection.validate(incorrect1));
-		assertTrue("Validated incorrect terminator", !UDPConnection.validate(incorrect2));
-		assertTrue("Validated incorrect checksum, first byte", !UDPConnection.validate(incorrect3));
-		assertTrue("Validated incorrect type byte", !UDPConnection.validate(incorrect4));
-		assertTrue("Validated incorrect checksum, second byte", !UDPConnection.validate(incorrect5));
+		assertFalse("Validated incorrect starter",UDPConnection.validate(incorrect1));
+		assertFalse("Validated incorrect terminator", UDPConnection.validate(incorrect2));
+		assertFalse("Validated incorrect checksum, first byte", UDPConnection.validate(incorrect3));
+		assertFalse("Validated incorrect type byte", UDPConnection.validate(incorrect4));
+		assertFalse("Validated incorrect checksum, second byte", UDPConnection.validate(incorrect5));
 	}
 
 }
