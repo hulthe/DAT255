@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		try{
-			udpSender = new UDPSender("192.168.43.150", 8722);}
+			udpSender = new UDPSender("192.168.43.75", 8721);}
 		catch(SocketException e){
 			e.printStackTrace();
 		} catch(UnknownHostException e){
@@ -58,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void run() {
 				while (true) {
+					try{
+						synchronized (this) {
+							//TODO: Remove this later
+							// We want constant UDP-sendings when the UDP-server library has been updated
+							//Also: Ugly code?
+							wait(100);
+						}
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}
 						Log.i("threadMessage", "Sending x:"+joystickPosition.getX()+" | "+"Sending y:"+joystickPosition.getY());
 						udpSender.sendMessage(messageConstructor.coordinateSteeringToMessage(joystickPosition.getX()));
 						udpSender.sendMessage(messageConstructor.coordinatePowerToMessage(joystickPosition.getY()));
