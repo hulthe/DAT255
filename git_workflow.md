@@ -14,11 +14,11 @@ $ git checkout -b your/branch/name
 Group branches by one of the following key words:
   - `fix`
   - `bug`
-  - `feature`
+  - `feat`
   - `doc`
 
 Examples:
-  - `feature/advanced_interface`
+  - `feat/advanced_interface`
   - `bug/networking/timeout`
   - `fix/api/documentation`
 
