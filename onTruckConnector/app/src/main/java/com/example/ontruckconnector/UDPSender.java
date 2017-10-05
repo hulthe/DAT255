@@ -11,36 +11,37 @@ import java.net.UnknownHostException;
 
 public class UDPSender {
 
-    private final int SERVER_PORT = 8722;
-    private final String ADDRESS = "192.168.43.150";
+    private final int SERVER_PORT;
+    private final String ADDRESS;
+	private final DatagramSocket socket;
+	private final DatagramPacket packet;
 
-    private static UDPSender instance;
 
-
-    private UDPSender(){}
-
-    static UDPSender getInstance(){
-        if(instance == null){
-            instance = new UDPSender();}
-        return instance;
-    }
+    public UDPSender(String address, int port) throws SocketException, UnknownHostException {
+		//All this information can be reused each time a message is sent
+		// and is therefor stored in the UDPSender class
+		ADDRESS = address;
+		SERVER_PORT = port;
+		socket = new DatagramSocket();
+		InetAddress iNetAddress = InetAddress.getByName(ADDRESS);
+		packet = new DatagramPacket(new byte[6], 6, iNetAddress, SERVER_PORT);
+	}
 
     void sendMessage(byte[] input){
+		//First the packet is held to avoid thread issues
+		// otherwise it is possible for multiple threads to attempt to access the same packet object
+		synchronized (packet){
+			packet.setData(input);
         try{
-            DatagramSocket s = new DatagramSocket();
-            InetAddress local = InetAddress.getByName(ADDRESS);
-            DatagramPacket p = new DatagramPacket(input, input.length,local,SERVER_PORT);
-            s.send(p);
-        }
-        catch(SocketException e){
-            Log.e(this.getClass().getName(), "Unable to create DatagramSocket");
-            e.printStackTrace();
-        }catch(UnknownHostException e){
-            Log.e(this.getClass().getName(), "Unable to create InetAddress");
-            e.printStackTrace();
+			//Then the socket is held to avoid thread issues,
+			// otherwise it is possible for multiple threads to attempt to access the same socket object
+            synchronized (socket){
+				socket.send(packet);}
         }catch(IOException e){
             Log.e(this.getClass().getName(), "Unable to send message");
             e.printStackTrace();
-        }
+        	}
+		}
     }
+
 }
