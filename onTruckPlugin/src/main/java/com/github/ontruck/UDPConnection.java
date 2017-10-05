@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class UDPConnection extends Thread {
 	private final DatagramPacket packet= new DatagramPacket(message, message.length);
 
 	public interface DataProcessor{
-		void process(byte[] data);
+		void process(byte type, byte payload);
 	}
 
 	public UDPConnection(int port) throws SocketException{
@@ -46,7 +48,7 @@ public class UDPConnection extends Thread {
 		System.out.printf("UDP thread closed\n");
 	}
 
-	private void process(byte[] data){
+	private void process(byte[] data) {
 		if (validate(data)){
 			DataProcessor[] ProcessorList;
 
@@ -56,13 +58,32 @@ public class UDPConnection extends Thread {
 			}
 
 			for (DataProcessor processor : ProcessorList) {
-				processor.process(data);
+				processor.process(data[1], data[2]);
 			}
 		}
 	}
 
-	private boolean validate(byte[] data){
-		return true; //Todo: write this when implementing protocol för UDP communication.
+	static boolean validate(byte[] data) {
+		//Checks if starter, and then terminator is correct
+		if (data[0] != 1) return false;
+		if (data[5] != 4) return false;
+
+		//makes sure the checksum is correct
+		byte[] verificationHash = new byte[]{data[3], data[4]};
+		byte[] checksum = checksum(data[1], data[2]);
+		return verificationHash[0] == checksum[0] && verificationHash[1] == checksum[1];
+	}
+
+	private static byte[] checksum(byte type, byte payload) {
+		byte[] bytes = new byte[]{type, payload};
+
+		try {
+			byte[] checksum = MessageDigest.getInstance("MD5").digest(bytes);
+			return new byte[] {checksum[0], checksum[1]};
+		} catch (NoSuchAlgorithmException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.example.ontruckconnector;
 
 
+import android.util.Log;
 
 //This class is only a holder an converter for the virtual joystick
 //This class converts the joystick's information in strength+combo to a x+y value

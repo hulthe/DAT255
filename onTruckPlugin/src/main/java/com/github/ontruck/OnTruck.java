@@ -1,35 +1,30 @@
 package com.github.ontruck;
 
-import com.sun.squawk.VM;
-import sics.plugin.PlugInComponent;
-
 import java.io.IOException;
 import java.net.SocketException;
 
-public class OnTruck extends PlugInComponent {
-
-
-	//private PluginPPort fs;
-	//private PluginRPort ff;
-
+public class OnTruck {
 
 	// Port number for UDP socket
 	private static final int UDP_PORT = 8721;
 
 	private UDPConnection udpConnection;
+	private DriveProtocol driver;
 
-    public OnTruck() {}
-
-    public OnTruck(String[] args) {
-		super(args);
-    }
-	
     public static void main(String[] args) {
-		OnTruck plugin = new OnTruck(args);
+		OnTruck plugin = new OnTruck();
 		plugin.run();
-    }
+	}
 
-    public void init() {
+	public void init() {
+
+		try {
+			driver = new DriveProtocol();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1); // Exit application if socket couldn't create socket
+		}
+
 		try {
 			// Create new socket
 			udpConnection = new UDPConnection(UDP_PORT);
@@ -38,17 +33,12 @@ public class OnTruck extends PlugInComponent {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		// Add a data processor for logging
-		udpConnection.addDataProcessor(new UDPConnection.DataProcessor() {
-			public void process(byte[] data) {
-				System.out.printf("Processed data: %s\n", new String(data));
-			}
-		});
-
+		// Add a data processor for driving
+		udpConnection.addDataProcessor(driver::processEvent);
 	}
-	
-    public void doFunction() throws InterruptedException{
-    	// Random blocking call
+
+	public void doFunction() throws InterruptedException{
+		// Random blocking call
 		try {
 			System.out.printf("Press enter to quit.\n");
 			System.in.read();
@@ -66,9 +56,9 @@ public class OnTruck extends PlugInComponent {
 		try {
 			doFunction();
 		} catch (InterruptedException e) {
-			VM.println("**************** Interrupted.");
+			System.out.println("**************** Interrupted.");
 			return;
 		}
-    }
+	}
 
 }
