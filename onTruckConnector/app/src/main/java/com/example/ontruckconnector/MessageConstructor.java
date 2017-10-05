@@ -3,23 +3,27 @@ package com.example.ontruckconnector;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
+//This class is used to create protocol messages used over UDP
 public class MessageConstructor {
 
 
 
-
+	//This method takes in the power(y) and returns a correct protocol message
 	public byte[] coordinatePowerToMessage(int y){
 		char returnValue;
 		if(y == 0){
+			//The char for breaking
 			returnValue = (char)0x42;
 		}else{
+			//The char for POWER
 			returnValue = (char)0x50;
 		}
 		return constructMessage(returnValue, (byte)y);
 	}
 
-    public byte[] coordinateSteeringToMessage(int x){
+	//This method takes in the sterring power(x) and returns a correct protocol message
+	public byte[] coordinateSteeringToMessage(int x){
+		//The char for steering
         return constructMessage((char)0x53, (byte) x);
     }
 

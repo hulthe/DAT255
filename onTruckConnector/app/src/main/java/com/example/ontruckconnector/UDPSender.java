@@ -18,6 +18,8 @@ public class UDPSender {
 
 
     public UDPSender(String address, int port) throws SocketException, UnknownHostException {
+		//All this information can be reused each time a message is sent
+		// and is therefor stored in the UDPSender class
 		ADDRESS = address;
 		SERVER_PORT = port;
 		socket = new DatagramSocket();
@@ -26,9 +28,13 @@ public class UDPSender {
 	}
 
     void sendMessage(byte[] input){
+		//First the packet is held to avoid thread issues
+		// otherwise it is possible for multiple threads to attempt to access the same packet object
 		synchronized (packet){
 			packet.setData(input);
         try{
+			//Then the socket is held to avoid thread issues,
+			// otherwise it is possible for multiple threads to attempt to access the same socket object
             synchronized (socket){
 				socket.send(packet);}
         }catch(IOException e){

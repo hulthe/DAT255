@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		//Creates the UDPSender object with an IP address and port number
 		try{
 			udpSender = new UDPSender("192.168.43.75", 8721);}
 		catch(SocketException e){
@@ -44,23 +45,22 @@ public class MainActivity extends AppCompatActivity {
 		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
 		connectionTextHolder.setTextView(connectionText);
 
+		//Sets a listener which listens when the joystick is moved to change the X and Y values in JoystickPosition
 		joystickView.setOnMoveListener(new JoystickView.OnMoveListener() {
-
 			@Override
 			public void onMove(int angle, int strength) {
 				joystickPosition.onUpdate(angle, strength);
 			}
 		});
 
-
-
+		//This thread runs the udp sending code
 		final Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (true) {
 					try{
+						//TODO: Remove this later
 						synchronized (this) {
-							//TODO: Remove this later
 							// We want constant UDP-sendings when the UDP-server library has been updated
 							//Also: Ugly code?
 							wait(100);
@@ -68,10 +68,11 @@ public class MainActivity extends AppCompatActivity {
 					}catch(InterruptedException e){
 						e.printStackTrace();
 					}
-						Log.i("threadMessage", "Sending x:"+joystickPosition.getX()+" | "+"Sending y:"+joystickPosition.getY());
+						//Each tick the MessageConstructor creates a protocol message using the
+						//joysticks X and Y values and sends it using the UDPSender
 						udpSender.sendMessage(messageConstructor.coordinateSteeringToMessage(joystickPosition.getX()));
 						udpSender.sendMessage(messageConstructor.coordinatePowerToMessage(joystickPosition.getY()));
-					}
+				}
 			}
 		});
 
