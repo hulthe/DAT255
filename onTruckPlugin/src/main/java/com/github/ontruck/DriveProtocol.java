@@ -27,6 +27,10 @@ public class DriveProtocol {
 		}
 	}
 
+	public void emergencyStop() {
+		brake((byte)0xFF);
+	}
+
 	public void processEvent(byte type, byte payload) {
 		switch(type) {
 			case POWER_OP_CODE:

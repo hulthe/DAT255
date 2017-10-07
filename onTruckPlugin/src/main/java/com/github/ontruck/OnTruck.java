@@ -10,6 +10,7 @@ public class OnTruck {
 
 	private UDPConnection udpConnection;
 	private DriveProtocol driver;
+	private DeadMansSwitch deadMansSwitch;
 
     public static void main(String[] args) {
 		OnTruck plugin = new OnTruck();
@@ -25,6 +26,8 @@ public class OnTruck {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
+		deadMansSwitch = new DeadMansSwitch(driver);
+
 		try {
 			// Create new socket
 			udpConnection = new UDPConnection(UDP_PORT);
@@ -35,6 +38,9 @@ public class OnTruck {
 
 		// Add a data processor for driving
 		udpConnection.addDataProcessor(driver::processEvent);
+		udpConnection.addDataProcessor((a,b) -> deadMansSwitch.ping());
+
+		new Thread(deadMansSwitch).start();
 	}
 
 	public void doFunction() throws InterruptedException{
