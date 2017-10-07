@@ -1,5 +1,6 @@
-# Package composition:
-`<starter><type><payload><checksum><terminator>`
+Package composition:
+====================
+`<starter><type><payload><state_group><checksum><terminator>`
 
 ### `<starter>`
 Size: 1 byte
@@ -39,10 +40,17 @@ Payload: unsigned integer
 
 Greater value means greater stopping power.
 
+### `<state_group>`
+Size: 1 byte
+
+Content: Abstract identifier for the state to which this event belongs.
+
+This value is used to invalidate late messages that belonged to the previous state.
+
 ### `<checksum>`
 Size: 2 bytes
 
-Content: First two bytes of `<type><payload>`:s md5-hash.
+Content: First two bytes of `<type><payload><state_group>`:s md5-hash.
 
 ### `<terminator>`
 Size: 1 byte
@@ -52,10 +60,10 @@ Content: 0x04 [(EOT)](http://www.asciitable.com)
 
 # Example
 #### Set max power forwards:
-`01` `50` `7F` `0791` `04`
+`01` `50` `7F` `00` `F381` `04`
 
 #### Apply 25% braking:
-`01` `42` `3F` `035D` `04`
+`01` `42` `3F` `01` `88DB` `04`
 
 #### Steer 50% to the left:
-`01` `53` `C1` `2997` `04`
+`01` `53` `C1` `02` `182F` `04`

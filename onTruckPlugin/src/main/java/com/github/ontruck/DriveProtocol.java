@@ -31,7 +31,7 @@ public class DriveProtocol {
 		brake((byte)0xFF);
 	}
 
-	public void processEvent(byte type, byte payload) {
+	public void processEvent(byte type, byte payload, byte stateGroup) {
 		switch(type) {
 			case POWER_OP_CODE:
 				power(payload);

@@ -24,7 +24,7 @@ public class UDPSender {
 		SERVER_PORT = port;
 		socket = new DatagramSocket();
 		InetAddress iNetAddress = InetAddress.getByName(ADDRESS);
-		packet = new DatagramPacket(new byte[6], 6, iNetAddress, SERVER_PORT);
+		packet = new DatagramPacket(new byte[7], 7, iNetAddress, SERVER_PORT);
 	}
 
     void sendMessage(byte[] input){

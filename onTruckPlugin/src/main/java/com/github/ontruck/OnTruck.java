@@ -38,7 +38,7 @@ public class OnTruck {
 
 		// Add a data processor for driving
 		udpConnection.addDataProcessor(driver::processEvent);
-		udpConnection.addDataProcessor((a,b) -> deadMansSwitch.ping());
+		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
 		new Thread(deadMansSwitch).start();
 	}
