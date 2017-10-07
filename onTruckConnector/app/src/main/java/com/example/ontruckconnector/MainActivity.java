@@ -3,7 +3,9 @@ package com.example.ontruckconnector;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 	private MessageConstructor messageConstructor = new MessageConstructor();
 	private JoystickView joystickView;
 	private UDPSender udpSender;
-
+	private ToggleButton accToggle;
 
 
     @Override
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
 		//Creates the UDPSender object with an IP address and port number
 		try{
-			udpSender = new UDPSender("192.168.43.75", 8721);}
+			udpSender = new UDPSender("192.168.1.110", 8721);}
 		catch(SocketException e){
 			e.printStackTrace();
 		} catch(UnknownHostException e){
@@ -37,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 		}
 
+		//Excecutes the TCP-connection
+		final TCPConnection tcpConnection = new TCPConnection("192.168.1.110", 8721);
+
 		//Initializes the UI-elements
 		connectionText = (TextView)findViewById(R.id.connectionText);
 		joystickView = (JoystickView)findViewById(R.id.joystick);
+		accToggle = (ToggleButton)findViewById(R.id.accToggle);
 
-		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPChecker
+		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPConnection
 		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
 		connectionTextHolder.setTextView(connectionText);
 
@@ -50,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onMove(int angle, int strength) {
 				joystickPosition.onUpdate(angle, strength);
+			}
+		});
+
+		accToggle.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (accToggle.isChecked()) {
+					// TODO
+				}
 			}
 		});
 
@@ -78,12 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
 		thread.start();
 
-
-
-
-
-		//Excecutes the TCP-connection
-        new TCPChecker("192.168.43.150", 8721).execute();
+		tcpConnection.execute();
     }
 
 

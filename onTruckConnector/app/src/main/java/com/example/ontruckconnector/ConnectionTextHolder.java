@@ -28,7 +28,7 @@ class ConnectionTextHolder {
 
 	}
 
-	//This method is called from TCPChecker every "tick"
+	//This method is called from TCPConnection every "tick"
 	void setConnection(boolean connection){
 		if(connection){
 			setConnectionText("Connected");}
