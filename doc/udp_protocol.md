@@ -1,6 +1,6 @@
 Package composition:
 ====================
-`<starter><type><payload><state_group><checksum><terminator>`
+`<starter>` `<type>` `<payload>` `<event_group>` `<checksum>` `<terminator>`
 
 ### `<starter>`
 Size: 1 byte
@@ -40,17 +40,17 @@ Payload: unsigned integer
 
 Greater value means greater stopping power.
 
-### `<state_group>`
+### `<event_group>`
 Size: 1 byte
 
-Content: Abstract identifier for the state to which this event belongs.
+Content: Abstract identifier for the group to which this event belongs.
 
-This value is used to invalidate late messages that belonged to the previous state.
+This value is used to invalidate late messages that are no longer applicable or wanted.
 
 ### `<checksum>`
 Size: 2 bytes
 
-Content: First two bytes of `<type><payload><state_group>`:s md5-hash.
+Content: First two bytes of `<type>` `<payload>` `<event_group>`:s md5-hash.
 
 ### `<terminator>`
 Size: 1 byte
