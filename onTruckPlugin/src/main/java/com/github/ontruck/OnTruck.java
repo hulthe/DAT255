@@ -7,8 +7,10 @@ public class OnTruck {
 
 	// Port number for UDP socket
 	private static final int UDP_PORT = 8721;
+	private static final int TCP_PORT = UDP_PORT;
 
 	private UDPConnection udpConnection;
+	private TCPConnection tcpConnection;
 	private DriveProtocol driver;
 	private DeadMansSwitch deadMansSwitch;
 
@@ -41,6 +43,10 @@ public class OnTruck {
 		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
 		new Thread(deadMansSwitch).start();
+
+		tcpConnection = new TCPConnection(TCP_PORT);
+		tcpConnection.addDataProcessor(driver::processEvent);
+		new Thread(tcpConnection).start();
 	}
 
 	public void doFunction() throws InterruptedException{

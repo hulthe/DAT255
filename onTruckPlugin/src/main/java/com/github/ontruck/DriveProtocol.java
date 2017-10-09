@@ -39,6 +39,13 @@ public class DriveProtocol {
 		}
 	}
 
+	// Process TCP Event
+	public void processEvent(String message){
+		System.out.println(message);
+		// ToDo
+	}
+
+	// Process UDP Event
 	public void processEvent(byte type, byte payload, byte stateGroup) {
 		switch(type) {
 			case POWER_OP_CODE:
