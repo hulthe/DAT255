@@ -4,21 +4,18 @@
       - Alla typer av möten börjar alltid fem minuter efter utsatt tid, dock ska alla infinna sig vid utsatt tid.
       - Vid privata förhinder accepteras frånvaro förutsatt att individ på egen hand tillgodoser sig eventuellt material.
       - Grupprum bokas, för varje mötestillfälle, 2 veckor i förväg.
-      - Protokoll skrivs för varje planerings- och reflektionsmöte. Dessa protokoll laddas upp på git till grenen `/documents`.
+      - Protokoll skrivs för varje planerings- och reflektionsmöte. Dessa protokoll laddas upp på git till grenen `/documents` innan projektets deadline.
   - Gruppen...
       - ...arbetar huvudsakligen på plats tillsammans.
       - ...håller Scrum-möten de dagar då arbete är planerat.
-      - ...närvarar i sin helhet vid Scrum-möten.
+      - ...närvarar i sin helhet vid Scrum-möten (med undantag för giltig frånvaro).
       - ...använder webtjänsten [trello](https://trello.com) som scrumboard.
       - ...håller sitt arbete på engelska, med undantag av från koden åtskilld dokumentation.
   - Medlem skall...
       - ...ansvara för att hålla gruppen informerad kring sin egen aktuella arbetssituation.
-      - ...följa ett, av gruppen, definerat arbetsflöde för git.
+      - ...följa ett av gruppen definierat arbetsflöde för git.
       - ...under möte, endast lägga fokus på mötet.
   - Medlem skall **ej**...
-      - ...agera inom andra medlemmars ansvarsområden utan att fortskridande kommunikation kring arbetet sker mellan vederbördande.
+      - ...agera inom andra medlemmars ansvarsområden utan att fortskridande kommunikation kring arbetet sker mellan vederbörande.
       - ...fatta större och för projektet avgörande besult utan att först konsultera gruppen som helhet.
       - ...godkänna sin egen ryckbegäran utan att den först granskats och godkänts av minst en annan gruppmedlem.
-  - Påföljder
-      - Då medlem är 5 minuter eller mer sen till möte utan motivering i form av yttre påverkan eller obehjälplig orsak bestraffas detta med en fikaprick.
-      - Vid uppnådda 2 prickar bjuder vederbörande hela gruppen på fika vid nästa arbetstillfälle.
