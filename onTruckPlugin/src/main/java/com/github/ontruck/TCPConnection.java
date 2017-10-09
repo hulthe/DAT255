@@ -12,7 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
-public class TCPConnection implements Runnable{
+public class TCPConnection extends Thread {
 
 	// Determines the end of a tcp message
 	private static final char TERMINATOR = 0x04; // Default ASCI terminator
@@ -38,6 +38,7 @@ public class TCPConnection implements Runnable{
 
 		OutputWorker(DataOutputStream stream){
 			this.stream = stream;
+			this.setDaemon(true);
 		}
 
 		@Override
@@ -59,6 +60,9 @@ public class TCPConnection implements Runnable{
 				try {
 					Thread.sleep(9000);
 				} catch (InterruptedException e) {
+						if (unsent() == 0 ) {
+							break;
+						}
 					// Carry on
 				}
 			}
@@ -122,6 +126,7 @@ public class TCPConnection implements Runnable{
 
 	public TCPConnection(int port) {
 		PORT = port;
+		this.setDaemon(true); // Make sure thread closes when application does.
 	}
 
 	@Override
@@ -129,7 +134,7 @@ public class TCPConnection implements Runnable{
 		Socket socket = null;
 
 		//If we get a connection related exception -> try connecting again
-		while (true) {
+		while (!isInterrupted()) { // Run until interrupted
 			try {
 				// Open socket and accept connection
 				ServerSocket ss = new ServerSocket(PORT);

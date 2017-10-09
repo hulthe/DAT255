@@ -1,7 +1,7 @@
 package com.github.ontruck;
 
 // Stops car if connection is dropped
-public class DeadMansSwitch implements Runnable {
+public class DeadMansSwitch extends Thread {
 
 	private static final int DELAY = 20; // Check interval
 
@@ -14,6 +14,7 @@ public class DeadMansSwitch implements Runnable {
 	public DeadMansSwitch(DriveProtocol driver) {
 		this.driver = driver;
 		lastTime = System.currentTimeMillis();
+		this.setDaemon(true); // Make sure thread closes when application does.
 	}
 
 	// Tell DeadMansSwitch that you're still alive

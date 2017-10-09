@@ -42,11 +42,9 @@ public class OnTruck {
 		udpConnection.addDataProcessor(driver::processEvent);
 		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
-		new Thread(deadMansSwitch).start();
 
 		tcpConnection = new TCPConnection(TCP_PORT);
 		tcpConnection.addDataProcessor(driver::processEvent);
-		new Thread(tcpConnection).start();
 	}
 
 	public void doFunction() throws InterruptedException{
@@ -62,8 +60,10 @@ public class OnTruck {
     public void run() {
 		init();
 
-		// Start listening
+		// Start threads
 		udpConnection.start();
+		deadMansSwitch.start();
+		tcpConnection.start();
 
 		try {
 			doFunction();
