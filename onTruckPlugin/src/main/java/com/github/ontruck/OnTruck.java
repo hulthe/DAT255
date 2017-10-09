@@ -3,7 +3,7 @@ package com.github.ontruck;
 import java.io.IOException;
 import java.net.SocketException;
 
-public class OnTruck {
+public class OnTruck implements Runnable {
 
 	// Port number for socket
 	private static final int UDP_PORT = 8721;
@@ -14,10 +14,6 @@ public class OnTruck {
 	private DriveProtocol driver;
 	private DeadMansSwitch deadMansSwitch;
 
-    public static void main(String[] args) {
-		OnTruck plugin = new OnTruck();
-		plugin.run();
-	}
 
 	public void init() {
 
@@ -57,6 +53,7 @@ public class OnTruck {
 		}
 	}
 
+	@Override
     public void run() {
 		init();
 
