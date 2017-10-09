@@ -2,6 +2,7 @@ package com.example.ontruckconnector;
 
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,11 +27,14 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 	private OutputWorker outputWorker = null;
 	private InputWorker inputWorker = null;
+	private Socket socket = null;
+
 
 	private class OutputWorker extends Thread {
 
 		private DataOutputStream stream;
 		private Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
+		private boolean running = false;
 
 		OutputWorker(DataOutputStream stream){
 			this.stream = stream;
@@ -38,7 +42,8 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 		@Override
 		public void run(){
-			while(true){
+			running = true;
+			while(running){
 				try {
 					while(!queue.isEmpty()) {
 						synchronized (stream) {
@@ -55,6 +60,11 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 					// Carry on
 				}
 			}
+		}
+
+		public void end() {
+			running = false;
+			interrupt();
 		}
 
 		public void send(byte[] message){
@@ -119,14 +129,16 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		PORT = port;
 	}
 
+
+
 	public void run() {
-		Socket socket = null;
 
 		//If we get a connection related exception -> try connecting again
-		while (true) {
+		while (!isCancelled()) {
 			try {
 				// Open socket
 				socket = new Socket();
+				Log.e("IP", IP_ADDRESS.toString());
 				socket.connect(new InetSocketAddress(IP_ADDRESS, PORT), TIMEOUT);
 
 				isConnected = true;
@@ -168,7 +180,9 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	}
 
 	public void send(String message) {
-		outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
+		if(outputWorker != null){
+			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
+		}
 	}
 
 	public void addDataProcessor(DataProcessor processor) {
@@ -177,6 +191,21 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 	public void removeDataProcessor(DataProcessor processor) {
 		inputWorker.dataProcessors.remove(processor);
+	}
+
+	@Override
+	protected void onCancelled(){
+		try {
+			if(outputWorker != null) {
+				outputWorker.end();
+			}
+			if(socket != null) {
+				socket.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	//Gives the connection boolean to the Holder -> possibly toggle the connection text
