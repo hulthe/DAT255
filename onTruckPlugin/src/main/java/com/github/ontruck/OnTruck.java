@@ -5,7 +5,7 @@ import java.net.SocketException;
 
 public class OnTruck {
 
-	// Port number for UDP socket
+	// Port number for socket
 	private static final int UDP_PORT = 8721;
 	private static final int TCP_PORT = UDP_PORT;
 
