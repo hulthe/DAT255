@@ -8,10 +8,10 @@ public class DeadMansSwitch extends Thread {
 	// Time before car should automatically brake. (Note that actual longest time before emergency stop is TIMEOUT + DELAY)
 	private static final long TIMEOUT = 200;
 
-	private final DriveProtocol driver;
+	private final Driver driver;
 	private long lastTime;
 
-	public DeadMansSwitch(DriveProtocol driver) {
+	public DeadMansSwitch(Driver driver) {
 		this.driver = driver;
 		lastTime = System.currentTimeMillis();
 		this.setDaemon(true); // Make sure thread closes when application does.

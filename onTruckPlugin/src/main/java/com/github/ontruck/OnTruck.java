@@ -11,14 +11,14 @@ public class OnTruck implements Runnable {
 
 	private UDPConnection udpConnection;
 	private TCPConnection tcpConnection;
-	private DriveProtocol driver;
+	private Driver driver;
 	private DeadMansSwitch deadMansSwitch;
 
 
 	public void init() {
 
 		try {
-			driver = new DriveProtocol();
+			driver = new Driver();
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1); // Exit application if socket couldn't create socket

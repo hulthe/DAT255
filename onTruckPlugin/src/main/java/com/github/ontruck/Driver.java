@@ -4,22 +4,21 @@ import com.github.moped.jcan.CAN;
 
 import java.io.IOException;
 
-public class DriveProtocol {
+public class Driver {
 
-	private static final byte STEER_OP_CODE = 0x53;
-	private static final byte POWER_OP_CODE = 0x50;
-	private static final byte BRAKE_OP_CODE = 0x42;
-
-	private MopedState state = MopedState.Manual;
+	protected static final byte STEER_OP_CODE = 0x53;
+	protected static final byte POWER_OP_CODE = 0x50;
+	protected static final byte BRAKE_OP_CODE = 0x42;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
 
+	private MopedState state = MopedState.Manual;
 	private CAN can;
 	private byte lastPowerValue = 0;
 
-	public DriveProtocol() throws IOException {
+	public Driver() throws IOException {
 		String canInterface = System.getenv("CAN_INTERFACE");
 		try {
 			can = new CAN(canInterface);
@@ -31,10 +30,10 @@ public class DriveProtocol {
 
 	public void emergencyStop() {
 		if(
-			MopedState.Manual                == state ||
-			MopedState.CruiseControl         == state ||
-			MopedState.AdaptiveCruiseControl == state
-		) {
+			state == MopedState.Manual ||
+			state == MopedState.CruiseControl ||
+			state == MopedState.AdaptiveCruiseControl)
+		{
 			brake((byte)0xFF);
 		}
 	}
