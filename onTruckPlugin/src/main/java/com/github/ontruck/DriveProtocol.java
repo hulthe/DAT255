@@ -10,6 +10,8 @@ public class DriveProtocol {
 	private static final byte POWER_OP_CODE = 0x50;
 	private static final byte BRAKE_OP_CODE = 0x42;
 
+	private MopedState state = MopedState.Manual;
+
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
@@ -28,18 +30,31 @@ public class DriveProtocol {
 	}
 
 	public void emergencyStop() {
-		brake((byte)0xFF);
+		if(
+			MopedState.Manual                == state ||
+			MopedState.CruiseControl         == state ||
+			MopedState.AdaptiveCruiseControl == state
+		) {
+			brake((byte)0xFF);
+		}
 	}
 
-	public void processEvent(byte type, byte payload) {
+	public void processEvent(byte type, byte payload, byte stateGroup) {
 		switch(type) {
 			case POWER_OP_CODE:
+				state = MopedState.Manual;
 				power(payload);
 				break;
+
 			case STEER_OP_CODE:
+				if(MopedState.Platooning == state) {
+					state = MopedState.Manual;
+				}
 				steer(payload);
 				break;
+
 			case BRAKE_OP_CODE:
+				state = MopedState.Manual;
 				brake(payload);
 				break;
 			default:
@@ -120,8 +135,6 @@ public class DriveProtocol {
 		}
 	}
 
-
-
 	private byte getAppropriatePowerLevel(byte powerLevel) {
 		if(powerLevel >= 0) {
 			for (byte n : usefulPowerValues) {
@@ -138,5 +151,12 @@ public class DriveProtocol {
 			}
 			return (byte)-usefulPowerValues[usefulPowerValues.length-1];
 		}
+	}
+
+	private enum MopedState {
+		Manual,
+		CruiseControl,
+		AdaptiveCruiseControl,
+		Platooning,
 	}
 }

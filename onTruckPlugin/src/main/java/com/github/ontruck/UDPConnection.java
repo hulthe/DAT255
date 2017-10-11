@@ -12,13 +12,13 @@ import java.util.List;
 public class UDPConnection extends Thread {
 	private final List<DataProcessor> dataProcessors = new LinkedList<DataProcessor>();
 
-	private final byte[] message = new byte[6];
+	private final byte[] message = new byte[7];
 
 	private final DatagramSocket socket;
 	private final DatagramPacket packet= new DatagramPacket(message, message.length);
 
 	public interface DataProcessor{
-		void process(byte type, byte payload);
+		void process(byte type, byte payload, byte stateGroup);
 	}
 
 	public UDPConnection(int port) throws SocketException{
@@ -58,7 +58,7 @@ public class UDPConnection extends Thread {
 			}
 
 			for (DataProcessor processor : ProcessorList) {
-				processor.process(data[1], data[2]);
+				processor.process(data[1], data[2], data[3]);
 			}
 		}
 	}
@@ -66,16 +66,16 @@ public class UDPConnection extends Thread {
 	static boolean validate(byte[] data) {
 		//Checks if starter, and then terminator is correct
 		if (data[0] != 1) return false;
-		if (data[5] != 4) return false;
+		if (data[6] != 4) return false;
 
 		//makes sure the checksum is correct
-		byte[] verificationHash = new byte[]{data[3], data[4]};
-		byte[] checksum = checksum(data[1], data[2]);
+		byte[] verificationHash = new byte[]{data[4], data[5]};
+		byte[] checksum = checksum(data[1], data[2], data[3]);
 		return verificationHash[0] == checksum[0] && verificationHash[1] == checksum[1];
 	}
 
-	private static byte[] checksum(byte type, byte payload) {
-		byte[] bytes = new byte[]{type, payload};
+	private static byte[] checksum(byte type, byte payload, byte stateGroup) {
+		byte[] bytes = new byte[]{type, payload, stateGroup};
 
 		try {
 			byte[] checksum = MessageDigest.getInstance("MD5").digest(bytes);

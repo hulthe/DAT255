@@ -18,13 +18,13 @@ public class MessageConstructor {
 			//The char for POWER
 			returnValue = (char)0x50;
 		}
-		return constructMessage(returnValue, (byte)y);
+		return constructMessage(returnValue, (byte)y, (byte)0);
 	}
 
 	//This method takes in the sterring power(x) and returns a correct protocol message
 	public byte[] coordinateSteeringToMessage(int x){
 		//The char for steering
-        return constructMessage((char)0x53, (byte) x);
+        return constructMessage((char)0x53, (byte)x, (byte)0);
     }
 
     /**
@@ -32,15 +32,16 @@ public class MessageConstructor {
      * @param type is the type of movement
      * @param payload is the value of that movement
      */
-    byte[] constructMessage(char type, byte payload) {
-        byte[] message = new byte[6];
+    byte[] constructMessage(char type, byte payload, byte stateGroup) {
+        byte[] message = new byte[7];
         message[0] = 1;
         message[1] = (byte)type;
         message[2] = payload;
-        byte[] checksum = createChecksum((byte)type, payload);
-        message[3] = checksum[0];
-        message[4] = checksum[1];
-        message[5] = 4;
+        byte[] checksum = createChecksum((byte)type, payload, stateGroup);
+        message[3] = 0x00;
+        message[4] = checksum[0];
+        message[5] = checksum[1];
+        message[6] = 4;
         return message;
     }
 
@@ -49,13 +50,14 @@ public class MessageConstructor {
      * @param type is the type of movement
      * @param payload is the value of that movement
      */
-    private byte[] createChecksum(byte type, byte payload) {
+    private byte[] createChecksum(byte type, byte payload, byte stateGroup) {
         byte[] checksum = new byte[2];
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] input = new byte[2];
+            byte[] input = new byte[3];
             input[0] = type;
             input[1] = payload;
+            input[2] = stateGroup;
             md5.update(input);
             checksum = md5.digest();
         } catch (NoSuchAlgorithmException e) {
