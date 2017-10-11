@@ -4,7 +4,7 @@ import com.github.moped.jcan.CAN;
 
 import java.io.IOException;
 
-public class Driver {
+public class Driver implements IDriver {
 
 	protected static final byte STEER_OP_CODE = 0x53;
 	protected static final byte POWER_OP_CODE = 0x50;
@@ -25,46 +25,6 @@ public class Driver {
 		} catch(IOException e) {
 			System.err.printf("Failed to connect to CAN interface [%s]%n", canInterface);
 			throw e;
-		}
-	}
-
-	public void emergencyStop() {
-		if(
-			state == MopedState.Manual ||
-			state == MopedState.CruiseControl ||
-			state == MopedState.AdaptiveCruiseControl)
-		{
-			brake((byte)0xFF);
-		}
-	}
-
-	// Process TCP Event
-	public void processEvent(String message){
-		System.out.println(message);
-		// ToDo
-	}
-
-	// Process UDP Event
-	public void processEvent(byte type, byte payload, byte stateGroup) {
-		switch(type) {
-			case POWER_OP_CODE:
-				state = MopedState.Manual;
-				power(payload);
-				break;
-
-			case STEER_OP_CODE:
-				if(MopedState.Platooning == state) {
-					state = MopedState.Manual;
-				}
-				steer(payload);
-				break;
-
-			case BRAKE_OP_CODE:
-				state = MopedState.Manual;
-				brake(payload);
-				break;
-			default:
-				// TODO: Error(?)
 		}
 	}
 
@@ -90,7 +50,7 @@ public class Driver {
 	}
 
 
-	private void power(byte payload) {
+	public void power(byte payload) {
 		byte powerLevel = maxMinPayload(payload, (byte)100, (byte)100); // Over 9000?
 		// If different sign
 		if(powerLevel * lastPowerValue < 0) {
@@ -113,7 +73,7 @@ public class Driver {
 		lastPowerValue = powerLevel;
 	}
 
-	private void steer(byte payload) {
+	public void steer(byte payload) {
 		try {
 			can.sendSteerValue(maxMinPayload(payload, (byte)100, (byte)100));
 		} catch (InterruptedException e) {
@@ -121,7 +81,7 @@ public class Driver {
 		}
 	}
 
-	private void brake(byte payload) {
+	public void brake(byte payload) {
 		int brakeValue = umaxPayload(payload, (byte)100);
 
 		if(lastPowerValue > 0) {
@@ -159,10 +119,4 @@ public class Driver {
 		}
 	}
 
-	private enum MopedState {
-		Manual,
-		CruiseControl,
-		AdaptiveCruiseControl,
-		Platooning,
-	}
 }

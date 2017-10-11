@@ -17,8 +17,8 @@ public class TCPConnection extends Thread {
 	// Determines the end of a tcp message
 	private static final char TERMINATOR = 0x04; // Default ASCI terminator
 
-	private final int PORT;				//the port is set in the constructor
-	private final int TIMEOUT = 1000;   //this is in ms and is the delay between pings
+	private final int PORT;           //the port is set in the constructor
+	private final int TIMEOUT = 1000; //this is in ms and is the delay between pings
 	private boolean isConnected = false;
 
 	private OutputWorker outputWorker = null;
@@ -107,7 +107,7 @@ public class TCPConnection extends Thread {
 						message = new StringBuilder();
 					}else{
 						// Append byte to message
-						message.append(b);
+						message.append((char)b);
 					}
 				}catch (IOException e){
 					break;

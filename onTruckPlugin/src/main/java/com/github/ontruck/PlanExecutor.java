@@ -4,12 +4,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class PlanExecutor extends Thread {
 
-	private final Driver driver;
+	private final IDriver driver;
 
 	private Plan plan = null;
 	private Plan newPlan = null;
 
-	public PlanExecutor(Driver driver) {
+	public PlanExecutor(IDriver driver) {
 		this.driver = driver;
 	}
 
@@ -57,13 +57,13 @@ public class PlanExecutor extends Thread {
 	private void executeInstruction(Instruction instruction) {
 		switch (instruction.getType()) {
 			case Brake:
-				//driver.brake((byte)instruction.getValue());
+				driver.brake((byte)instruction.getValue());
 				break;
 			case Drive:
-				//driver.power((byte)instruction.getValue());
+				driver.power((byte)instruction.getValue());
 				break;
 			case Steer:
-				//driver.steer((byte)instruction.getValue());
+				driver.steer((byte)instruction.getValue());
 				break;
 			case Sleep:
 				try {
