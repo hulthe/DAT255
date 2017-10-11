@@ -229,8 +229,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
-		ConnectionTextHolder.getInstance().setConnection(isConnected);
-
+		GUIHolder.getInstance().setConnection(isConnected);
 	}
 
 

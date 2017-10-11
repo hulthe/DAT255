@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
 		ipInput = (EditText)findViewById(R.id.ipInput);
 
 		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPConnection
-		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
-		connectionTextHolder.setTextView(connectionText);
+		GUIHolder guiHolder = GUIHolder.getInstance();
+		guiHolder.setTextView(connectionText);
+		guiHolder.setToggleButton(accToggle);
 
 		//Creates the TCP/UDP clients
 		updateTCP();
