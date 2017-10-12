@@ -1,7 +1,6 @@
 package com.example.ontruckconnector;
 
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.io.DataInputStream;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static java.lang.Thread.currentThread;
 
 public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
@@ -48,6 +46,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 					while(!queue.isEmpty()) {
 						synchronized (stream) {
 							stream.write(queue.poll());
+							Log.i("OutputWorker", "deepest inside run()");
 						}
 					}
 				} catch (IOException e) {
@@ -63,6 +62,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		}
 
 		public void end() {
+			Log.i("TCP", "inside end()");
 			running = false;
 			interrupt();
 		}
@@ -125,6 +125,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 	//public TCPConnection(String ipAddress, int port, MainActivity mainActivity) {
 	public TCPConnection(String ipAddress, int port) {
+		Log.i("TCP", "inside TCPConnection constructor");
 		IP_ADDRESS = ipAddress;
 		PORT = port;
 	}
@@ -133,15 +134,18 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 	public void run() {
 
+		Log.i("TCP", "inside TCPConnection.run()");
+
 		//If we get a connection related exception -> try connecting again
 		while (!isCancelled()) {
 			try {
 				// Open socket
 				socket = new Socket();
-				Log.e("IP", IP_ADDRESS.toString());
+				Log.i("TCP", "creating new socket with IP: "+IP_ADDRESS.toString());
 				socket.connect(new InetSocketAddress(IP_ADDRESS, PORT), TIMEOUT);
 
 				isConnected = true;
+				this.publishProgress();
 
 				outputWorker = new OutputWorker(new DataOutputStream(socket.getOutputStream()));
 				inputWorker = new InputWorker(new DataInputStream(socket.getInputStream()));
@@ -163,6 +167,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 				//Close socket since it wont have been if an exception was thrown
 				if (socket != null && !socket.isClosed()) {
 					try {
+						Log.i("TCP", "closing socket inside finally{}");
 						socket.close();
 						socket = null;
 
@@ -174,8 +179,10 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 			}
 
 			isConnected = false;
+			this.publishProgress();
 			inputWorker = null;
 			outputWorker = null;
+			Log.i("TCP", "reached end of run() inside TCPConnection");
 		}
 	}
 
@@ -193,8 +200,18 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		inputWorker.dataProcessors.remove(processor);
 	}
 
+	//manually close this entire class/task
+	public final void stop() {
+		cancel(true);
+		onCancelled();
+	}
+
+	//what happens after this class/task has been terminated
 	@Override
 	protected void onCancelled(){
+		Log.i("TCP", "inside onCancelled()");
+		isConnected = false;
+		onProgressUpdate();
 		try {
 			if(outputWorker != null) {
 				outputWorker.end();
@@ -212,6 +229,8 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
-		ConnectionTextHolder.getInstance().setConnection(isConnected);
+		GUIHolder.getInstance().setConnection(isConnected);
 	}
+
+
 }

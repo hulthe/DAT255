@@ -85,7 +85,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="phone"
-        android:text="192.168.43.88"
+        android:text="192.168.43.7"
         android:textAlignment="textEnd"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/accToggle"

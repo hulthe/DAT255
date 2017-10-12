@@ -49,13 +49,14 @@ public class MainActivity extends AppCompatActivity {
 		accToggle = (ToggleButton)findViewById(R.id.accToggle);
 		ipInput = (EditText)findViewById(R.id.ipInput);
 
-		//todo this comnment
+		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPConnection
+		GUIHolder guiHolder = GUIHolder.getInstance();
+		guiHolder.setTextView(connectionText);
+		guiHolder.setToggleButton(accToggle);
+
+		//Creates the TCP/UDP clients
 		updateTCP();
 		updateUDP();
-
-		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPConnection
-		ConnectionTextHolder connectionTextHolder = ConnectionTextHolder.getInstance();
-		connectionTextHolder.setTextView(connectionText);
 
 		//Sets a listener which listens when the joystick is moved to change the X and Y values in JoystickPosition
 		joystickView.setOnMoveListener(new JoystickView.OnMoveListener() {
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-
 		UDPThread = initilizeUDPThread();
 		UDPThread.start();
 		tcpConnection.execute();
@@ -93,28 +93,32 @@ public class MainActivity extends AppCompatActivity {
 			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
 			@Override
-			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-			@Override
-			public void afterTextChanged(Editable editable) {
+			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 				//Each time the IPinput changes, if it is a correct IP:
 				//UDP and TCP thread stops and restarts with new IP
+				tcpConnection.stop();
+
 				if(isValidIP(ipInput.getText().toString())){
 
 					//Stop old threads
-					tcpConnection.cancel(true);
 					UDPThread.interrupt();
 
 					//Create new threads with correct IP
 					updateUDP();
 					updateTCP();
-					
+
 					//Runs the new Threads
 					UDPThread = initilizeUDPThread();
 					UDPThread.start();
 					tcpConnection.execute();
+
+					//Update the "old" IP address
+					oldIP = ipInput.getText().toString();
 				}
 			}
+
+			@Override
+			public void afterTextChanged(Editable editable) {}
 		});
 
 
@@ -134,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 							wait(100);
 						}
 					}catch(InterruptedException e){
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 					//Each tick the MessageConstructor creates a protocol message using the
 					//joysticks X and Y values and sends it using the UDPSender
