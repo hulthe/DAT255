@@ -8,6 +8,8 @@ Package composition
 }
 ```
 
+A message must end with a byte value of `0x04` [(EOT)](http://www.asciitable.com).
+
 ## `<type>`
 A string value describing the message type.
 
