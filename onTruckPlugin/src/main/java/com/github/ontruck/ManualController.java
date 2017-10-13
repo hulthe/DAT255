@@ -1,5 +1,7 @@
 package com.github.ontruck;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import static com.github.ontruck.Driver.BRAKE_OP_CODE;
 import static com.github.ontruck.Driver.POWER_OP_CODE;
 import static com.github.ontruck.Driver.STEER_OP_CODE;
@@ -27,7 +29,7 @@ public class ManualController {
 				driver.brake(payload);
 				break;
 			default:
-				// TODO: Error(?)
+				throw new NotImplementedException();
 		}
 	}
 }
