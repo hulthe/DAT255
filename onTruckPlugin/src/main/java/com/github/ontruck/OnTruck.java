@@ -1,5 +1,6 @@
 package com.github.ontruck;
 
+import com.github.ontruck.filters.DMSFilter;
 import com.github.ontruck.filters.FilterManager;
 import com.github.ontruck.filters.ManualFilter;
 
@@ -39,7 +40,9 @@ public class OnTruck implements Runnable {
 			manualController = new ManualController(manualFilter);
 			filterManager.addFilter(manualFilter);
 
-			//deadMansSwitch = new DeadMansSwitch(manualFilter);
+			DMSFilter dmsFilter = new DMSFilter(driver);
+			deadMansSwitch = new DeadMansSwitch(dmsFilter);
+			filterManager.addFilter(dmsFilter);
 
 			filterManager.setState(MopedState.Manual);
 		}
@@ -54,11 +57,11 @@ public class OnTruck implements Runnable {
 
 		// Add data processors for drive control
 		udpConnection.addDataProcessor(manualController::processEvent);
-		//udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
+		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
 		// Add data processors for state control
 		tcpConnection = new TCPConnection(TCP_PORT);
-		//tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
+		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
 	}
 

@@ -6,7 +6,7 @@ public class DeadMansSwitch extends Thread {
 	private static final int DELAY = 20; // Check interval
 
 	// Time before car should automatically brake. (Note that actual longest time before emergency stop is TIMEOUT + DELAY)
-	private static final long TIMEOUT = 200;
+	private static final long TIMEOUT = 500;
 
 	private final IDriver driver;
 	private long lastTime;

@@ -3,7 +3,7 @@ package com.github.ontruck.filters;
 import com.github.ontruck.IDriver;
 import com.github.ontruck.MopedState;
 
-public class GenericFilter extends StateFilter implements IDriver {
+public class GenericFilter extends StateFilter {
 
 	private final IDriver driver;
 	private final MopedState desiredState;
