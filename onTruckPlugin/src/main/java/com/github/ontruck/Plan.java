@@ -2,6 +2,9 @@ package com.github.ontruck;
 
 import java.util.*;
 
+/**
+ * This class contains a set of instructions to be executed.
+ */
 public class Plan implements Cloneable {
 	private final Queue<Instruction> instructions;
 	private Boolean isExecuting = false;
