@@ -3,14 +3,14 @@ package com.github.ontruck.filters;
 import com.github.ontruck.IDriver;
 import com.github.ontruck.MopedState;
 
-abstract class StateFilter implements IDriver {
+public abstract class StateFilter implements IDriver {
 	private MopedState state;
 
-	void setState(MopedState state) {
+	public void setState(MopedState state) {
 		this.state = state;
 	}
 
-	MopedState getState() {
+	public MopedState getState() {
 		return state;
 	}
 }
