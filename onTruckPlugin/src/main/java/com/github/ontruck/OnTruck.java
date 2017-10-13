@@ -1,7 +1,7 @@
 package com.github.ontruck;
 
 import com.github.ontruck.filters.FilterManager;
-import com.github.ontruck.filters.GenericFilter;
+import com.github.ontruck.filters.ManualFilter;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -14,8 +14,12 @@ public class OnTruck implements Runnable {
 
 	private UDPConnection udpConnection;
 	private TCPConnection tcpConnection;
-	private FilterManager filterManager;
+
 	private Driver driver;
+
+	private FilterManager filterManager;
+
+	private ManualController manualController;
 	private DeadMansSwitch deadMansSwitch;
 
 
@@ -30,11 +34,15 @@ public class OnTruck implements Runnable {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		GenericFilter manualFilter = new GenericFilter(driver, MopedState.Manual);
-		manualFilter.setState(MopedState.Manual);
-		ManualController manualController = new ManualController(manualFilter);
-		this.filterManager.addFilter(manualFilter);
-		//deadMansSwitch = new DeadMansSwitch(manualFilter);
+		{ // Set up filters & controllers
+			ManualFilter manualFilter = new ManualFilter(driver);
+			manualController = new ManualController(manualFilter);
+			filterManager.addFilter(manualFilter);
+
+			//deadMansSwitch = new DeadMansSwitch(manualFilter);
+
+			filterManager.setState(MopedState.Manual);
+		}
 
 		try {
 			// Create new socket
@@ -44,11 +52,11 @@ public class OnTruck implements Runnable {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		// Add a data processor for driving
+		// Add data processors for drive control
 		udpConnection.addDataProcessor(manualController::processEvent);
 		//udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
-
+		// Add data processors for state control
 		tcpConnection = new TCPConnection(TCP_PORT);
 		//tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);

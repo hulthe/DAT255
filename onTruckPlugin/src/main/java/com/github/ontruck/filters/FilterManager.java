@@ -16,6 +16,15 @@ public class FilterManager {
 		this.state = initialState;
 	}
 
+	public void setState(MopedState state) {
+		this.state = state;
+
+		System.out.println(state);
+		for (StateFilter filter : filters) {
+			filter.setState(state);
+		}
+	}
+
 	public void processStateEvent(String message) {
 
 		JsonElement json = new JsonParser().parse(message);
@@ -44,12 +53,7 @@ public class FilterManager {
 			return;
 		}
 
-		state = MopedState.fromString(value);
-
-		System.out.println(state);
-		for (StateFilter filter : filters) {
-			filter.setState(state);
-		}
+		setState(MopedState.fromString(value));
 	}
 
 	public boolean addFilter(StateFilter filter) {
