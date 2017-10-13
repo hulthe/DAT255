@@ -34,7 +34,7 @@ public class OnTruck implements Runnable {
 		manualFilter.setState(MopedState.Manual);
 		ManualController manualController = new ManualController(manualFilter);
 		this.filterManager.addFilter(manualFilter);
-		deadMansSwitch = new DeadMansSwitch(manualFilter);
+		//deadMansSwitch = new DeadMansSwitch(manualFilter);
 
 		try {
 			// Create new socket
@@ -46,11 +46,11 @@ public class OnTruck implements Runnable {
 
 		// Add a data processor for driving
 		udpConnection.addDataProcessor(manualController::processEvent);
-		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
+		//udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 
 
 		tcpConnection = new TCPConnection(TCP_PORT);
-		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
+		//tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
 	}
 
@@ -70,7 +70,7 @@ public class OnTruck implements Runnable {
 
 		// Start threads
 		udpConnection.start();
-		deadMansSwitch.start();
+		//deadMansSwitch.start();
 		tcpConnection.start();
 
 		try {
