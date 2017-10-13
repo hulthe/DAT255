@@ -8,6 +8,9 @@ import com.google.gson.JsonParser;
 import java.util.List;
 import java.util.LinkedList;
 
+/**
+ * The purpose of this class is to collectively set the state of multiple filters.
+ */
 public class FilterManager {
 	private List<StateFilter> filters = new LinkedList<>();
 	private MopedState state;
@@ -25,6 +28,10 @@ public class FilterManager {
 		}
 	}
 
+	/**
+	 * @see <a href="https://github.com/hulthe/DAT255/blob/master/doc/tcp_protocol.md">Protocol Specification</a>
+	 * @param message JSON object as a String
+	 */
 	public void processStateEvent(String message) {
 
 		JsonElement json = new JsonParser().parse(message);
