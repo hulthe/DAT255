@@ -1,6 +1,6 @@
 ## DAT255 - Group Smiley
 
-Course-related documentation can be found in the `/documents`-branch (e.g. Reflection Report)
+The `documents` branch contains all non-code specific documentation & course-related documentation (e.g. Social contract and Reflection report)
 
 `/doc` folder contains code-specific documentation (e.g. TCP-protocol)
 
