@@ -4,61 +4,27 @@ import com.github.moped.jcan.CAN;
 
 import java.io.IOException;
 
-public class DriveProtocol {
+public class Driver implements IDriver {
 
-	private static final byte STEER_OP_CODE = 0x53;
-	private static final byte POWER_OP_CODE = 0x50;
-	private static final byte BRAKE_OP_CODE = 0x42;
-
-	private MopedState state = MopedState.Manual;
+	protected static final byte STEER_OP_CODE = 0x53;
+	protected static final byte POWER_OP_CODE = 0x50;
+	protected static final byte BRAKE_OP_CODE = 0x42;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
 
+	private MopedState state = MopedState.Manual;
 	private CAN can;
 	private byte lastPowerValue = 0;
 
-	public DriveProtocol() throws IOException {
+	public Driver() throws IOException {
 		String canInterface = System.getenv("CAN_INTERFACE");
 		try {
 			can = new CAN(canInterface);
 		} catch(IOException e) {
 			System.err.printf("Failed to connect to CAN interface [%s]%n", canInterface);
 			throw e;
-		}
-	}
-
-	public void emergencyStop() {
-		if(
-			MopedState.Manual                == state ||
-			MopedState.CruiseControl         == state ||
-			MopedState.AdaptiveCruiseControl == state
-		) {
-			brake((byte)0xFF);
-		}
-	}
-
-	public void processEvent(byte type, byte payload, byte stateGroup) {
-		switch(type) {
-			case POWER_OP_CODE:
-				state = MopedState.Manual;
-				power(payload);
-				break;
-
-			case STEER_OP_CODE:
-				if(MopedState.Platooning == state) {
-					state = MopedState.Manual;
-				}
-				steer(payload);
-				break;
-
-			case BRAKE_OP_CODE:
-				state = MopedState.Manual;
-				brake(payload);
-				break;
-			default:
-				// TODO: Error(?)
 		}
 	}
 
@@ -84,7 +50,7 @@ public class DriveProtocol {
 	}
 
 
-	private void power(byte payload) {
+	public void power(byte payload) {
 		byte powerLevel = maxMinPayload(payload, (byte)100, (byte)100); // Over 9000?
 		// If different sign
 		if(powerLevel * lastPowerValue < 0) {
@@ -107,7 +73,7 @@ public class DriveProtocol {
 		lastPowerValue = powerLevel;
 	}
 
-	private void steer(byte payload) {
+	public void steer(byte payload) {
 		try {
 			can.sendSteerValue(maxMinPayload(payload, (byte)100, (byte)100));
 		} catch (InterruptedException e) {
@@ -115,7 +81,7 @@ public class DriveProtocol {
 		}
 	}
 
-	private void brake(byte payload) {
+	public void brake(byte payload) {
 		int brakeValue = umaxPayload(payload, (byte)100);
 
 		if(lastPowerValue > 0) {
@@ -153,10 +119,4 @@ public class DriveProtocol {
 		}
 	}
 
-	private enum MopedState {
-		Manual,
-		CruiseControl,
-		AdaptiveCruiseControl,
-		Platooning,
-	}
 }
