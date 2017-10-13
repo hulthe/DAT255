@@ -2,10 +2,19 @@ package com.github.ontruck;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+/**
+ * This class defines an instruction to be executed by a PlanExecutor.
+ */
+
 class Instruction {
 	private final InstructionType type;
 	private final Object value;
 
+	/**
+	 * @param type The type of instruction to be executed (e.g. Steer)
+	 * @param value An reference to the value to be applied by the instruction (e.g. Steering Angle)
+	 * @throws IllegalArgumentException Exception is thrown when the reference type doesn't match the desired type (e.g. A Byte was expected, received an Int)
+	 */
 	public Instruction(InstructionType type, Object value) throws IllegalArgumentException {
 		this.type = type;
 		switch (type) {

@@ -2,6 +2,9 @@ package com.github.ontruck;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+/**
+ * This class steps through and executed each Instruction in a Plan.
+ */
 public class PlanExecutor extends Thread {
 
 	private final IDriver driver;
@@ -13,6 +16,10 @@ public class PlanExecutor extends Thread {
 		this.driver = driver;
 	}
 
+	/**
+	 * Set a new Plan to be executed. Interrupts execution of the current Plan.
+	 * @param plan New Plan
+	 */
 	public void newPlan(Plan plan) {
 		synchronized (this.newPlan) {
 			this.newPlan = plan;
@@ -20,6 +27,13 @@ public class PlanExecutor extends Thread {
 		}
 	}
 
+	/**
+	 * Begin execution of the current Plan.
+	 * <p>
+	 * Will step through every Instruction in the current Plan until all Instruction:s have been depleted.
+	 * <p>
+	 * After execution the thread will sleep. Calling newPlan(...) will resume execution.
+	 */
 	@Override
 	public void run() {
 		while(true) {
