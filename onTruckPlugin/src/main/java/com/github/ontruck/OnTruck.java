@@ -26,8 +26,10 @@ public class OnTruck implements Runnable {
 
 	public void init() {
 
+		// Use FilterManager to collectively set the state of every StateFilter
 		this.filterManager = new FilterManager(MopedState.Manual);
 
+		// Driver talks to the CAN-bus and drives the car.
 		try {
 			driver = new Driver();
 		} catch (IOException e) {
@@ -35,7 +37,12 @@ public class OnTruck implements Runnable {
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		{ // Set up filters & controllers
+		{	// Set up filters & controllers
+			/*
+				**************                       **********     **********
+				* Controller * --control commands--> * Filter * --> * Driver * --> CAN
+				**************                       **********     **********
+			 */
 			ManualFilter manualFilter = new ManualFilter(driver);
 			manualController = new ManualController(manualFilter);
 			filterManager.addFilter(manualFilter);
