@@ -23,14 +23,14 @@ public class GenericFilter extends StateFilter implements IDriver {
 	@Override
 	public void steer(byte value) {
 		if(desiredState.equals(this.getState())) {
-			driver.power(value);
+			driver.steer(value);
 		}
 	}
 
 	@Override
 	public void brake(byte value) {
 		if(desiredState.equals(this.getState())) {
-			driver.power(value);
+			driver.brake(value);
 		}
 	}
 }
