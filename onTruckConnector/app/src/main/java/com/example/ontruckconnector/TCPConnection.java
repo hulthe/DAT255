@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
-	private static final char TERMINATOR = '\n'; //FIXME: newline for now
+	private static final char TERMINATOR = 0x04;
 
 	private final String IP_ADDRESS; 	//the IP_ADDRESS is set in the constructor
 	private final int PORT;				//the port is set in the constructor

@@ -69,9 +69,17 @@ public class MainActivity extends AppCompatActivity {
 		accToggle.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (accToggle.isChecked()) {
-					tcpConnection.send("Hur mar du gurgyuyguyu");
-				}
+				// Send new eventGroup
+				tcpConnection.send(String.format(
+						"{\"type\":\"event_group\", \"value\":%s}",
+						0 /*TODO: Add eventGroup variable*/
+				));
+
+				// Set new state
+				tcpConnection.send(String.format(
+						"{\"type\":\"state\", \"value\":\"%s\"}",
+						accToggle.isChecked() ? "ACC" : "M"
+				));
 			}
 		});
 
