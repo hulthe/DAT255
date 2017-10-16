@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
 	private static final int PORT = 8721;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 
-    }
+	}
 
-    private Thread initilizeUDPThread(){
+	private Thread initilizeUDPThread(){
 		//This thread runs the udp sending code
 		final Thread thread = new Thread(new Runnable() {
 			@Override
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-    private void updateUDP(){
+	private void updateUDP(){
 		String newIP = oldIP;
 
 		if(isValidIP(ipInput.getText().toString())){
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-    private UDPSender createUDPSender(String ip, int port){
+	private UDPSender createUDPSender(String ip, int port){
 		//Creates the UDPSender object with an IP address and port number
 		UDPSender udpSender = null;
 		try{
@@ -193,6 +193,4 @@ public class MainActivity extends AppCompatActivity {
 		}
 		return udpSender;
 	}
-
-
 }

@@ -11,13 +11,13 @@ import java.net.UnknownHostException;
 
 public class UDPSender {
 
-    private final int SERVER_PORT;
-    private final String ADDRESS;
+	private final int SERVER_PORT;
+	private final String ADDRESS;
 	private final DatagramSocket socket;
 	private final DatagramPacket packet;
 
 
-    public UDPSender(String address, int port) throws SocketException, UnknownHostException {
+	public UDPSender(String address, int port) throws SocketException, UnknownHostException {
 		//All this information can be reused each time a message is sent
 		// and is therefor stored in the UDPSender class
 		ADDRESS = address;
@@ -27,21 +27,20 @@ public class UDPSender {
 		packet = new DatagramPacket(new byte[7], 7, iNetAddress, SERVER_PORT);
 	}
 
-    void sendMessage(byte[] input){
+	void sendMessage(byte[] input){
 		//First the packet is held to avoid thread issues
 		// otherwise it is possible for multiple threads to attempt to access the same packet object
 		synchronized (packet){
 			packet.setData(input);
-        try{
-			//Then the socket is held to avoid thread issues,
-			// otherwise it is possible for multiple threads to attempt to access the same socket object
-            synchronized (socket){
-				socket.send(packet);}
-        }catch(IOException e){
-            Log.e(this.getClass().getName(), "Unable to send message");
-            e.printStackTrace();
-        	}
+			try{
+				//Then the socket is held to avoid thread issues,
+				// otherwise it is possible for multiple threads to attempt to access the same socket object
+				synchronized (socket){
+					socket.send(packet);}
+			}catch(IOException e){
+				Log.e(this.getClass().getName(), "Unable to send message");
+				e.printStackTrace();
+			}
 		}
-    }
-
+	}
 }

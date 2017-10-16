@@ -6,8 +6,6 @@ import java.security.NoSuchAlgorithmException;
 //This class is used to create protocol messages used over UDP
 public class MessageConstructor {
 
-
-
 	//This method takes in the power(y) and returns a correct protocol message
 	public byte[] coordinatePowerToMessage(int y){
 		char returnValue;
@@ -24,45 +22,45 @@ public class MessageConstructor {
 	//This method takes in the sterring power(x) and returns a correct protocol message
 	public byte[] coordinateSteeringToMessage(int x){
 		//The char for steering
-        return constructMessage((char)0x53, (byte)x, (byte)0);
-    }
+		return constructMessage((char)0x53, (byte)x, (byte)0);
+	}
 
-    /**
-     * This method constructs a byte array message with length 6
-     * @param type is the type of movement
-     * @param payload is the value of that movement
-     */
-    byte[] constructMessage(char type, byte payload, byte stateGroup) {
-        byte[] message = new byte[7];
-        message[0] = 1;
-        message[1] = (byte)type;
-        message[2] = payload;
-        byte[] checksum = createChecksum((byte)type, payload, stateGroup);
-        message[3] = 0x00;
-        message[4] = checksum[0];
-        message[5] = checksum[1];
-        message[6] = 4;
-        return message;
-    }
+	/**
+	 * This method constructs a byte array message with length 6
+	 * @param type is the type of movement
+	 * @param payload is the value of that movement
+	 */
+	byte[] constructMessage(char type, byte payload, byte stateGroup) {
+		byte[] message = new byte[7];
+		message[0] = 1;
+		message[1] = (byte)type;
+		message[2] = payload;
+		byte[] checksum = createChecksum((byte)type, payload, stateGroup);
+		message[3] = stateGroup;
+		message[4] = checksum[0];
+		message[5] = checksum[1];
+		message[6] = 4;
+		return message;
+	}
 
-    /**
-     * This method returns a MD5 hash of type and payload
-     * @param type is the type of movement
-     * @param payload is the value of that movement
-     */
-    private byte[] createChecksum(byte type, byte payload, byte stateGroup) {
-        byte[] checksum = new byte[2];
-        try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] input = new byte[3];
-            input[0] = type;
-            input[1] = payload;
-            input[2] = stateGroup;
-            md5.update(input);
-            checksum = md5.digest();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return checksum;
-    }
+	/**
+	 * This method returns a MD5 hash of type and payload
+	 * @param type is the type of movement
+	 * @param payload is the value of that movement
+	 */
+	private byte[] createChecksum(byte type, byte payload, byte stateGroup) {
+		byte[] checksum = new byte[2];
+		try {
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			byte[] input = new byte[3];
+			input[0] = type;
+			input[1] = payload;
+			input[2] = stateGroup;
+			md5.update(input);
+			checksum = md5.digest();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return checksum;
+	}
 }

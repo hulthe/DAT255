@@ -51,5 +51,4 @@ class GUIHolder {
 			connectionText.setText(text);
 		}
 	}
-
 }

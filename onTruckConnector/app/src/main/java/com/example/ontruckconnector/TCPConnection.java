@@ -231,6 +231,4 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		super.onProgressUpdate(values);
 		GUIHolder.getInstance().setConnection(isConnected);
 	}
-
-
 }
