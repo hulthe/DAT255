@@ -26,9 +26,4 @@ public class DMSFilter extends StateFilter {
 			driver.brake(value);
 		}
 	}
-
-	@Override
-	public byte getLastPowerValue() {
-		return driver.getLastPowerValue();
-	}
 }

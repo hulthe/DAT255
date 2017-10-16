@@ -119,8 +119,4 @@ public class Driver implements IDriver {
 		}
 	}
 
-	public byte getLastPowerValue(){
-		return lastPowerValue;
-	}
-
 }

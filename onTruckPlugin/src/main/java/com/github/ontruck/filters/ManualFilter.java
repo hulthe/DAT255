@@ -42,9 +42,4 @@ public class ManualFilter extends StateFilter {
 			driver.brake(value);
 		}
 	}
-
-	@Override
-	public byte getLastPowerValue() {
-		return driver.getLastPowerValue();
-	}
 }
