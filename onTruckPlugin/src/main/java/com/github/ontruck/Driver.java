@@ -101,6 +101,16 @@ public class Driver implements IDriver {
 		}
 	}
 
+	@Override
+	public void increaseSpeed() {
+		int powerlevel = lastPowerValue;
+	}
+
+	@Override
+	public void decreaseSpeed() {
+
+	}
+
 	private byte getAppropriatePowerLevel(byte powerLevel) {
 		if(powerLevel >= 0) {
 			for (byte n : usefulPowerValues) {
