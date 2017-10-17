@@ -14,7 +14,7 @@ public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 	/**
 	 * The buffer that holds the latest sensor data.
 	 */
-	private Queue<short[]> buffer;
+	private Queue<Integer> buffer;
 
 
 	public DistanceSensorFilter() {
@@ -27,7 +27,7 @@ public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 	 *
 	 * @param data the given sensor data.
 	 */
-	private void addToQueue(short[] data) {
+	private void addToQueue(int data) {
 		synchronized (buffer) {
 			buffer.add(data);
 			if (buffer.size() > maxBufferLength) {
@@ -37,8 +37,8 @@ public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 	}
 
 	@Override
-	public void process(short[] data) {
-		System.out.println("process(" + Arrays.toString(data) + ")");
+	public void process(int data) {
+		System.out.println("process(" + data + ")");
 		addToQueue(data);
 	}
 
@@ -49,11 +49,8 @@ public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 	 * @return the distance recorded by the sensors and then extracted from the input
 	 * data.
 	 */
-	private short filter(short[] data) {
-		System.out.println("filter(" + Arrays.toString(data) + ")");
-		System.out.println("getMinValue returns: " + Short.toString(getMinValue(data))
-				+ ")");
-		return getMinValue(data);
+	private int filter(int data) {
+		return data;
 	}
 
 	/**
@@ -78,7 +75,7 @@ public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 	/**
 	 * @return the distance recorded by the sensors.
 	 */
-	public short getDistance() {
+	public int getDistance() {
 		return filter(buffer.peek());
 	}
 }
