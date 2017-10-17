@@ -8,12 +8,7 @@ import java.util.List;
 /**
  * This class is used to collect data from the sensor on the CAN network.
  */
-public class DataCollector extends Thread {
-
-	/**
-	 * Where the collected data is stored before it is processed.
-	 */
-	private short[] data;
+public class SensorDataCollector extends Thread {
 
 	/**
 	 * The {@link CAN} network
@@ -33,12 +28,12 @@ public class DataCollector extends Thread {
 	 * @param can the given CAN network that the DataProcessor will be
 	 *            connected to.
 	 */
-	public DataCollector(CAN can) {
+	public SensorDataCollector(CAN can) {
 		this.can = can;
 	}
 
 	/**
-	 * Adds a {@link DataProcessor} to the {@link DataCollector#dataProcessors} list.
+	 * Adds a {@link DataProcessor} to the {@link SensorDataCollector#dataProcessors} list.
 	 *
 	 * Note: To be able to remove the added DataProcessor you will have to save the
 	 * reference to the given DataProcessor.
@@ -52,7 +47,7 @@ public class DataCollector extends Thread {
 	}
 
 	/**
-	 * Removes the {@link DataProcessor} to the {@link DataCollector#dataProcessors} list.
+	 * Removes the {@link DataProcessor} to the {@link SensorDataCollector#dataProcessors} list.
 	 *
 	 * @param processor  the given DataProcessor that should be added to the list.
 	 */
@@ -64,10 +59,14 @@ public class DataCollector extends Thread {
 
 	@Override
 	public void run() {
+		int data;
 		while (!isInterrupted()) {
 			try {
 				data = can.readSensor();
-				process(data);
+
+				if (0 != data) {
+					process(data);
+				}
 			} catch (InterruptedException e) {
 				this.interrupt();
 			}
@@ -80,7 +79,7 @@ public class DataCollector extends Thread {
 	 *
 	 * @param data  the given data.
 	 */
-	private void process(short[] data) {
+	private void process(int data) {
 		DataProcessor[] ProcessorList;
 
 		// Synchronized copy to avoid concurrency problems
@@ -94,9 +93,9 @@ public class DataCollector extends Thread {
 	}
 
 	/**
-	 * An interface for processors placed in the {@link DataCollector#dataProcessors}.
+	 * An interface for processors placed in the {@link SensorDataCollector#dataProcessors}.
 	 */
 	public interface DataProcessor {
-		void process(short[] data);
+		void process(int data);
 	}
 }

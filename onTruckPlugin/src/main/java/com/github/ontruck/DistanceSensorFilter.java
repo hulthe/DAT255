@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class DistanceSensorFilter implements DataCollector.DataProcessor {
+public class DistanceSensorFilter implements SensorDataCollector.DataProcessor {
 
 	/**
 	 * The maximum size of the buffer.
