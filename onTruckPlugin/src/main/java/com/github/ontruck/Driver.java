@@ -136,9 +136,6 @@ public class Driver implements IDriver {
 			}
 		}
 
-		//Now when we have found the next power level then that becomes the "old one"
-		lastPowerValue = newPowerValue;
-
 		//Send to CAN!
 		rawPower(newPowerValue);
 	}
@@ -167,8 +164,6 @@ public class Driver implements IDriver {
 				}
 			}
 		}
-		//Now when we have found the next power level then that becomes the "old one"
-		lastPowerValue = newPowerValue;
 
 		//Send to CAN!
 		rawPower(newPowerValue);
