@@ -26,4 +26,14 @@ public class DMSFilter extends StateFilter {
 			driver.brake(value);
 		}
 	}
+
+	@Override
+	public void increaseSpeed() {
+		driver.increaseSpeed();
+	}
+
+	@Override
+	public void decreaseSpeed() {
+		driver.decreaseSpeed();
+	}
 }
