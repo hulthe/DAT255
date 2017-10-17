@@ -1,5 +1,6 @@
 package com.github.ontruck;
 
+import com.github.moped.jcan.CAN;
 import com.github.ontruck.filters.DMSFilter;
 import com.github.ontruck.filters.FilterManager;
 import com.github.ontruck.filters.ManualFilter;
@@ -31,7 +32,8 @@ public class OnTruck implements Runnable {
 
 		// Driver talks to the CAN-bus and drives the car.
 		try {
-			driver = new Driver();
+			String canInterface = System.getenv("CAN_INTERFACE");
+			driver = new Driver(new CAN(canInterface));
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1); // Exit application if socket couldn't create socket

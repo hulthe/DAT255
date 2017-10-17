@@ -3,6 +3,7 @@ package com.github.ontruck.filters;
 import com.github.ontruck.IDriver;
 import com.github.ontruck.MopedState;
 
+
 public class ManualFilter extends StateFilter {
 
 	private final IDriver driver;
@@ -41,5 +42,20 @@ public class ManualFilter extends StateFilter {
 		) {
 			driver.brake(value);
 		}
+	}
+
+	@Override
+	public void increaseSpeed() {
+		driver.increaseSpeed();
+	}
+
+	@Override
+	public void decreaseSpeed() {
+		driver.decreaseSpeed();
+	}
+
+	@Override
+	public byte getLastPowerValue() {
+		return driver.getLastPowerValue();
 	}
 }
