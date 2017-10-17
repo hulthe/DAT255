@@ -15,15 +15,15 @@ public class DriverTest {
 		try{
 			Driver driver = new Driver(null);
 			byte[] usefulPVs = driver.getUsefulPowerValues();
-			byte lastPL = driver.getLastPowerLevel();
-			byte newPL = driver.getLastPowerLevel();
+			byte lastPL = driver.getLastPowerValue();
+			byte newPL = driver.getLastPowerValue();
 
 			assertEquals("lastPowerValue starts at 0", 0, newPL);
 
 			for(int i = 0; i<usefulPVs.length ;i++){
 				driver.increaseSpeed();
 
-				newPL = driver.getLastPowerLevel();
+				newPL = driver.getLastPowerValue();
 
 				assertTrue("new PL exists in byte array",
 						existsInByteArray(newPL, usefulPVs));
@@ -36,7 +36,7 @@ public class DriverTest {
 			for(int i = usefulPVs.length; i<(-1*(usefulPVs.length+1)*2) ;i--){
 				driver.decreaseSpeed();
 
-				newPL = driver.getLastPowerLevel();
+				newPL = driver.getLastPowerValue();
 
 				assertTrue("new PL exists in byte array",
 						existsInByteArray(newPL, usefulPVs));
@@ -49,7 +49,7 @@ public class DriverTest {
 			for(int i = 0; i<usefulPVs.length*2 ;i++){
 				driver.increaseSpeed();
 
-				newPL = driver.getLastPowerLevel();
+				newPL = driver.getLastPowerValue();
 
 				assertTrue("new PL exists in byte array",
 						existsInByteArray(newPL, usefulPVs));

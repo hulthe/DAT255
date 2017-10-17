@@ -36,4 +36,9 @@ public class DMSFilter extends StateFilter {
 	public void decreaseSpeed() {
 		driver.decreaseSpeed();
 	}
+
+	@Override
+	public byte getLastPowerValue() {
+		return driver.getLastPowerValue();
+	}
 }

@@ -175,7 +175,7 @@ public class Driver implements IDriver {
 	}
 
 	//This is for testing purposes
-	public byte getLastPowerLevel(){
+	public byte getLastPowerValue(){
 		return lastPowerValue;
 	}
 
