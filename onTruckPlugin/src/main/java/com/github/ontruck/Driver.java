@@ -18,6 +18,7 @@ public class Driver implements IDriver {
 	private MopedState state = MopedState.Manual;
 	private CAN can;
 	private byte lastPowerValue = 0;
+	private byte lastSteerValue = 0;
 
 	public Driver(CAN can) throws IOException {
 		this.can = can;
@@ -58,36 +59,33 @@ public class Driver implements IDriver {
 			}
 		}
 
-		powerLevel = getAppropriatePowerLevel(powerLevel);
-
-		try {
-			if(can != null){
-			can.sendMotorValue(powerLevel);
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		lastPowerValue = powerLevel;
+		rawPower(getAppropriatePowerLevel(powerLevel));
 	}
 
 	private void rawPower(byte powerLevel){
-		try {
-			if(can != null){
-				can.sendMotorValue(powerLevel);
+		if(powerLevel != lastPowerValue) {
+			try {
+				if(can != null){
+					can.sendMotorValue(powerLevel);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
-		lastPowerValue = powerLevel;
+			lastPowerValue = powerLevel;
+		}
 	}
 
 	public void steer(byte payload) {
-		try {
-			can.sendSteerValue(maxMinPayload(payload, (byte)100, (byte)100));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		byte steerValue = maxMinPayload(payload, (byte)100, (byte)100);
+		if(steerValue != lastSteerValue) {
+			try {
+				can.sendSteerValue(steerValue);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			lastSteerValue = steerValue;
 		}
 	}
 
@@ -103,6 +101,8 @@ public class Driver implements IDriver {
 		} else {
 			// TODO: needs testing
 		}
+
+		// TODO Don't spam can with brake commands
 
 		try {
 			can.sendMotorValue((byte)brakeValue);
@@ -135,8 +135,6 @@ public class Driver implements IDriver {
 				}
 			}
 		}
-		//Added again for testing purposes
-		lastPowerValue = newPowerValue;
 
 		//Send to CAN!
 		rawPower(newPowerValue);
@@ -168,9 +166,6 @@ public class Driver implements IDriver {
 				}
 			}
 		}
-
-		//Added again for testing purposes
-		lastPowerValue = newPowerValue;
 
 		//Send to CAN!
 		rawPower(newPowerValue);
