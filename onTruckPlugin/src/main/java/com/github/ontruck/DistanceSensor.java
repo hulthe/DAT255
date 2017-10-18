@@ -15,7 +15,7 @@ public class DistanceSensor {
 	/**
 	 * The buffer that holds the latest sensor data.
 	 */
-	private final List<Pair<Long, Integer>> buffer;
+	private final List<Tuple<Long, Integer>> buffer;
 
 
 	public DistanceSensor() {
@@ -30,7 +30,7 @@ public class DistanceSensor {
 	 */
 	public void process(int data) {
 		synchronized (buffer) {
-			buffer.add(new Pair<>(System.currentTimeMillis(), data));
+			buffer.add(new Tuple<>(System.currentTimeMillis(), data));
 			while (buffer.size() > maxBufferLength) {
 				buffer.remove(0);
 			}
@@ -41,11 +41,11 @@ public class DistanceSensor {
 		return getLatestRawDistance(); // FIXME
 	}
 
-	public Pair<Long, Integer> getFilteredDistance(int offset) throws ArrayIndexOutOfBoundsException {
+	public Tuple<Long, Integer> getFilteredDistance(int offset) throws ArrayIndexOutOfBoundsException {
 		return getRawDistance(offset); // FIXME
 	}
 
-	public Pair<Long, Integer>[] getFilteredDistance() {
+	public Tuple<Long, Integer>[] getFilteredDistance() {
 		return getRawDistance(); // FIXME
 	}
 
@@ -53,14 +53,14 @@ public class DistanceSensor {
 	 * @return the distance recorded by the sensors.
 	 */
 	public int getLatestRawDistance() {
-		return buffer.get(buffer.size() - 1).getValue();
+		return buffer.get(buffer.size() - 1).getY();
 	}
 
-	public Pair<Long, Integer> getRawDistance(int offset) throws ArrayIndexOutOfBoundsException {
+	public Tuple<Long, Integer> getRawDistance(int offset) throws ArrayIndexOutOfBoundsException {
 		return buffer.get(buffer.size() - 1 - Math.abs(offset));
 	}
 
-	public Pair<Long, Integer>[] getRawDistance() {
-		return buffer.toArray(new Pair[0]);
+	public Tuple<Long, Integer>[] getRawDistance() {
+		return buffer.toArray(new Tuple[0]);
 	}
 }
