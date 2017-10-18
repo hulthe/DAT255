@@ -154,12 +154,14 @@ public class Driver implements IDriver {
 		} else {
 
 			//Loop through the list of useful power values
-			for (byte usefulPowerValue : usefulPowerValues) {
+			for (int i = usefulPowerValues.length-1; i > 0; i--) {
+
+				byte usefulPowerValue = usefulPowerValues[i];
 
 				//If the next useful power value is reached then stop the loop and use that value
 				if (lastPowerValue > usefulPowerValue) {
 					newPowerValue = usefulPowerValue;
-					continue;
+					break;
 				} else if (lastPowerValue > usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
 					break;
