@@ -70,6 +70,8 @@ public class OnTruck implements Runnable {
 		tcpConnection = new TCPConnection(TCP_PORT);
 		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
+
+		deadMansSwitch.start();
 	}
 
 	public void doFunction() throws InterruptedException{
