@@ -76,6 +76,10 @@ public class AutonomousController extends Thread {
         return new Plan();
     }
 
+    private int distanceDiffMargin(){
+        return 0;
+    }
+
     @Override
     public void run() {
         while (!isInterrupted()) {
@@ -87,7 +91,7 @@ public class AutonomousController extends Thread {
                 this.interrupt();
             }
             currentDistance=sensor.getLatesteFilteredDistance();
-            lastDistance = sensor.getFilteredDistance(1).getValue();
+            lastDistance = sensor.getFilteredDistance(1).getY();
             executor.newPlan(generatePlan());
         }
     }
