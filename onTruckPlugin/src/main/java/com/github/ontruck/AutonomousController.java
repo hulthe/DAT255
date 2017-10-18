@@ -6,14 +6,17 @@ public class AutonomousController extends Thread {
     private final PlanExecutor executor;
 
     //TODO: here we need the distance to the object in front
-    int lastDistance = 0;
-    int currentDistance = 0;
-    int goalDistance = 0;
+    int lastDistance;
+    int currentDistance;
+    int goalDistance = 30;
     long loopDelay = 800;
 
     public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
         this.sensor = sensor;
-        this.executor = executor;
+        lastDistance  = sensor.getLatesteFilteredDistance();
+        currentDistance = sensor.getLatesteFilteredDistance();
+        this.executor = executor;    int lastDistance = sensor.getLatesteFilteredDistance();
+
     }
 
     //Returns false if speed does not need to be altered, return true if speed has been altered.
@@ -83,7 +86,8 @@ public class AutonomousController extends Thread {
             } catch (InterruptedException e) {
                 this.interrupt();
             }
-
+            currentDistance=sensor.getLatesteFilteredDistance();
+            lastDistance = sensor.getFilteredDistance(1).getValue();
             executor.newPlan(generatePlan());
         }
     }
