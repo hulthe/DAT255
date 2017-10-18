@@ -1,7 +1,5 @@
 package com.github.ontruck;
 
-import javafx.util.Pair;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,11 +35,15 @@ public class DistanceSensor {
 		}
 	}
 
-	public int getLatesteFilteredDistance() {
+	public int getBufferSize() {
+		return buffer.size();
+	}
+
+	public int getLatestFilteredDistance() {
 		return getLatestRawDistance(); // FIXME
 	}
 
-	public Tuple<Long, Integer> getFilteredDistance(int offset) throws ArrayIndexOutOfBoundsException {
+	public Tuple<Long, Integer> getFilteredDistance(int offset) throws IndexOutOfBoundsException {
 		return getRawDistance(offset); // FIXME
 	}
 
@@ -53,10 +55,14 @@ public class DistanceSensor {
 	 * @return the distance recorded by the sensors.
 	 */
 	public int getLatestRawDistance() {
+		if(buffer.size() == 0) {
+			return 0;
+		}
+
 		return buffer.get(buffer.size() - 1).getY();
 	}
 
-	public Tuple<Long, Integer> getRawDistance(int offset) throws ArrayIndexOutOfBoundsException {
+	public Tuple<Long, Integer> getRawDistance(int offset) throws IndexOutOfBoundsException {
 		return buffer.get(buffer.size() - 1 - Math.abs(offset));
 	}
 

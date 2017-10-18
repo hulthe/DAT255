@@ -14,7 +14,7 @@ public class AutonomousController extends Thread {
 
     public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
         this.sensor = sensor;
-        currentDistance = sensor.getLatesteFilteredDistance();
+        currentDistance = sensor.getLatestFilteredDistance();
         this.executor = executor;
     }
 
@@ -95,7 +95,7 @@ public class AutonomousController extends Thread {
             } catch (InterruptedException e) {
                 this.interrupt();
             }
-            currentDistance = sensor.getLatesteFilteredDistance();
+            currentDistance = sensor.getLatestFilteredDistance();
             executor.newPlan(generatePlan());
         }
     }
