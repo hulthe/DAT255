@@ -79,10 +79,19 @@ public class AutonomousController extends Thread {
 
     //This function calculates the velocity relative to the followed object over the last five measures
     private int relativeVelocity() {
-        long timeDiffLong = sensor.getFilteredDistance(0).getX() - sensor.getFilteredDistance(4).getX();
-        int timeDiff = toIntExact(timeDiffLong);
-        int distanceDiff = sensor.getLatesteFilteredDistance() - sensor.getFilteredDistance(4).getY();
-        return distanceDiff / timeDiff;
+        try {
+            long timeDiffLong =
+                    sensor.getFilteredDistance(0).getX() -
+                    sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getX();
+            int timeDiff = toIntExact(timeDiffLong);
+
+            int distanceDiff =
+                    sensor.getLatestFilteredDistance() -
+                    sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getY();
+            return distanceDiff / timeDiff;
+        } catch(IndexOutOfBoundsException e) {
+            return 0;
+        }
     }
 
     @Override
