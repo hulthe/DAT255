@@ -153,13 +153,13 @@ public class Driver implements IDriver {
 			newPowerValue = -100;
 		} else {
 
-			//Loop through the list of usefulPowerValue : usefulPowerValues) {
+			//Loop through the list of useful power values
+			for (byte usefulPowerValue : usefulPowerValues) {
 
-			//If the next useful power value is reached then stop the loop and use that value
-			if (lastPowerValue > usefulPowerValue) {
-				newPowerValue = usefulPowerValue;
-				power values
-			for (byte useful					continue;
+				//If the next useful power value is reached then stop the loop and use that value
+				if (lastPowerValue > usefulPowerValue) {
+					newPowerValue = usefulPowerValue;
+					continue;
 				} else if (lastPowerValue > usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
 					break;
