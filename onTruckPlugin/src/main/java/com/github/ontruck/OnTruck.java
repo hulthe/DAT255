@@ -1,6 +1,7 @@
 package com.github.ontruck;
 
 import com.github.moped.jcan.CAN;
+import com.github.ontruck.filters.AutonomousFilter;
 import com.github.ontruck.filters.DMSFilter;
 import com.github.ontruck.filters.FilterManager;
 import com.github.ontruck.filters.ManualFilter;
@@ -61,6 +62,10 @@ public class OnTruck implements Runnable {
 			deadMansSwitch = new DeadMansSwitch(dmsFilter);
 			filterManager.addFilter(dmsFilter);
 
+			AutonomousFilter autoFilter = new AutonomousFilter(driver);
+			autonomousPlanExecutor = new PlanExecutor(autoFilter);
+			filterManager.addFilter(autoFilter);
+
 			filterManager.setState(MopedState.Manual);
 		}
 
@@ -85,11 +90,10 @@ public class OnTruck implements Runnable {
 		distanceSensor = new DistanceSensor();
 		sensorDataCollector.addDataProcessor(distanceSensor::process);
 		sensorDataCollector.start();
-		
+
 
 
 		// create and start AI controller with executor
-		autonomousPlanExecutor = new PlanExecutor(driver);
 		autonomousPlanExecutor.start();
 		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
 		autonomousController.start();
