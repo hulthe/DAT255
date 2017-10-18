@@ -53,9 +53,4 @@ public class AutonomousFilter extends StateFilter {
 			driver.decreaseSpeed();
 		}
 	}
-
-	@Override
-	public byte getLastPowerValue() {
-		return driver.getLastPowerValue();
-	}
 }

@@ -6,5 +6,4 @@ public interface IDriver {
 	void brake(byte value);
 	void increaseSpeed();
 	void decreaseSpeed();
-	byte getLastPowerValue();
 }

@@ -174,6 +174,7 @@ public class Driver implements IDriver {
 		rawPower(newPowerValue);
 	}
 
+	// This is for testing purposes
 	public byte getLastPowerValue(){
 		return lastPowerValue;
 	}
