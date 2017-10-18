@@ -135,6 +135,8 @@ public class Driver implements IDriver {
 				}
 			}
 		}
+		//Added again for testing purposes
+		lastPowerValue = newPowerValue;
 
 		//Send to CAN!
 		rawPower(newPowerValue);
@@ -151,13 +153,13 @@ public class Driver implements IDriver {
 			newPowerValue = -100;
 		} else {
 
-			//Loop through the list of useful power values
-			for (byte usefulPowerValue : usefulPowerValues) {
+			//Loop through the list of usefulPowerValue : usefulPowerValues) {
 
-				//If the next useful power value is reached then stop the loop and use that value
-				if (lastPowerValue > usefulPowerValue) {
-					newPowerValue = usefulPowerValue;
-					break;
+			//If the next useful power value is reached then stop the loop and use that value
+			if (lastPowerValue > usefulPowerValue) {
+				newPowerValue = usefulPowerValue;
+				power values
+			for (byte useful					continue;
 				} else if (lastPowerValue > usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
 					break;
@@ -165,13 +167,20 @@ public class Driver implements IDriver {
 			}
 		}
 
+		//Added again for testing purposes
+		lastPowerValue = newPowerValue;
+
 		//Send to CAN!
 		rawPower(newPowerValue);
 	}
 
-	//This is for testing purposes
 	public byte getLastPowerValue(){
 		return lastPowerValue;
+	}
+
+	//This is for testing purposes
+	public void setLastPowerValue(byte lastPowerValue){
+		this.lastPowerValue = lastPowerValue;
 	}
 
 	//This is for testing purposes
