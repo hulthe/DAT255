@@ -39,7 +39,7 @@ public class DistanceSensor {
 		return buffer.size();
 	}
 
-	public int getLatestFilteredDistance() {
+	public Tuple<Long, Integer> getLatestFilteredDistance() {
 		return getLatestRawDistance(); // FIXME
 	}
 
@@ -54,12 +54,12 @@ public class DistanceSensor {
 	/**
 	 * @return the distance recorded by the sensors.
 	 */
-	public int getLatestRawDistance() {
+	public Tuple<Long, Integer> getLatestRawDistance() {
 		if(buffer.size() == 0) {
-			return 0;
+			return new Tuple<>((long)0, 0);
 		}
 
-		return buffer.get(buffer.size() - 1).getY();
+		return buffer.get(buffer.size() - 1);
 	}
 
 	public Tuple<Long, Integer> getRawDistance(int offset) throws IndexOutOfBoundsException {

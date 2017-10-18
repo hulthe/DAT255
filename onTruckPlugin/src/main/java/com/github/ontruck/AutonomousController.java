@@ -8,13 +8,14 @@ public class AutonomousController extends Thread {
     private final PlanExecutor executor;
 
     //TODO: here we need the distance to the object in front
-    int currentDistance;
-    int goalDistance = 30;
-    long loopDelay = 800;
+    private int currentDistance;
+    private final int goalDistance = 30;
+    private final long loopDelay = 10;
+    private long latestSensorTimeStamp = 0;
 
     public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
         this.sensor = sensor;
-        currentDistance = sensor.getLatestFilteredDistance();
+        currentDistance = sensor.getLatestFilteredDistance().getY();
         this.executor = executor;
     }
 
@@ -81,12 +82,12 @@ public class AutonomousController extends Thread {
     private int relativeVelocity() {
         try {
             long timeDiffLong =
-                    sensor.getFilteredDistance(0).getX() -
+                    sensor.getLatestFilteredDistance().getX() -
                     sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getX();
             int timeDiff = toIntExact(timeDiffLong);
 
             int distanceDiff =
-                    sensor.getLatestFilteredDistance() -
+                    sensor.getLatestFilteredDistance().getY() -
                     sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getY();
             return distanceDiff / timeDiff;
         } catch(IndexOutOfBoundsException e) {
@@ -97,15 +98,19 @@ public class AutonomousController extends Thread {
     @Override
     public void run() {
         while (!isInterrupted()) {
-
             // delay
             try {
                 this.sleep(loopDelay);
             } catch (InterruptedException e) {
                 this.interrupt();
             }
-            currentDistance = sensor.getLatestFilteredDistance();
-            executor.newPlan(generatePlan());
+
+            Tuple<Long, Integer> latestSensorRead = sensor.getLatestFilteredDistance();
+            if(latestSensorRead.getX() != latestSensorTimeStamp) {
+                latestSensorTimeStamp = latestSensorRead.getX();
+                currentDistance = latestSensorRead.getY();
+                executor.newPlan(generatePlan());
+            }
         }
     }
 }
