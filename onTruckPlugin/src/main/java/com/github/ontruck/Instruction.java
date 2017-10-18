@@ -38,6 +38,12 @@ class Instruction {
 					throw new IllegalArgumentException("Type of value for Sleep instruction must be Long");
 				}
 				break;
+			case IncreaseSpeed:
+				// We do not care about value
+				break;
+			case DecreaseSpeed:
+				// We do not care about value
+				break;
 			default:
 				throw new NotImplementedException();
 		}
@@ -57,5 +63,7 @@ class Instruction {
 		Drive,
 		Steer,
 		Sleep,
+		IncreaseSpeed,
+		DecreaseSpeed
 	}
 }

@@ -24,6 +24,12 @@ public class OnTruck implements Runnable {
 	private ManualController manualController;
 	private DeadMansSwitch deadMansSwitch;
 
+	private SensorDataCollector sensorDataCollector;
+	private DistanceSensor distanceSensor;
+
+	private AutonomousController autonomousController;
+	private PlanExecutor autonomousPlanExecutor;
+
 
 	public void init() {
 
@@ -33,7 +39,9 @@ public class OnTruck implements Runnable {
 		// Driver talks to the CAN-bus and drives the car.
 		try {
 			String canInterface = System.getenv("CAN_INTERFACE");
-			driver = new Driver(new CAN(canInterface));
+			CAN can = new CAN(canInterface);
+			driver = new Driver(can);
+			sensorDataCollector = new SensorDataCollector(can);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1); // Exit application if socket couldn't create socket
@@ -72,6 +80,19 @@ public class OnTruck implements Runnable {
 		tcpConnection = new TCPConnection(TCP_PORT);
 		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
+
+
+		distanceSensor = new DistanceSensor();
+		sensorDataCollector.addDataProcessor(distanceSensor::process);
+		sensorDataCollector.start();
+		
+
+
+		// create and start AI controller with executor
+		autonomousPlanExecutor = new PlanExecutor(driver);
+		autonomousPlanExecutor.start();
+		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
+		autonomousController.start();
 	}
 
 	public void doFunction() throws InterruptedException{

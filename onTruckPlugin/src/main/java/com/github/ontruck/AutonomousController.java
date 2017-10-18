@@ -2,8 +2,8 @@ package com.github.ontruck;
 
 public class AutonomousController extends Thread {
 
-    private final IDriver driver;
-    private final PlanExecutor planExecutor;
+    private final DistanceSensor sensor;
+    private final PlanExecutor executor;
 
     //TODO: here we need the distance to the object in front
     int lastDistance = 0;
@@ -11,14 +11,13 @@ public class AutonomousController extends Thread {
     int goalDistance = 0;
     long loopDelay = 800;
 
-    public AutonomousController(IDriver driver) {
-        this.driver = driver;
-        this.planExecutor = new PlanExecutor(this.driver);
-        this.planExecutor.start();
+    public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
+        this.sensor = sensor;
+        this.executor = executor;
     }
 
     //Returns false if speed does not need to be altered, return true if speed has been altered.
-    public boolean checkAndAlterDistance(int lastDistance, int currentDistance, int goalDistance) {
+    private Plan generatePlan() {
 
         // Accepted difference between current distance and goal distance (to prevent constant acceleration, this depends on the accuracy of the distance measurement)
         int distanceMargin = 20;
@@ -30,62 +29,61 @@ public class AutonomousController extends Thread {
         //Increase/decrease speed is called only if the distance to the car in front has decreased or increased significally since last interval
         if (goalDistance < currentDistance + distanceMargin && goalDistance > currentDistance - distanceMargin) {
             if (distanceDiff < -distanceDifferenceMargin) { //If distance was just decreased a lot, decrease speed
-                driver.decreaseSpeed();
-                return true;
+				return new Plan(
+					new Instruction(
+						Instruction.InstructionType.DecreaseSpeed,
+						null
+					)
+				);
             } else if (distanceDiff > distanceDifferenceMargin) { //If distance was just increased a lot, increase speed
-                driver.increaseSpeed();
-                return true;
+				return new Plan(
+					new Instruction(
+						Instruction.InstructionType.IncreaseSpeed,
+						null
+					)
+				);
             } else { //Distance was good and has not just changed a lot, is good
-                return false;
+				return new Plan();
             }
         } else if (currentDistance > goalDistance + distanceMargin) { //currentDistance is greater than goalDistance
             if (distanceDiff > distanceDifferenceMargin) { //If difference is significantly positive, we do not need to accelerate more
-                return false;
+				return new Plan();
             } else {
-                driver.increaseSpeed();
-                return true;
+				return new Plan(
+					new Instruction(
+						Instruction.InstructionType.IncreaseSpeed,
+						null
+					)
+				);
             }
         } else if (currentDistance < goalDistance - distanceMargin) { //currentDistance is smaller than goalDistance
             if (distanceDiff < -distanceDifferenceMargin) { //If difference is significantly negative, we do not need to accelerate more
-                return false;
+				return new Plan();
             } else {
-                driver.decreaseSpeed();
-                return true;
+                return new Plan(
+                	new Instruction(
+                		Instruction.InstructionType.DecreaseSpeed,
+						null
+					)
+				);
             }
         }
-        return false;
+        // Do nothing
+        return new Plan();
     }
 
     @Override
     public void run() {
-
-        int newSpeed = 0;
-
         while (!isInterrupted()) {
 
             // delay
             try {
                 this.sleep(loopDelay);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                this.interrupt();
             }
 
-            if (checkAndAlterDistance(lastDistance, currentDistance, goalDistance)) { //If distance is altered, send new instruction and plan
-
-                newSpeed = driver.getLastPowerValue();
-
-                // new Instruction
-                Instruction instruction = new Instruction(
-                        Instruction.InstructionType.Drive,
-                        newSpeed
-                );
-
-                // new Plan
-                Plan plan = new Plan(instruction);
-
-                // send new plan
-                planExecutor.newPlan(plan);
-            }
+            executor.newPlan(generatePlan());
         }
     }
 }

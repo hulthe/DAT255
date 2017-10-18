@@ -86,6 +86,12 @@ public class PlanExecutor extends Thread {
 					this.interrupt(); // Make next blocking call handle interrupts
 				}
 				break;
+			case IncreaseSpeed:
+				driver.increaseSpeed();
+				break;
+			case DecreaseSpeed:
+				driver.decreaseSpeed();
+				break;
 			default:
 				throw new NotImplementedException();
 		}
