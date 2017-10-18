@@ -53,7 +53,7 @@ public class PlanExecutor extends Thread {
 				if (instruction == null) {
 					this.plan = null;
 				} else {
-					executeInstruction(plan.poll());
+					executeInstruction(instruction);
 				}
 			} else {
 				try {
