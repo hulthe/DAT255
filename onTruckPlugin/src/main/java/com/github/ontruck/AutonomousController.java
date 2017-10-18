@@ -46,7 +46,7 @@ public class AutonomousController extends Thread {
 				return new Plan();
             }
         } else if (currentDistance > goalDistance + distanceMargin) { //currentDistance is greater than goalDistance
-            if (distanceDiff > distanceDifferenceMargin) { //If difference is significantly positive, we do not need to accelerate more
+            if (distanceDiff < -distanceDifferenceMargin) { //If difference is significantly negative, we do not need to accelerate more
 				return new Plan();
             } else {
 				return new Plan(
@@ -57,7 +57,8 @@ public class AutonomousController extends Thread {
 				);
             }
         } else if (currentDistance < goalDistance - distanceMargin) { //currentDistance is smaller than goalDistance
-            if (distanceDiff < -distanceDifferenceMargin) { //If difference is significantly negative, we do not need to accelerate more
+            //If difference is significantly positive, we do not need to accelerate more
+            if (distanceDiff > distanceDifferenceMargin) {
 				return new Plan();
             } else {
                 return new Plan(
