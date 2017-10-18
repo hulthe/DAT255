@@ -1,22 +1,21 @@
 package com.github.ontruck;
 
+import static java.lang.Math.toIntExact;
+
 public class AutonomousController extends Thread {
 
     private final DistanceSensor sensor;
     private final PlanExecutor executor;
 
     //TODO: here we need the distance to the object in front
-    int lastDistance;
     int currentDistance;
     int goalDistance = 30;
     long loopDelay = 800;
 
     public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
         this.sensor = sensor;
-        lastDistance  = sensor.getLatesteFilteredDistance();
         currentDistance = sensor.getLatesteFilteredDistance();
-        this.executor = executor;    int lastDistance = sensor.getLatesteFilteredDistance();
-
+        this.executor = executor;
     }
 
     //Returns false if speed does not need to be altered, return true if speed has been altered.
@@ -26,58 +25,64 @@ public class AutonomousController extends Thread {
         int distanceMargin = 20;
 
         //How much distance must have changed since last measurement for us to care
-        int distanceDifferenceMargin = 4;
+        int relativeVelocity = relativeVelocity();
 
-        int distanceDiff = currentDistance - lastDistance;
-        //Increase/decrease speed is called only if the distance to the car in front has decreased or increased significally since last interval
-        if (goalDistance < currentDistance + distanceMargin && goalDistance > currentDistance - distanceMargin) {
-            if (distanceDiff < -distanceDifferenceMargin) { //If distance was just decreased a lot, decrease speed
-				return new Plan(
-					new Instruction(
-						Instruction.InstructionType.DecreaseSpeed,
-						null
-					)
-				);
-            } else if (distanceDiff > distanceDifferenceMargin) { //If distance was just increased a lot, increase speed
-				return new Plan(
-					new Instruction(
-						Instruction.InstructionType.IncreaseSpeed,
-						null
-					)
-				);
+        int relativeVelocityLimit = 2;
+
+        //current distance may never be smaller than goal distance, but it can be greater to the margin.
+        if (currentDistance >= goalDistance && currentDistance < goalDistance + distanceMargin) {
+            if (relativeVelocity < -relativeVelocityLimit) { //If distance was just decreased a lot, decrease speed
+                return new Plan(
+                        new Instruction(
+                                Instruction.InstructionType.DecreaseSpeed,
+                                null
+                        )
+                );
+            } else if (relativeVelocity > relativeVelocityLimit) { //If distance was just increased a lot, increase speed
+                return new Plan(
+                        new Instruction(
+                                Instruction.InstructionType.IncreaseSpeed,
+                                null
+                        )
+                );
             } else { //Distance was good and has not just changed a lot, is good
-				return new Plan();
+                return new Plan();
             }
-        } else if (currentDistance > goalDistance + distanceMargin) { //currentDistance is greater than goalDistance
-            if (distanceDiff < -distanceDifferenceMargin) { //If difference is significantly negative, we do not need to accelerate more
-				return new Plan();
-            } else {
-				return new Plan(
-					new Instruction(
-						Instruction.InstructionType.IncreaseSpeed,
-						null
-					)
-				);
-            }
-        } else if (currentDistance < goalDistance - distanceMargin) { //currentDistance is smaller than goalDistance
-            //If difference is significantly positive, we do not need to accelerate more
-            if (distanceDiff > distanceDifferenceMargin) {
-				return new Plan();
+            //currentDistance is greater than goalDistance
+        } else if (currentDistance > goalDistance + distanceMargin) {
+            //If difference is significantly negative, we do not need to accelerate more
+            if (relativeVelocity < -relativeVelocityLimit) {
+                return new Plan();
             } else {
                 return new Plan(
-                	new Instruction(
-                		Instruction.InstructionType.DecreaseSpeed,
-						null
-					)
-				);
+                        new Instruction(
+                                Instruction.InstructionType.IncreaseSpeed,
+                                null
+                        )
+                );
+            }
+        } else if (currentDistance < goalDistance) { //currentDistance is smaller than goalDistance
+            if (relativeVelocity > relativeVelocityLimit) {
+                return new Plan();
+            } else {
+                return new Plan(
+                        new Instruction(
+                                Instruction.InstructionType.DecreaseSpeed,
+                                null
+                        )
+                );
             }
         }
         // Do nothing
         return new Plan();
     }
 
-    private int distanceDiffMargin(){
-        return 0;
+    //This function calculates the velocity relative to the followed object over the last five measures
+    private int relativeVelocity() {
+        long timeDiffLong = sensor.getFilteredDistance(0).getX() - sensor.getFilteredDistance(4).getX();
+        int timeDiff = toIntExact(timeDiffLong);
+        int distanceDiff = sensor.getLatesteFilteredDistance() - sensor.getFilteredDistance(4).getY();
+        return distanceDiff / timeDiff;
     }
 
     @Override
@@ -90,8 +95,7 @@ public class AutonomousController extends Thread {
             } catch (InterruptedException e) {
                 this.interrupt();
             }
-            currentDistance=sensor.getLatesteFilteredDistance();
-            lastDistance = sensor.getFilteredDistance(1).getY();
+            currentDistance = sensor.getLatesteFilteredDistance();
             executor.newPlan(generatePlan());
         }
     }
