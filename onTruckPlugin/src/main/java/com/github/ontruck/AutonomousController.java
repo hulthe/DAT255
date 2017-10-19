@@ -9,9 +9,10 @@ public class AutonomousController extends Thread {
 
     //TODO: here we need the distance to the object in front
     private int currentDistance;
-    private final int goalDistance = 30;
+    private final int goalDistance = 40;
     private final long loopDelay = 10;
     private long latestSensorTimeStamp = 0;
+    private boolean haveJumpedOneSensorBatch = false;
 
     public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
         this.sensor = sensor;
@@ -27,6 +28,8 @@ public class AutonomousController extends Thread {
 
         //How much distance must have changed since last measurement for us to care
         int relativeVelocity = relativeVelocity();
+
+        //System.out.printf("Δd: [%4d]", relativeVelocity);
 
         int relativeVelocityLimit = 2;
 
@@ -82,14 +85,19 @@ public class AutonomousController extends Thread {
     private int relativeVelocity() {
         try {
             long timeDiffLong =
-                    sensor.getLatestFilteredDistance().getX() -
-                    sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getX();
+                    sensor.getFilteredDistance(2).getX()-
+                    sensor.getFilteredDistance(0).getX();
             int timeDiff = toIntExact(timeDiffLong);
 
             int distanceDiff =
-                    sensor.getLatestFilteredDistance().getY() -
-                    sensor.getFilteredDistance(Math.min(4, sensor.getBufferSize())).getY();
-            return distanceDiff / timeDiff;
+                    sensor.getFilteredDistance(2).getY()-
+                    sensor.getFilteredDistance(0).getY();
+
+            if(timeDiff == 0) {
+                return 0;
+            }
+
+            return distanceDiff * 1000 / timeDiff;
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
@@ -107,9 +115,21 @@ public class AutonomousController extends Thread {
 
             Tuple<Long, Integer> latestSensorRead = sensor.getLatestFilteredDistance();
             if(latestSensorRead.getX() != latestSensorTimeStamp) {
+                if(haveJumpedOneSensorBatch) {
+                    currentDistance = latestSensorRead.getY();
+
+
+                    Plan plan = generatePlan();
+                    //System.out.printf(" d: [%4d] rd: [%4d] ", currentDistance, sensor.getLatestRawDistance().getY());
+                    //System.out.printf("%s%n", plan.toString());
+                    executor.newPlan(plan);
+
+                    haveJumpedOneSensorBatch = false;
+                } else {
+                    haveJumpedOneSensorBatch = true;
+                }
+
                 latestSensorTimeStamp = latestSensorRead.getX();
-                currentDistance = latestSensorRead.getY();
-                executor.newPlan(generatePlan());
             }
         }
     }

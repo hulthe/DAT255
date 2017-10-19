@@ -66,4 +66,9 @@ class Instruction {
 		IncreaseSpeed,
 		DecreaseSpeed
 	}
+
+	@Override
+	public String toString() {
+		return type.toString();
+	}
 }
