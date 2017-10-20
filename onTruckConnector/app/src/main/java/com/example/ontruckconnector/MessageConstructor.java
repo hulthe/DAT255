@@ -3,10 +3,16 @@ package com.example.ontruckconnector;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-//This class is used to create protocol messages used over UDP
+/**
+ * This class is used to create protocol messages used over UDP.
+ */
 public class MessageConstructor {
 
-	//This method takes in the power(y) and returns a correct protocol message
+	/**
+	 * This method takes in the power, y, and returns a correct protocol message.
+	 * @param y, power
+	 * @return Correct Power Protocol Message
+	 */
 	public byte[] coordinatePowerToMessage(int y){
 		char returnValue;
 		if(y == 0){
@@ -19,7 +25,11 @@ public class MessageConstructor {
 		return constructMessage(returnValue, (byte)y, (byte)0);
 	}
 
-	//This method takes in the sterring power(x) and returns a correct protocol message
+	/**
+	 * This method takes in the steering power, x, and returns a correct protocol message
+	 * @param x, steering
+	 * @return Correct Steering Protocol Message
+	 */
 	public byte[] coordinateSteeringToMessage(int x){
 		//The char for steering
 		return constructMessage((char)0x53, (byte)x, (byte)0);
