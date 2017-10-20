@@ -123,6 +123,8 @@ public class OnTruck implements Runnable {
 			System.out.println("**************** Interrupted.");
 			return;
 		}
+
+		System.exit(0);
 	}
 
 }
