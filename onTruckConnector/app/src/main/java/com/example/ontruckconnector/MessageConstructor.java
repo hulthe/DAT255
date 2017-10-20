@@ -11,7 +11,7 @@ public class MessageConstructor {
 
 	/**
 	 * This method takes in the power, y, and returns a correct protocol message.
-	 * @param y, power
+	 * @param y power
 	 * @return Correct Power Protocol Message
 	 */
 	public byte[] coordinatePowerToMessage(int y){
@@ -28,7 +28,7 @@ public class MessageConstructor {
 
 	/**
 	 * This method takes in the steering power, x, and returns a correct protocol message
-	 * @param x, steering
+	 * @param x steering
 	 * @return Correct Steering Protocol Message
 	 */
 	public byte[] coordinateSteeringToMessage(int x){
