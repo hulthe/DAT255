@@ -19,7 +19,7 @@ public class UDPSender {
 
 	public UDPSender(String address, int port) throws SocketException, UnknownHostException {
 		//All this information can be reused each time a message is sent
-		// and is therefor sared in the UDPSender class
+		// and is therefor stored in the UDPSender class
 		ADDRESS = address;
 		SERVER_PORT = port;
 		socket = new DatagramSocket();
