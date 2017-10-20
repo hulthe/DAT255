@@ -42,4 +42,17 @@ public class Plan implements Cloneable {
 	public Plan clone() {
 		return new Plan(instructions.toArray(new Instruction[0]));
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("(Plan)[");
+		boolean first = true;
+		for (Instruction instruction : instructions) {
+			builder.append(first ? "" : ", ");
+			builder.append(instruction.toString());
+			first = false;
+		}
+		builder.append(']');
+		return builder.toString();
+	}
 }

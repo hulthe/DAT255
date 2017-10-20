@@ -1,5 +1,7 @@
 package com.github.ontruck;
 
+import com.github.moped.jcan.CAN;
+import com.github.ontruck.filters.AutonomousFilter;
 import com.github.ontruck.filters.DMSFilter;
 import com.github.ontruck.filters.FilterManager;
 import com.github.ontruck.filters.ManualFilter;
@@ -23,6 +25,12 @@ public class OnTruck implements Runnable {
 	private ManualController manualController;
 	private DeadMansSwitch deadMansSwitch;
 
+	private SensorDataCollector sensorDataCollector;
+	private DistanceSensor distanceSensor;
+
+	private AutonomousController autonomousController;
+	private PlanExecutor autonomousPlanExecutor;
+
 
 	public void init() {
 
@@ -31,7 +39,10 @@ public class OnTruck implements Runnable {
 
 		// Driver talks to the CAN-bus and drives the car.
 		try {
-			driver = new Driver();
+			String canInterface = System.getenv("CAN_INTERFACE");
+			CAN can = new CAN(canInterface);
+			driver = new Driver(can);
+			sensorDataCollector = new SensorDataCollector(can);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1); // Exit application if socket couldn't create socket
@@ -50,6 +61,10 @@ public class OnTruck implements Runnable {
 			DMSFilter dmsFilter = new DMSFilter(driver);
 			deadMansSwitch = new DeadMansSwitch(dmsFilter);
 			filterManager.addFilter(dmsFilter);
+
+			AutonomousFilter autoFilter = new AutonomousFilter(driver);
+			autonomousPlanExecutor = new PlanExecutor(autoFilter);
+			filterManager.addFilter(autoFilter);
 
 			filterManager.setState(MopedState.Manual);
 		}
@@ -70,6 +85,15 @@ public class OnTruck implements Runnable {
 		tcpConnection = new TCPConnection(TCP_PORT);
 		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
+
+		distanceSensor = new DistanceSensor();
+		sensorDataCollector.addDataProcessor(distanceSensor::process);
+		sensorDataCollector.start();
+
+		// create and start AI controller with executor
+		autonomousPlanExecutor.start();
+		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
+		autonomousController.start();
 
 		deadMansSwitch.start();
 	}

@@ -1,5 +1,6 @@
 package com.github.ontruck;
 
+import sun.misc.Lock;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -10,7 +11,8 @@ public class PlanExecutor extends Thread {
 	private final IDriver driver;
 
 	private Plan plan = null;
-	private Plan newPlan = null;
+	private Plan newPlan;
+	private Object newPlanLock = new Lock();
 
 	public PlanExecutor(IDriver driver) {
 		this.driver = driver;
@@ -21,7 +23,7 @@ public class PlanExecutor extends Thread {
 	 * @param plan New Plan
 	 */
 	public void newPlan(Plan plan) {
-		synchronized (this.newPlan) {
+		synchronized (this.newPlanLock) {
 			this.newPlan = plan;
 			this.interrupt();
 		}
@@ -39,7 +41,7 @@ public class PlanExecutor extends Thread {
 		while(true) {
 
 			// Check if a new plan has been set
-			synchronized (newPlan) {
+			synchronized (this.newPlanLock) {
 				if(newPlan != null) {
 					plan = newPlan;
 					newPlan = null;
@@ -51,13 +53,13 @@ public class PlanExecutor extends Thread {
 				if (instruction == null) {
 					this.plan = null;
 				} else {
-					executeInstruction(plan.poll());
+					executeInstruction(instruction);
 				}
 			} else {
 				try {
 					Thread.sleep(9001);
 				} catch (InterruptedException e) {
-					synchronized (newPlan) {
+					synchronized (this.newPlanLock) {
 						if (newPlan == null) {
 							break; // Exit thread
 						}
@@ -86,6 +88,18 @@ public class PlanExecutor extends Thread {
 					this.interrupt(); // Make next blocking call handle interrupts
 				}
 				break;
+			case IncreaseSpeed: {
+				byte powerLimit = (byte) instruction.getValue();
+				if(powerLimit <= 0 || powerLimit > Math.abs(driver.getLastPowerValue())) {
+					driver.increaseSpeed();
+				}
+			}	break;
+			case DecreaseSpeed: {
+				byte powerLimit = (byte) instruction.getValue();
+				if(powerLimit <= 0 || powerLimit > Math.abs(driver.getLastPowerValue())) {
+					driver.decreaseSpeed();
+				}
+			}	break;
 			default:
 				throw new NotImplementedException();
 		}
