@@ -123,7 +123,6 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		return null;
 	}
 
-	//public TCPConnection(String ipAddress, int port, MainActivity mainActivity) {
 	public TCPConnection(String ipAddress, int port) {
 		Log.i("TCP", "inside TCPConnection constructor");
 		IP_ADDRESS = ipAddress;
