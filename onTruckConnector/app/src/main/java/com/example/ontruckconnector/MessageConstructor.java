@@ -3,6 +3,7 @@ package com.example.ontruckconnector;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+
 /**
  * This class is used to create protocol messages used over UDP.
  */

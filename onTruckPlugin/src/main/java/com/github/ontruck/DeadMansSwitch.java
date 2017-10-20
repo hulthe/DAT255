@@ -3,10 +3,10 @@ package com.github.ontruck;
 // Stops car if connection is dropped
 public class DeadMansSwitch extends Thread {
 
-	private static final int DELAY = 20; // Check interval
+	private static final int DELAY = 100; // Check interval
 
 	// Time before car should automatically brake. (Note that actual longest time before emergency stop is TIMEOUT + DELAY)
-	private static final long TIMEOUT = 500;
+	private static final long TIMEOUT = 750;
 
 	private final IDriver driver;
 	private long lastTime;
