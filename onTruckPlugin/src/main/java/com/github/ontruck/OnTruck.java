@@ -1,10 +1,17 @@
 package com.github.ontruck;
 
 import com.github.moped.jcan.CAN;
-import com.github.ontruck.filters.AutonomousFilter;
-import com.github.ontruck.filters.DMSFilter;
-import com.github.ontruck.filters.FilterManager;
-import com.github.ontruck.filters.ManualFilter;
+import com.github.ontruck.controller.AutonomousController;
+import com.github.ontruck.controller.DeadMansSwitch;
+import com.github.ontruck.controller.ManualController;
+import com.github.ontruck.controller.plan.PlanExecutor;
+import com.github.ontruck.moped.Driver;
+import com.github.ontruck.moped.SensorDataCollector;
+import com.github.ontruck.network.TCPConnection;
+import com.github.ontruck.network.UDPConnection;
+import com.github.ontruck.states.FilterManager;
+import com.github.ontruck.states.MopedState;
+import com.github.ontruck.states.filters.*;
 
 import java.io.IOException;
 import java.net.SocketException;

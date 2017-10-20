@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.controller.plan;
 
 import java.util.*;
 

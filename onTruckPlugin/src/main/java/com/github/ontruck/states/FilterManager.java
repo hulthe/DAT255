@@ -1,6 +1,5 @@
-package com.github.ontruck.filters;
+package com.github.ontruck.states;
 
-import com.github.ontruck.MopedState;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

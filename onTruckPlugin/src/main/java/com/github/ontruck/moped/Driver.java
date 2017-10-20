@@ -1,14 +1,14 @@
-package com.github.ontruck;
+package com.github.ontruck.moped;
 
 import com.github.moped.jcan.CAN;
+import com.github.ontruck.driver.IDriver;
+import com.github.ontruck.states.MopedState;
 
 import java.io.IOException;
 
 public class Driver implements IDriver {
 
-	protected static final byte STEER_OP_CODE = 0x53;
-	protected static final byte POWER_OP_CODE = 0x50;
-	protected static final byte BRAKE_OP_CODE = 0x42;
+
 	protected static final byte MAX_POWER_VALUE = 100;
 
 	private static final byte[] usefulPowerValues = new byte[] {

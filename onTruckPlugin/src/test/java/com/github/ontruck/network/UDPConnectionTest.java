@@ -1,4 +1,5 @@
-package com.github.ontruck;
+package com.github.ontruck.network;
+import com.github.ontruck.network.UDPConnection;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

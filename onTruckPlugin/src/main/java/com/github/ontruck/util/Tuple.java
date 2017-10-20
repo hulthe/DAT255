@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.util;
 
 public class Tuple<X, Y> {
 	private final X x;

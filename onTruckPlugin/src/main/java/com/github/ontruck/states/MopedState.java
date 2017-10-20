@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.states;
 
 public enum MopedState {
 	Manual,

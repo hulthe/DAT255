@@ -1,7 +1,6 @@
-package com.github.ontruck.filters;
+package com.github.ontruck.states;
 
-import com.github.ontruck.IDriver;
-import com.github.ontruck.MopedState;
+import com.github.ontruck.driver.IDriver;
 
 public abstract class StateFilter implements IDriver {
 	private MopedState state;

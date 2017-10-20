@@ -1,4 +1,6 @@
-package com.github.ontruck;
+package com.github.ontruck.controller;
+
+import com.github.ontruck.driver.IDriver;
 
 // Stops car if connection is dropped
 public class DeadMansSwitch extends Thread {

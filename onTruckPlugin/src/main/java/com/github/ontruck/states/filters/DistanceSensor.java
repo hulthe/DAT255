@@ -1,4 +1,6 @@
-package com.github.ontruck;
+package com.github.ontruck.states.filters;
+
+import com.github.ontruck.util.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;

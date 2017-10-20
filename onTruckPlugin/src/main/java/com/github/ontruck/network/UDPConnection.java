@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.network;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,6 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UDPConnection extends Thread {
+	public 	static final byte POWER_OP_CODE = 0x50;
+	public static final byte STEER_OP_CODE = 0x53;
+	public static final byte BRAKE_OP_CODE = 0x42;
+
 	private final List<DataProcessor> dataProcessors = new LinkedList<DataProcessor>();
 
 	private final byte[] message = new byte[7];

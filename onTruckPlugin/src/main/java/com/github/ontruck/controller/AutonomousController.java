@@ -1,4 +1,10 @@
-package com.github.ontruck;
+package com.github.ontruck.controller;
+
+import com.github.ontruck.controller.plan.Instruction;
+import com.github.ontruck.controller.plan.Plan;
+import com.github.ontruck.controller.plan.PlanExecutor;
+import com.github.ontruck.states.filters.DistanceSensor;
+import com.github.ontruck.util.Tuple;
 
 public class AutonomousController extends Thread {
 
