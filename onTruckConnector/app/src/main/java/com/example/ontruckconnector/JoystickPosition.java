@@ -4,7 +4,7 @@ import android.util.Log;
 
 /**
  * This class converts the joystick information from strength+combo to x+y value.
- * Theese values are then saved here.
+ * These values are then saved here.
  */
 public class JoystickPosition {
 
@@ -37,10 +37,14 @@ public class JoystickPosition {
 
 		if(dx > 100){dx = 100;}
 		else if(dx < -100){dx = -100;}
+		else if((byte)dx == 99){dx = 100;} //Getting rid of rounding errors
+		else if((byte)dx == -99){dx = -100;}
 		x = (byte)dx;
 
 		if(dy > 100){dy = 100;}
 		else if(dy < -100){dy = -100;}
+		else if((byte)dy == 99){dy = 100;} //Getting rid of rounding errors
+		else if((byte)dy == -99){dy = -100;}
 		y = (byte)dy;
 	}
 
