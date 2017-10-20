@@ -13,37 +13,87 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
+/**
+ * Handles the TCP connection.
+ */
 public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
+	/**
+	 * The terminator character. It represents the end of a message.
+	 */
 	private static final char TERMINATOR = 0x04;
 
-	private final String IP_ADDRESS; 	//the IP_ADDRESS is set in the constructor
-	private final int PORT;				//the port is set in the constructor
-	private final int TIMEOUT = 1000;   //this is in ms and is the delay between pings
+	/**
+	 * The address the the communication is sent to.
+	 */
+	private final String IP_ADDRESS;
+
+	/**
+	 * The port that the communication is sent to.
+	 */
+	private final int PORT;
+
+	/**
+	 * The time between sent packets.
+	 */
+	private final int TIMEOUT = 1000;
+
+	/**
+	 * Whether there is a connection or not.
+	 */
 	private boolean isConnected = false;
 
+	/**
+	 * The object that sends data.
+	 */
 	private OutputWorker outputWorker = null;
+
+	/**
+	 * The object that receives data.
+	 */
 	private InputWorker inputWorker = null;
+
+	/**
+	 * The socket data is sent through.
+	 */
 	private Socket socket = null;
 
 
+	/**
+	 * Handles the sending of data as a thread.
+	 */
 	private class OutputWorker extends Thread {
 
+		/**
+		 * The stream where to data is placed in.
+		 */
 		private DataOutputStream stream;
+
+		/**
+		 * The queue with messages to be sent.
+		 */
 		private Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
+
+		/**
+		 * Whether the thread is running or not.
+		 */
 		private boolean running = false;
 
-		OutputWorker(DataOutputStream stream){
+		/**
+		 * Creates an {@link OutputWorker} with a given {@link DataOutputStream}.
+		 *
+		 * @param stream the given DataOutputStream.
+		 */
+		OutputWorker(DataOutputStream stream) {
 			this.stream = stream;
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			running = true;
-			while(running){
+			while (running) {
 				try {
-					while(!queue.isEmpty()) {
+					while (!queue.isEmpty()) {
 						synchronized (stream) {
 							stream.write(queue.poll());
 							Log.i("OutputWorker", "deepest inside run()");
@@ -67,63 +117,112 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 			interrupt();
 		}
 
-		public void send(byte[] message){
+		/**
+		 * Sends a message by adding a given message in the queue and then waking the thread.
+		 *
+		 * @param message the given message.
+		 */
+		public void send(byte[] message) {
 			queue.add(message);
 			// TODO: Find out if this crashes the app while blocking the gui thread.
 			synchronized (stream) {
 				interrupt();
 			}
 		}
-		public int unsent(){
+
+		/**
+		 * Receives the number of unsent messages in the queue.
+		 *
+		 * @return the number of unsent messages in the queue.
+		 */
+		public int unsent() {
 			return queue.size();
 		}
 	}
-	private class InputWorker implements Runnable{
 
+	/**
+	 * This is an inner class used to handle all inputs.
+	 */
+	private class InputWorker implements Runnable {
+
+		/**
+		 * The {@link DataInputStream} that holds the input.
+		 */
 		private DataInputStream stream;
+
+		/**
+		 * The list of {@link DataProcessor}s to handle te input.
+		 */
 		private List<DataProcessor> dataProcessors = new LinkedList<>();
 
-		InputWorker(DataInputStream stream){
+
+		/**
+		 * Creates an {@link InputWorker} with a given {@link DataInputStream}.
+		 *
+		 * @param stream the given {@link DataInputStream}.
+		 */
+		InputWorker(DataInputStream stream) {
 			this.stream = stream;
 		}
 
 		@Override
-		public void run(){
+		public void run() {
 			StringBuilder message = new StringBuilder();
-			while (true){
+			while (true) {
 				try {
 					byte b = stream.readByte();
-					if (b == TERMINATOR){
+					if (b == TERMINATOR) {
 						process(message.toString());
 						message = new StringBuilder();
-					}else{
+					} else {
 						message.append(b);
 					}
-				}catch (IOException e){
+				} catch (IOException e) {
 					break;
 				}
 
 			}
 		}
 
+		/**
+		 * Processes the given message with all the {@link DataProcessor}s in
+		 * {@link TCPConnection.InputWorker#dataProcessors}.
+		 *
+		 * @param message the given message to be processed.
+		 */
 		private void process(String message) {
-			for(DataProcessor processor: dataProcessors) {
+			for (DataProcessor processor : dataProcessors) {
 				processor.process(message);
 			}
 		}
 	}
 
+	/**
+	 * Internal interface to make sure that all {@link DataProcessor}s have a
+	 * {@link DataProcessor#process(String)} method.
+	 */
 	public interface DataProcessor {
 		void process(String message);
 	}
 
+	/**
+	 * Gets called when this task starts and currently its only purpose is to run().
+	 *
+	 * @param strings
+	 * @return
+	 */
 	@Override
 	protected TCPConnection doInBackground(String... strings) {
 		run();
 		return null;
 	}
 
-	//public TCPConnection(String ipAddress, int port, MainActivity mainActivity) {
+	/**
+	 * Creates a {@link TCPConnection} with a given
+	 *
+	 * @param ipAddress
+	 * @param port
+	 */
 	public TCPConnection(String ipAddress, int port) {
 		Log.i("TCP", "inside TCPConnection constructor");
 		IP_ADDRESS = ipAddress;
@@ -131,7 +230,10 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	}
 
 
-
+	/**
+	 * The run method runs infinitely as long as the this task hasn't been canceled.
+	 * The run method is suppose to attempt a TCP connection to the given IP-address.
+	 */
 	public void run() {
 
 		Log.i("TCP", "inside TCPConnection.run()");
@@ -141,7 +243,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 			try {
 				// Open socket
 				socket = new Socket();
-				Log.i("TCP", "creating new socket with IP: "+IP_ADDRESS.toString());
+				Log.i("TCP", "creating new socket with IP: " + IP_ADDRESS.toString());
 				socket.connect(new InetSocketAddress(IP_ADDRESS, PORT), TIMEOUT);
 
 				isConnected = true;
@@ -186,37 +288,56 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 		}
 	}
 
+	/**
+	 * This method sends a message to the outputWorker's send() command.
+	 *
+	 * @param message
+	 */
 	public void send(String message) {
-		if(outputWorker != null){
+		if (outputWorker != null) {
 			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
 		}
 	}
 
+	/**
+	 * This method adds the given DataProcessor to the list of DataProcessors.
+	 *
+	 * @param processor
+	 */
 	public void addDataProcessor(DataProcessor processor) {
 		inputWorker.dataProcessors.add(processor);
 	}
 
+	/**
+	 * This method removes the given DataProcessor from the list of DataProcessors in this class
+	 *
+	 * @param processor
+	 */
 	public void removeDataProcessor(DataProcessor processor) {
 		inputWorker.dataProcessors.remove(processor);
 	}
 
-	//manually close this entire class/task
+	/**
+	 * This method manually terminates the entire task.
+	 */
 	public final void stop() {
 		cancel(true);
 		onCancelled();
 	}
 
-	//what happens after this class/task has been terminated
+	/**
+	 * This method gets called automatically when this task is terminated.
+	 */
 	@Override
-	protected void onCancelled(){
+	protected void onCancelled() {
 		Log.i("TCP", "inside onCancelled()");
 		isConnected = false;
 		onProgressUpdate();
 		try {
-			if(outputWorker != null) {
+			if (outputWorker != null) {
 				outputWorker.end();
 			}
-			if(socket != null) {
+			if (socket != null) {
 				socket.close();
 			}
 		} catch (IOException e) {
@@ -225,7 +346,11 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 
 	}
 
-	//Gives the connection boolean to the Holder -> possibly toggle the connection text
+	/**
+	 * This method gets called to potentially update the connection text between "connected" and "disconnected".
+	 *
+	 * @param values
+	 */
 	@Override
 	protected void onProgressUpdate(Void... values) {
 		super.onProgressUpdate(values);
