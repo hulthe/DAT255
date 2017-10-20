@@ -11,4 +11,4 @@
 |      |      |     |        |      |
 |      |      |     |        |      |
 |      |      |     |        |      |
-|      |      |     |        |      |
+|John Segerstedt|Flex|sejohn|[JohnSegerstedt](https://github.com/JohnSegerstedt) & [FlexTerror](https://github.com/FlexTerror)|sejohn@student.chalmers.se|
