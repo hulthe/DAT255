@@ -80,9 +80,10 @@ public class AutonomousController extends Thread {
 		return new Plan();
 	}
 
-	//This function calculates the velocity relative to the followed object over the last five measures
+	//This function calculates the velocity relative to the followed object over the last two measures
 	private int relativeVelocity() {
 		try {
+			// FIXME: factor in the time in this method
 			//long timeDiffLong =
 			//		sensor.getFilteredDistance(2).getX()-
 			//		sensor.getFilteredDistance(0).getX();
