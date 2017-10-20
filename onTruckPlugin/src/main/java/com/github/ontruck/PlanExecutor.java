@@ -88,12 +88,18 @@ public class PlanExecutor extends Thread {
 					this.interrupt(); // Make next blocking call handle interrupts
 				}
 				break;
-			case IncreaseSpeed:
-				driver.increaseSpeed();
-				break;
-			case DecreaseSpeed:
-				driver.decreaseSpeed();
-				break;
+			case IncreaseSpeed: {
+				byte powerLimit = (byte) instruction.getValue();
+				if(powerLimit <= 0 || powerLimit > Math.abs(driver.getLastPowerValue())) {
+					driver.increaseSpeed();
+				}
+			}	break;
+			case DecreaseSpeed: {
+				byte powerLimit = (byte) instruction.getValue();
+				if(powerLimit <= 0 || powerLimit > Math.abs(driver.getLastPowerValue())) {
+					driver.decreaseSpeed();
+				}
+			}	break;
 			default:
 				throw new NotImplementedException();
 		}

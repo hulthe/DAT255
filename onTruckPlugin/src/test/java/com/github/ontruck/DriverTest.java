@@ -25,7 +25,7 @@ public class DriverTest {
 
 				newPL = driver.getLastPowerValue();
 
-				assertTrue("new PL exists in byte array",
+				assertTrue(String.format("new PL [%d] exists in byte array (1)", newPL),
 						existsInByteArray(newPL, usefulPVs));
 				assertTrue("new PL, after increaseSpeed(), becomes greater",
 						(lastPL < newPL) || newPL == 100);
@@ -38,7 +38,7 @@ public class DriverTest {
 
 				newPL = driver.getLastPowerValue();
 
-				assertTrue("new PL exists in byte array",
+				assertTrue(String.format("new PL [%d] exists in byte array (2)", newPL),
 						existsInByteArray(newPL, usefulPVs));
 				assertTrue("new PL, after increaseSpeed(), becomes lesser",
 						(lastPL > newPL) || newPL == -100);
@@ -51,7 +51,7 @@ public class DriverTest {
 
 				newPL = driver.getLastPowerValue();
 
-				assertTrue("new PL exists in byte array",
+				assertTrue(String.format("new PL [%d] exists in byte array (3)", newPL),
 						existsInByteArray(newPL, usefulPVs));
 				assertTrue("new PL, after increaseSpeed(), becomes greater",
 						(lastPL < newPL) || newPL == 100);

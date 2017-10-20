@@ -18,31 +18,19 @@ class Instruction {
 	public Instruction(InstructionType type, Object value) throws IllegalArgumentException {
 		this.type = type;
 		switch (type) {
-			case Brake:
-				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Brake instruction must be Byte");
+			case Sleep:
+				if(!(value instanceof Long)) {
+					throw new IllegalArgumentException(String.format("Type of value for %s must be Long", type));
 				}
 				break;
 			case Drive:
-				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Drive instruction must be Byte");
-				}
-				break;
+			case Brake:
 			case Steer:
-				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Steer instruction must be Byte");
-				}
-				break;
-			case Sleep:
-				if(!(value instanceof Long)) {
-					throw new IllegalArgumentException("Type of value for Sleep instruction must be Long");
-				}
-				break;
 			case IncreaseSpeed:
-				// We do not care about value
-				break;
 			case DecreaseSpeed:
-				// We do not care about value
+				if(!(value instanceof Byte)) {
+					throw new IllegalArgumentException(String.format("Type of value for %s must be Byte", type));
+				}
 				break;
 			default:
 				throw new NotImplementedException();

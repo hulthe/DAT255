@@ -94,7 +94,7 @@ public class DistanceSensor {
 		return buffer.size();
 	}
 
-	public Tuple<Long, Integer> getLatestFilteredDistance() {
+	public Tuple<Long, Integer> getLatestFilteredDistance() throws IndexOutOfBoundsException {
 		return getFilteredDistance(0);
 	}
 

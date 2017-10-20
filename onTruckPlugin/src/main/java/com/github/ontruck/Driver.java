@@ -9,11 +9,11 @@ public class Driver implements IDriver {
 	protected static final byte STEER_OP_CODE = 0x53;
 	protected static final byte POWER_OP_CODE = 0x50;
 	protected static final byte BRAKE_OP_CODE = 0x42;
+	protected static final byte MAX_POWER_VALUE = 100;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
-
 
 	private MopedState state = MopedState.Manual;
 	private CAN can;
@@ -48,7 +48,7 @@ public class Driver implements IDriver {
 
 
 	public void power(byte payload) {
-		byte powerLevel = maxMinPayload(payload, (byte)100, (byte)100); // Over 9000?
+		byte powerLevel = maxMinPayload(payload, MAX_POWER_VALUE, MAX_POWER_VALUE); // Over 9000?
 		// If different sign
 		if(powerLevel * lastPowerValue < 0) {
 			try {
@@ -90,7 +90,7 @@ public class Driver implements IDriver {
 	}
 
 	public void brake(byte payload) {
-		int brakeValue = maxPayload(payload, (byte)100);
+		int brakeValue = maxPayload(payload, MAX_POWER_VALUE);
 
 		if(lastPowerValue > 0) {
 			// Engine will break if engine is set to the opposite direction it was driving.
@@ -118,9 +118,10 @@ public class Driver implements IDriver {
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full speed then don't accelerate (keep at 100)
-		if (lastPowerValue >= 100) {
-			newPowerValue = 100;
+		if (lastPowerValue >= MAX_POWER_VALUE) {
+			newPowerValue = MAX_POWER_VALUE;
 		} else {
+
 
 			//Loop through the list of useful power values
 			for (byte usefulPowerValue : usefulPowerValues) {
@@ -128,6 +129,7 @@ public class Driver implements IDriver {
 				//If the next useful power value is reached then stop the loop and use that value
 				if (lastPowerValue < usefulPowerValue) {
 					newPowerValue = usefulPowerValue;
+
 					break;
 				} else if (lastPowerValue < usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
@@ -135,6 +137,7 @@ public class Driver implements IDriver {
 				}
 			}
 		}
+
 
 		//Send to CAN!
 		rawPower(newPowerValue);
@@ -147,8 +150,8 @@ public class Driver implements IDriver {
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full reverse speed then don't accelerate (keep at -100)
-		if (lastPowerValue <= -100) {
-			newPowerValue = -100;
+		if (lastPowerValue <= -MAX_POWER_VALUE) {
+			newPowerValue = -MAX_POWER_VALUE;
 		} else {
 
 			//Loop through the list of useful power values
@@ -160,8 +163,8 @@ public class Driver implements IDriver {
 				if (lastPowerValue > usefulPowerValue) {
 					newPowerValue = usefulPowerValue;
 					break;
-				} else if (lastPowerValue > usefulPowerValue * -1) {
-					newPowerValue = (byte) (usefulPowerValue * -1);
+				} else if (lastPowerValue < -usefulPowerValue) {
+					newPowerValue = (byte)-usefulPowerValue;
 					break;
 				}
 			}
@@ -171,7 +174,7 @@ public class Driver implements IDriver {
 		rawPower(newPowerValue);
 	}
 
-	// This is for testing purposes
+	@Override
 	public byte getLastPowerValue(){
 		return lastPowerValue;
 	}
@@ -185,8 +188,6 @@ public class Driver implements IDriver {
 	public byte[] getUsefulPowerValues(){
 		return usefulPowerValues;
 	}
-
-
 
 	private byte getAppropriatePowerLevel(byte powerLevel) {
 		if(powerLevel >= 0) {

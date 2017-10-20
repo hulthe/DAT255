@@ -1,7 +1,5 @@
 package com.github.ontruck;
 
-import static java.lang.Math.toIntExact;
-
 public class AutonomousController extends Thread {
 
     private final DistanceSensor sensor;
@@ -9,7 +7,8 @@ public class AutonomousController extends Thread {
 
     //TODO: here we need the distance to the object in front
     private int currentDistance;
-    private final int goalDistance = 40;
+    private final int GOAL_DISTANCE = 40;
+    private final byte MAX_POWER = 20;
     private final long loopDelay = 10;
     private long latestSensorTimeStamp = 0;
     private boolean haveJumpedOneSensorBatch = false;
@@ -34,26 +33,26 @@ public class AutonomousController extends Thread {
         int relativeVelocityLimit = 2;
 
         //current distance may never be smaller than goal distance, but it can be greater to the margin.
-        if (currentDistance >= goalDistance && currentDistance < goalDistance + distanceMargin) {
+        if (currentDistance >= GOAL_DISTANCE && currentDistance < GOAL_DISTANCE + distanceMargin) {
             if (relativeVelocity < -relativeVelocityLimit) { //If distance was just decreased a lot, decrease speed
                 return new Plan(
                         new Instruction(
                                 Instruction.InstructionType.DecreaseSpeed,
-                                null
+                                MAX_POWER
                         )
                 );
             } else if (relativeVelocity > relativeVelocityLimit) { //If distance was just increased a lot, increase speed
                 return new Plan(
                         new Instruction(
                                 Instruction.InstructionType.IncreaseSpeed,
-                                null
+                                MAX_POWER
                         )
                 );
             } else { //Distance was good and has not just changed a lot, is good
                 return new Plan();
             }
-            //currentDistance is greater than goalDistance
-        } else if (currentDistance > goalDistance + distanceMargin) {
+            //currentDistance is greater than GOAL_DISTANCE
+        } else if (currentDistance > GOAL_DISTANCE + distanceMargin) {
             //If difference is significantly negative, we do not need to accelerate more
             if (relativeVelocity < -relativeVelocityLimit) {
                 return new Plan();
@@ -61,18 +60,18 @@ public class AutonomousController extends Thread {
                 return new Plan(
                         new Instruction(
                                 Instruction.InstructionType.IncreaseSpeed,
-                                null
+                                MAX_POWER
                         )
                 );
             }
-        } else if (currentDistance < goalDistance) { //currentDistance is smaller than goalDistance
+        } else if (currentDistance < GOAL_DISTANCE) { //currentDistance is smaller than GOAL_DISTANCE
             if (relativeVelocity > relativeVelocityLimit) {
                 return new Plan();
             } else {
                 return new Plan(
                         new Instruction(
-                                Instruction.InstructionType.DecreaseSpeed,
-                                null
+                            Instruction.InstructionType.Drive,
+                            (byte)0
                         )
                 );
             }
@@ -84,20 +83,20 @@ public class AutonomousController extends Thread {
     //This function calculates the velocity relative to the followed object over the last five measures
     private int relativeVelocity() {
         try {
-            long timeDiffLong =
-                    sensor.getFilteredDistance(2).getX()-
-                    sensor.getFilteredDistance(0).getX();
-            int timeDiff = toIntExact(timeDiffLong);
+            //long timeDiffLong =
+            //        sensor.getFilteredDistance(2).getX()-
+            //        sensor.getFilteredDistance(0).getX();
+            //int timeDiff = toIntExact(timeDiffLong);
 
             int distanceDiff =
                     sensor.getFilteredDistance(2).getY()-
                     sensor.getFilteredDistance(0).getY();
 
-            if(timeDiff == 0) {
-                return 0;
-            }
+            //if(timeDiff == 0) {
+            //    return 0;
+            //}
 
-            return distanceDiff * 1000 / timeDiff;
+            return distanceDiff;
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
