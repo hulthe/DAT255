@@ -1,20 +1,33 @@
 package com.example.ontruckconnector;
 
-
 import android.util.Log;
 
-//This class is only a holder an converter for the virtual joystick
-//This class converts the joystick's information in strength+combo to a x+y value
+/**
+ * This class converts the joystick information from strength+combo to x+y value.
+ * Theese values are then saved here.
+ */
 public class JoystickPosition {
 
+	/**
+	 * The X value. Positive when forward or negative when backwards. (-100, 100)
+	 */
 	private byte x = 0;
+
+	/**
+	 * The Y value. Positive when left or negative when right. (-100, 100)
+	 */
 	private byte y = 0;
 
 
-	JoystickPosition(){
-	}
+	/**
+	 * This class has an empty constructor.
+	 */
+	JoystickPosition(){}
 
 
+	/**
+	 * This method updates the X and Y values after converting an Angle and Strength value.
+	 */
 	public void onUpdate(int angle, int strength){
 		//This converts the circular maximum of the joystick to a square
 		//So you can reach ex: (100,100) instead of (100/sqrt(2), 100/sqrt(2))
@@ -32,10 +45,18 @@ public class JoystickPosition {
 	}
 
 
+	/**
+	 * Returns the X value.
+	 * @return X
+	 */
 	public byte getX(){
 		return x;
 	}
 
+	/**
+	 * Returns the Y Value
+	 * @return
+	 */
 	public byte getY(){
 		return y;
 	}

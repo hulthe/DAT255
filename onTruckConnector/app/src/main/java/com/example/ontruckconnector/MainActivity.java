@@ -1,14 +1,18 @@
 package com.example.ontruckconnector;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -26,33 +30,35 @@ public class MainActivity extends AppCompatActivity {
 	private JoystickView joystickView;
 	private UDPSender udpSender;
 	private ToggleButton accToggle;
+	private ImageView borderImage;
 	private EditText ipInput;
 	private Thread UDPThread;
 	private TCPConnection tcpConnection;
+	private ImageView connectionImage;
 	private String oldIP;
 
 	private static final int PORT = 8721;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-
-		//todo olIP = getIP form last session
-
 
 		//Initializes the UI-elements
 		connectionText = (TextView)findViewById(R.id.connectionText);
 		joystickView = (JoystickView)findViewById(R.id.joystick);
 		accToggle = (ToggleButton)findViewById(R.id.accToggle);
+		borderImage = (ImageView)findViewById(R.id.borderImage);
 		ipInput = (EditText)findViewById(R.id.ipInput);
+		connectionImage = (ImageView)findViewById(R.id.connectionImage);
 
 		//Initializes a Holder-object to avoid double coupling between MainActivity and TCPConnection
 		GUIHolder guiHolder = GUIHolder.getInstance();
 		guiHolder.setTextView(connectionText);
 		guiHolder.setToggleButton(accToggle);
+		guiHolder.setImageView(connectionImage);
+		guiHolder.setBorderImage(borderImage);
 
 		//Creates the TCP/UDP clients
 		updateTCP();
@@ -66,11 +72,52 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
+
+
+
 		accToggle.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (accToggle.isChecked()) {
-					tcpConnection.send("Hur mar du gurgyuyguyu");
+
+				// Send new eventGroup
+				tcpConnection.send(String.format(
+						"{\"type\":\"event_group\", \"value\":%s}",
+						0 /*TODO: Add eventGroup variable*/
+				));
+
+				// Set new state
+				tcpConnection.send(String.format(
+						"{\"type\":\"state\", \"value\":\"%s\"}",
+						accToggle.isChecked() ? "ACC" : "M"
+				));
+			}
+		});
+
+
+
+
+
+
+		GUIHolder.getInstance().resetToggleButton();
+
+		accToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				System.out.println("accToggle pressed");
+				accToggle.setText("CHANGED");
+				if(GUIHolder.getInstance().getConnection()){
+				//if(true){
+					//Todo: remove this comment ^
+					accToggle.setBackgroundColor(Color.parseColor("#CCCCCC"));
+					accToggle.setTextColor(Color.parseColor("#222222"));
+					if(b){
+						GUIHolder.getInstance().activateToggleButton();
+					}
+					else{
+						GUIHolder.getInstance().deacativateToggleButton();
+					}
+				}else{
+					GUIHolder.getInstance().resetToggleButton();
 				}
 			}
 		});
@@ -114,16 +161,18 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 
-    }
+	}
 
-    private Thread initilizeUDPThread(){
+
+
+	private Thread initilizeUDPThread(){
 		//This thread runs the udp sending code
 		final Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (true) {
 					try{
-						//TODO: Remove this later
+						//TODO: Remove this later?
 						synchronized (this) {
 							// We want constant UDP-sendings when the UDP-server library has been updated
 							//Also: Ugly code?
@@ -150,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 
+
 	private void updateTCP(){
 		String newIP = oldIP;
 		if(isValidIP(ipInput.getText().toString())){
@@ -160,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-    private void updateUDP(){
+	private void updateUDP(){
 		String newIP = oldIP;
 
 		if(isValidIP(ipInput.getText().toString())){
@@ -172,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-    private UDPSender createUDPSender(String ip, int port){
+	private UDPSender createUDPSender(String ip, int port){
 		//Creates the UDPSender object with an IP address and port number
 		UDPSender udpSender = null;
 		try{
@@ -185,6 +235,4 @@ public class MainActivity extends AppCompatActivity {
 		}
 		return udpSender;
 	}
-
-
 }

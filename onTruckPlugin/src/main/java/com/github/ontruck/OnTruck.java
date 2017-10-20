@@ -86,17 +86,16 @@ public class OnTruck implements Runnable {
 		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
 		tcpConnection.addDataProcessor(filterManager::processStateEvent);
 
-
 		distanceSensor = new DistanceSensor();
 		sensorDataCollector.addDataProcessor(distanceSensor::process);
 		sensorDataCollector.start();
-
-
 
 		// create and start AI controller with executor
 		autonomousPlanExecutor.start();
 		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
 		autonomousController.start();
+
+		deadMansSwitch.start();
 	}
 
 	public void doFunction() throws InterruptedException{
