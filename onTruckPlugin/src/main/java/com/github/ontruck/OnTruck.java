@@ -127,4 +127,8 @@ public class OnTruck implements Runnable {
 		System.exit(0);
 	}
 
+	public static void main(String[] args) {
+		OnTruck onTruck = new OnTruck();
+		onTruck.run();
+	}
 }
