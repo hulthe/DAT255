@@ -1,6 +1,6 @@
 | Namn | Nick | CID | GitHub | Mejl |
 |------|------|-----|--------|------|
-|Fredrik Åberg|Feffe|abergf|[TheFeffe](https://github.com/TheFeffe)|feffe@chalmers.it|
+|Fredrik Åberg|Feffe|abergf|[TheFeffe](https://github.com/TheFeffe)|abergf@student.chalmers.se|
 |Agnes Mårdh|Mårdhor|agnesma|[agnesmardh](https://github.com/agnesmardh)|agnesma@student.chalmers.se|
 |Sofia Larborn|nekki|soflarb|[soflarb](https://github.com/soflarb)|soflarb@student.chalmers.se|
 |Anton Levholm|Levis|levholm|[Levis92](https://github.com/Levis92)|levholm@student.chalmers.se|
