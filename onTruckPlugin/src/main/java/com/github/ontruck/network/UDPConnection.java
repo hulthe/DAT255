@@ -46,10 +46,10 @@ public class UDPConnection extends Thread {
 				// Clear buffer
 				for(int i = 0; i < message.length; i++) { message[i] = 0; }
 			}catch (IOException ex){
-				System.err.printf("Error while reading from socket: %s \n", ex.getMessage());
+				System.err.printf("Error while reading from socket: %s%n", ex.getMessage());
 			}
 		}
-		System.out.printf("UDP thread closed\n");
+		System.out.printf("UDP thread closed%n");
 	}
 
 	private void process(byte[] data) {

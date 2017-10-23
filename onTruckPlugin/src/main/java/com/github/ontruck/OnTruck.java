@@ -80,7 +80,7 @@ public class OnTruck implements Runnable {
 			// Create new socket
 			udpConnection = new UDPConnection(UDP_PORT);
 		} catch (SocketException e) {
-			System.err.printf("Could not open socket on port %d:\n%s\n", UDP_PORT, e.getMessage());
+			System.err.printf("Could not open socket on port %d:%n%s%n", UDP_PORT, e.getMessage());
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
@@ -103,7 +103,7 @@ public class OnTruck implements Runnable {
 	public void doFunction() throws InterruptedException{
 		// Random blocking call
 		try {
-			System.out.printf("Press enter to quit.\n");
+			System.out.printf("Press enter to quit.%n");
 			System.in.read();
 		} catch (IOException e) {
 			e.printStackTrace();
