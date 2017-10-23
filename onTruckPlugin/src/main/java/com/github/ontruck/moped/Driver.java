@@ -15,7 +15,6 @@ public class Driver implements IDriver {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
 
-	private MopedState state = MopedState.Manual;
 	private CAN can;
 	private byte lastPowerValue = 0;
 	private byte lastSteerValue = 0;

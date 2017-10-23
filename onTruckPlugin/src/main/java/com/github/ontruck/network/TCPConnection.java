@@ -20,7 +20,6 @@ public class TCPConnection extends Thread {
 
 	private final int PORT;           //the port is set in the constructor
 	private final int TIMEOUT = 1000; //this is in ms and is the delay between pings
-	private boolean isConnected = false;
 
 	private OutputWorker outputWorker = null;
 	private InputWorker inputWorker = null;
@@ -146,8 +145,6 @@ public class TCPConnection extends Thread {
 
 				System.out.println("TCP connection established");
 
-				isConnected = true;
-
 				outputWorker = new OutputWorker(new DataOutputStream(socket.getOutputStream()));
 				inputWorker = new InputWorker(new DataInputStream(socket.getInputStream()));
 
@@ -164,7 +161,6 @@ public class TCPConnection extends Thread {
 				closeSocket();
 
 				socket = null;
-				isConnected = false;
 				inputWorker = null;
 				outputWorker = null;
 			}
