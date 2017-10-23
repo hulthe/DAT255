@@ -24,6 +24,8 @@ public class TCPConnection extends Thread {
 	private OutputWorker outputWorker = null;
 	private InputWorker inputWorker = null;
 
+	private Socket socket = null;
+
 	// Code to be executed with received message
 	private List<DataProcessor> dataProcessors = new LinkedList<>();
 	public interface DataProcessor {
@@ -35,6 +37,7 @@ public class TCPConnection extends Thread {
 
 		private DataOutputStream stream;
 		private Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
+		private boolean hasNewMessage = false;
 
 		OutputWorker(DataOutputStream stream){
 			this.stream = stream;
@@ -60,10 +63,12 @@ public class TCPConnection extends Thread {
 				try {
 					Thread.sleep(9000);
 				} catch (InterruptedException e) {
-						if (unsent() == 0 ) {
+					synchronized (stream) {
+						if (!hasNewMessage) {
 							break;
 						}
-					// Carry on
+						hasNewMessage = false;
+					}
 				}
 			}
 		}
@@ -73,6 +78,7 @@ public class TCPConnection extends Thread {
 
 			// Stop sleep
 			synchronized (stream) {
+				hasNewMessage = true;
 				interrupt();
 			}
 		}
@@ -95,7 +101,7 @@ public class TCPConnection extends Thread {
 		@Override
 		public void run(){
 			StringBuilder message = new StringBuilder();
-			while (true){ // Read all the time
+			while (!isInterrupted()){ // Read until interrupted
 				try {
 					byte b = stream.readByte(); // Read next byte
 					if (b == TERMINATOR){ // When terminator byte is reached
@@ -112,7 +118,6 @@ public class TCPConnection extends Thread {
 				}catch (IOException e){
 					break;
 				}
-
 			}
 		}
 
@@ -131,8 +136,6 @@ public class TCPConnection extends Thread {
 
 	@Override
 	public void run() {
-		Socket socket = null;
-
 		//If we get a connection related exception -> try connecting again
 		while (!isInterrupted()) { // Run until interrupted
 			try {
@@ -149,19 +152,15 @@ public class TCPConnection extends Thread {
 
 				outputWorker.start();
 				inputWorker.run(); // Blocking call
+				System.out.println("breaking tcp");
+
 
 			} catch (IOException e) {
 				// Connection dropped (stuff in here will be spammed)
 			} finally {
 
 				//Close socket since it wont have been if an exception was thrown
-				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				closeSocket();
 
 				socket = null;
 				isConnected = false;
@@ -169,6 +168,34 @@ public class TCPConnection extends Thread {
 				outputWorker = null;
 			}
 		}
+
+		System.out.println("outputWorker");
+
+		outputWorker.interrupt();
+		System.out.println("outputWorker2");
+		try {
+			outputWorker.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("outputWorker3");
+	}
+
+	private void closeSocket() {
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			socket = null;
+		}
+	}
+
+	@Override
+	public void interrupt() {
+		closeSocket();
+		super.interrupt();
 	}
 
 	public void send(String message) {

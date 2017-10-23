@@ -95,14 +95,9 @@ public class OnTruck implements Runnable {
 
 		distanceSensor = new DistanceSensor();
 		sensorDataCollector.addDataProcessor(distanceSensor::process);
-		sensorDataCollector.start();
 
 		// create and start AI controller with executor
-		autonomousPlanExecutor.start();
 		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
-		autonomousController.start();
-
-		deadMansSwitch.start();
 	}
 
 	public void doFunction() throws InterruptedException{
@@ -115,14 +110,49 @@ public class OnTruck implements Runnable {
 		}
 	}
 
+	private void startThreads() {
+		udpConnection.start();
+		tcpConnection.start();
+		deadMansSwitch.start();
+
+		sensorDataCollector.start();
+		autonomousPlanExecutor.start();
+		autonomousController.start();
+	}
+
+	private int stopThreads() {
+		udpConnection.interrupt();
+		tcpConnection.interrupt();
+		deadMansSwitch.interrupt();
+		sensorDataCollector.interrupt();
+		autonomousPlanExecutor.interrupt();
+		autonomousController.interrupt();
+
+		try {
+			System.out.println("udpConnection");
+			udpConnection.join();
+			System.out.println("tcpConnection");
+			tcpConnection.join();
+			System.out.println("deadMansSwitch");
+			deadMansSwitch.join();
+			System.out.println("sensorDataCollector");
+			sensorDataCollector.join();
+			System.out.println("autonomousPlanExecutor");
+			autonomousPlanExecutor.join();
+			System.out.println("autonomousController");
+			autonomousController.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
+
 	@Override
     public void run() {
 		init();
 
-		// Start threads
-		udpConnection.start();
-		//deadMansSwitch.start();
-		tcpConnection.start();
+		startThreads();
 
 		try {
 			doFunction();
@@ -131,7 +161,7 @@ public class OnTruck implements Runnable {
 			return;
 		}
 
-		System.exit(0);
+		System.exit(stopThreads());
 	}
 
 	public static void main(String[] args) {
