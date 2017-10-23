@@ -52,7 +52,7 @@ public class OnTruck implements Runnable {
 			sensorDataCollector = new SensorDataCollector(can);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1); // Exit application if socket couldn't create socket
+			exit(-1); // Exit application if socket couldn't create socket
 		}
 
 		{	// Set up filters & controllers
@@ -161,7 +161,11 @@ public class OnTruck implements Runnable {
 			return;
 		}
 
-		System.exit(stopThreads());
+		exit(stopThreads());
+	}
+
+	private void exit(int status) {
+		System.exit(status);
 	}
 
 	public static void main(String[] args) {
