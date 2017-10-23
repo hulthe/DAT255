@@ -86,7 +86,7 @@ public class UDPConnection extends Thread {
 			return new byte[] {checksum[0], checksum[1]};
 		} catch (NoSuchAlgorithmException e){
 			e.printStackTrace();
-			return null;
+			return new byte[0];
 		}
 	}
 
