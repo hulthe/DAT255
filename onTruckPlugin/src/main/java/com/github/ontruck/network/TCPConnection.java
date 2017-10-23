@@ -4,6 +4,7 @@ package com.github.ontruck.network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -199,7 +200,12 @@ public class TCPConnection extends Thread {
 	}
 
 	public void send(String message) {
-		outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
+		try {
+			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("Unsupported character set: \"UTF-8\"");
+			e.printStackTrace();
+		}
 	}
 
 	public void addDataProcessor(DataProcessor processor) {
