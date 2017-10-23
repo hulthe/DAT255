@@ -34,7 +34,7 @@ public class TCPConnection extends Thread {
 	}
 
 	// Sends messages
-	private class OutputWorker extends Thread {
+	private static class OutputWorker extends Thread {
 
 		private DataOutputStream stream;
 		private Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
