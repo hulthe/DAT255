@@ -186,7 +186,7 @@ public class Driver implements IDriver {
 
 	//This is for testing purposes
 	public byte[] getUsefulPowerValues(){
-		return usefulPowerValues;
+		return usefulPowerValues.clone();
 	}
 
 	private byte getAppropriatePowerLevel(byte powerLevel) {
