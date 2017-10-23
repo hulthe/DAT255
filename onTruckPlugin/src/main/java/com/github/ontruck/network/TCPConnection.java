@@ -150,7 +150,6 @@ public class TCPConnection extends Thread {
 
 				outputWorker.start();
 				inputWorker.run(); // Blocking call
-				System.out.println("breaking tcp");
 
 
 			} catch (IOException e) {
@@ -166,16 +165,13 @@ public class TCPConnection extends Thread {
 			}
 		}
 
-		System.out.println("outputWorker");
 
 		outputWorker.interrupt();
-		System.out.println("outputWorker2");
 		try {
 			outputWorker.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("outputWorker3");
 	}
 
 	private void closeSocket() {

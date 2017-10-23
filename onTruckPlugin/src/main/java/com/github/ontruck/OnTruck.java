@@ -129,17 +129,11 @@ public class OnTruck implements Runnable {
 		autonomousController.interrupt();
 
 		try {
-			System.out.println("udpConnection");
 			udpConnection.join();
-			System.out.println("tcpConnection");
-			tcpConnection.join();
-			System.out.println("deadMansSwitch");
+			//tcpConnection.join();
 			deadMansSwitch.join();
-			System.out.println("sensorDataCollector");
 			sensorDataCollector.join();
-			System.out.println("autonomousPlanExecutor");
 			autonomousPlanExecutor.join();
-			System.out.println("autonomousController");
 			autonomousController.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
