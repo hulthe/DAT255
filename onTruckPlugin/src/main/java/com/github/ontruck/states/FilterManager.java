@@ -27,6 +27,10 @@ public class FilterManager {
 		}
 	}
 
+	public MopedState getState() {
+		return state;
+	}
+
 	/**
 	 * @see <a href="https://github.com/hulthe/DAT255/blob/master/doc/tcp_protocol.md">Protocol Specification</a>
 	 * @param message JSON object as a String
