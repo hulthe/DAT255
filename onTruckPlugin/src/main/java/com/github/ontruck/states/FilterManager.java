@@ -66,7 +66,7 @@ public class FilterManager {
 		return this.filters.add(filter);
 	}
 
-	private boolean removeFilter(StateFilter filter) {
+	public boolean removeFilter(StateFilter filter) {
 		return filters.remove(filter);
 	}
 }
