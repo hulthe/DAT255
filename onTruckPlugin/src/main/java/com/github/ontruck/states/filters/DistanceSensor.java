@@ -11,7 +11,7 @@ public class DistanceSensor {
 	/**
 	 * The maximum size of the buffer.
 	 */
-	private final int maxBufferLength = 64;
+	private static final int maxBufferLength = 64;
 
 	/**
 	 * The buffer that holds the latest sensor data.

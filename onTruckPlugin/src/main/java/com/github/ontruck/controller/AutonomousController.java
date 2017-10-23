@@ -13,9 +13,9 @@ public class AutonomousController extends Thread {
 
 	//TODO: here we need the distance to the object in front
 	private int currentDistance;
-	private final int GOAL_DISTANCE = 40;
-	private final byte MAX_POWER = 20;
-	private final long loopDelay = 10;
+	private static final int GOAL_DISTANCE = 40;
+	private static final byte MAX_POWER = 20;
+	private static final long loopDelay = 10;
 	private long latestSensorTimeStamp = 0;
 	private boolean haveJumpedOneSensorBatch = false;
 

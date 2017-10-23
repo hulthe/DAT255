@@ -19,7 +19,7 @@ public class TCPConnection extends Thread {
 	private static final char TERMINATOR = 0x04; // Default ASCI terminator
 
 	private final int PORT;           //the port is set in the constructor
-	private final int TIMEOUT = 1000; //this is in ms and is the delay between pings
+	private static final int TIMEOUT = 1000; //this is in ms and is the delay between pings
 
 	private OutputWorker outputWorker = null;
 	private InputWorker inputWorker = null;
