@@ -95,9 +95,9 @@ public class Driver implements IDriver {
 			// Engine will break if engine is set to the opposite direction it was driving.
 			// Therefore, if we are driving forward, we need to set the engine in reverse.
 			brakeValue = -brakeValue;
-		} else if(lastPowerValue < 0){
+		//} else if(lastPowerValue < 0){
 			// The break value is positive, which is what we want.
-		} else {
+		//} else {
 			// TODO: needs testing
 		}
 
