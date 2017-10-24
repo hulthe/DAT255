@@ -1,13 +1,11 @@
 <FindBugsFilter>
-	<!-- Filter out android libraries -->
 	<Match>
-		<Package name="android.support.v7.appcompat" />
+		<!-- ignore all issues in resource generation -->
+		<Class name="~.*\.R\$.*"/>
 	</Match>
+	
 	<Match>
-		<Package name="android.support.constraint" />
-	</Match>
-	<Match>
-		<Package name="io.github.controlwear.virtual.joystick.android" />
+		<Class name="~.*\.Manifest\$.*"/>
 	</Match>
 
 	<!-- All bugs in test classes, except for JUnit-specific bugs -->
