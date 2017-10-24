@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -34,9 +35,9 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	private final int PORT;
 
 	/**
-	 * The time between sent packets.
+	 * The time until socket times out
 	 */
-	private final int TIMEOUT = 1000;
+	private static final int TIMEOUT = 1000;
 
 	/**
 	 * Whether there is a connection or not.
@@ -62,7 +63,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	/**
 	 * Handles the sending of data as a thread.
 	 */
-	private class OutputWorker extends Thread {
+	private static class OutputWorker extends Thread {
 
 		/**
 		 * The stream where to data is placed in.
@@ -143,7 +144,7 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	/**
 	 * This is an inner class used to handle all inputs.
 	 */
-	private class InputWorker implements Runnable {
+	private static class InputWorker implements Runnable {
 
 		/**
 		 * The {@link DataInputStream} that holds the input.
@@ -295,7 +296,11 @@ public class TCPConnection extends AsyncTask<String, Void, TCPConnection> {
 	 */
 	public void send(String message) {
 		if (outputWorker != null) {
-			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
+			try {
+				outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
