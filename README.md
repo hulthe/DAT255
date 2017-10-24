@@ -6,7 +6,7 @@
 |Anton Levholm|Levis|levholm|[Levis92](https://github.com/Levis92)|levholm@student.chalmers.se|
 |Joakim Hulthe|tux|hulthe|[hulthe](https://github.com/hulthe)|hulthe@student.chalmers.se|
 |William Levén|Gurgy|levenw|[Gurgy](https://github.com/Gurgy)|levenw@student.chalmers.se|
-|      |      |     |        |      |
+|Lovisa Landgren|Lumo|lovlan|[LumoIT](https://github.com/lumoit)|lovlan@student.chalmers.se|
 |      |      |     |        |      |
 |      |      |     |        |      |
 |      |      |     |        |      |
