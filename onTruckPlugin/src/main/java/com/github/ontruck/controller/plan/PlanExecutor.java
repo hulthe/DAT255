@@ -26,8 +26,16 @@ public class PlanExecutor extends Thread {
 	public void newPlan(Plan plan) {
 		synchronized (this.newPlanLock) {
 			this.newPlan = plan;
-			this.interrupt();
+			if(this.isAlive()) {
+				this.interrupt();
+			} else {
+				this.plan = this.newPlan;
+			}
 		}
+	}
+
+	public Plan getPlan() {
+		return plan;
 	}
 
 	/**
