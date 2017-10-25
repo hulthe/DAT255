@@ -114,6 +114,13 @@ public class Driver implements IDriver {
 	//This works by reading the last byte sent to the CAN and then sending a byte one step higher
 	@Override
 	public void increaseSpeed() {
+
+
+
+		//Send to CAN!
+		rawPower(calculateIncreaseSpeed(lastPowerValue));
+	}
+	public static byte calculateIncreaseSpeed(byte lastPowerValue){
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full speed then don't accelerate (keep at 100)
@@ -133,10 +140,7 @@ public class Driver implements IDriver {
 				}
 			}
 		}
-
-
-		//Send to CAN!
-		rawPower(newPowerValue);
+		return newPowerValue;
 	}
 
 	//This method calls the rawPower(byte) method to be able to decelerate the car
@@ -149,7 +153,7 @@ public class Driver implements IDriver {
 
 		rawPower(calculateDecreaseSpeed(lastPowerValue));
 	}
-	public byte calculateDecreaseSpeed(byte lastPowerValue){
+	public static byte calculateDecreaseSpeed(byte lastPowerValue){
 
 		byte newPowerValue = lastPowerValue;
 
@@ -177,10 +181,7 @@ public class Driver implements IDriver {
 					if (lastPowerValue > usefulPowerValue) {
 						newPowerValue = usefulPowerValue;
 						break;
-					}/* else if (lastPowerValue < -usefulPowerValue) {
-						newPowerValue = (byte) -usefulPowerValue;
-						break;
-					}*/
+					}
 				}
 			}
 		}
@@ -200,7 +201,7 @@ public class Driver implements IDriver {
 	}
 
 	//This is for testing purposes
-	public byte[] getUsefulPowerValues(){
+	public static byte[] getUsefulPowerValues(){
 		return usefulPowerValues.clone();
 	}
 
