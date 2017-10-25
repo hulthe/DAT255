@@ -29,12 +29,12 @@ Bellow you can find all artifacts related to the deliverables of the course.
  
 #### Code 
 The group have developed two code artifacts: 
-* onTruckPlugin; the java code running on the M.O.P.E.D 
+* [onTruckPlugin](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin); the java code running on the M.O.P.E.D 
   * Findbugs report 
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin/src/test/java/com/github/ontruck) 
   * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/design-rationale/moped-design-rationale.md) 
   * JavaDoc 
-* onTruckConnector; a android app that manuvers the M.O.P.E.D 
+* [onTruckConnector](https://github.com/hulthe/DAT255/tree/master/onTruckConnector); a android app that manuvers the M.O.P.E.D 
   * Findbugs report 
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckConnector/app/src/test/java/com/example/ontruckconnector) 
   * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/design-rationale/app-design-rationale.md) 
