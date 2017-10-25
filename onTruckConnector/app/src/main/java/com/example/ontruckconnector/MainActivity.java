@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 		if (isValidIP(ipInput.getText().toString())) {
 			newIP = ipInput.getText().toString();
 		}
-		if (!(newIP == null) || !newIP.equals("")) {
+		if (newIP != null && !newIP.equals("")) {
 			tcpConnection = new TCPConnection(newIP, PORT);
 		}
 	}
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 			newIP = ipInput.getText().toString();
 		}
 
-		if (!(newIP == null) || !newIP.equals("")) {
+		if (newIP != null && !newIP.equals("")) {
 			udpSender = createUDPSender(newIP, PORT);
 		}
 	}

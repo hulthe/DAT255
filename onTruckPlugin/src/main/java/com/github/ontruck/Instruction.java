@@ -18,24 +18,18 @@ class Instruction {
 	public Instruction(InstructionType type, Object value) throws IllegalArgumentException {
 		this.type = type;
 		switch (type) {
-			case Brake:
-				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Brake instruction must be Byte");
+			case Sleep:
+				if(!(value instanceof Long)) {
+					throw new IllegalArgumentException(String.format("Type of value for %s must be Long", type));
 				}
 				break;
 			case Drive:
-				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Drive instruction must be Byte");
-				}
-				break;
+			case Brake:
 			case Steer:
+			case IncreaseSpeed:
+			case DecreaseSpeed:
 				if(!(value instanceof Byte)) {
-					throw new IllegalArgumentException("Type of value for Steer instruction must be Byte");
-				}
-				break;
-			case Sleep:
-				if(!(value instanceof Long)) {
-					throw new IllegalArgumentException("Type of value for Sleep instruction must be Long");
+					throw new IllegalArgumentException(String.format("Type of value for %s must be Byte", type));
 				}
 				break;
 			default:
@@ -57,5 +51,12 @@ class Instruction {
 		Drive,
 		Steer,
 		Sleep,
+		IncreaseSpeed,
+		DecreaseSpeed
+	}
+
+	@Override
+	public String toString() {
+		return type.toString();
 	}
 }
