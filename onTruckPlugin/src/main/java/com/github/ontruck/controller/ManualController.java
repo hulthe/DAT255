@@ -16,7 +16,7 @@ public class ManualController {
 	}
 
 	/**
-	 * Process driver command
+	 * Process driver command. It chooses how to send along the payload to the driver.
  	 */
 	public void processEvent(byte type, byte payload, byte stateGroup) {
 		switch(type) {
