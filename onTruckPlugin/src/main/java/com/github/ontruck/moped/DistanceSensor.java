@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class DistanceSensor {
+public class DistanceSensor implements IDistanceSensor {
 
 	/**
 	 * The maximum size of the buffer.

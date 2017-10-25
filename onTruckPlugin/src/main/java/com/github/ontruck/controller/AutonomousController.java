@@ -3,12 +3,12 @@ package com.github.ontruck.controller;
 import com.github.ontruck.controller.plan.Instruction;
 import com.github.ontruck.controller.plan.Plan;
 import com.github.ontruck.controller.plan.PlanExecutor;
-import com.github.ontruck.states.filters.DistanceSensor;
+import com.github.ontruck.moped.IDistanceSensor;
 import com.github.ontruck.util.Tuple;
 
 public class AutonomousController extends Thread {
 
-	private final DistanceSensor sensor;
+	private final IDistanceSensor sensor;
 	private final PlanExecutor executor;
 
 	//TODO: here we need the distance to the object in front
@@ -19,7 +19,7 @@ public class AutonomousController extends Thread {
 	private long latestSensorTimeStamp = 0;
 	private boolean haveJumpedOneSensorBatch = false;
 
-	public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
+	public AutonomousController(IDistanceSensor sensor, PlanExecutor executor) {
 		this.sensor = sensor;
 		currentDistance = sensor.getLatestFilteredDistance().getY();
 		this.executor = executor;
