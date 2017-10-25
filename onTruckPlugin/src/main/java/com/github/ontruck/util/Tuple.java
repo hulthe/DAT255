@@ -28,4 +28,9 @@ public class Tuple<X, Y> {
 		}
 		return super.equals(o);
 	}
+
+	@Override
+	public int hashCode() {
+		return x.hashCode() + y.hashCode() * 11;
+	}
 }
