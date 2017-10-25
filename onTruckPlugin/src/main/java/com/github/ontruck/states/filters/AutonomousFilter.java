@@ -4,7 +4,9 @@ import com.github.ontruck.driver.IDriver;
 import com.github.ontruck.states.MopedState;
 import com.github.ontruck.states.StateFilter;
 
-
+/**
+ * Filters {@link com.github.ontruck.controller.AutonomousController} control signals based on state.
+ */
 public class AutonomousFilter extends StateFilter {
 
 	private final IDriver driver;

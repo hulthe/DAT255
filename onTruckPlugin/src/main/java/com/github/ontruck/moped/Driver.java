@@ -6,10 +6,11 @@ import com.github.ontruck.states.MopedState;
 
 import java.io.IOException;
 
+/**
+ * This class talks directly to the {@link CAN} interface.
+ */
 public class Driver implements IDriver {
-
-
-	protected static final byte MAX_POWER_VALUE = 100;
+	private static final byte MAX_POWER_VALUE = 100;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
@@ -19,7 +20,7 @@ public class Driver implements IDriver {
 	private byte lastPowerValue = 0;
 	private byte lastSteerValue = 0;
 
-	public Driver(CAN can) throws IOException {
+	public Driver(CAN can) {
 		this.can = can;
 
 	}
@@ -45,7 +46,7 @@ public class Driver implements IDriver {
 		return tmp;
 	}
 
-
+	@Override
 	public void power(byte payload) {
 		byte powerLevel = maxMinPayload(payload, MAX_POWER_VALUE, MAX_POWER_VALUE); // Over 9000?
 		// If different sign
@@ -75,6 +76,7 @@ public class Driver implements IDriver {
 		}
 	}
 
+	@Override
 	public void steer(byte payload) {
 		byte steerValue = maxMinPayload(payload, (byte)100, (byte)100);
 		if(steerValue != lastSteerValue) {
@@ -88,6 +90,7 @@ public class Driver implements IDriver {
 		}
 	}
 
+	@Override
 	public void brake(byte payload) {
 		int brakeValue = maxPayload(payload, MAX_POWER_VALUE);
 

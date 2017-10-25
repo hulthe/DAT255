@@ -6,6 +6,10 @@ import com.github.ontruck.controller.plan.PlanExecutor;
 import com.github.ontruck.states.filters.DistanceSensor;
 import com.github.ontruck.util.Tuple;
 
+/**
+ * This class is used for Adaptive Cruise Control,
+ * ergo maintaining driver speed, not exceeding the speed of an object in front of it.
+ */
 public class AutonomousController extends Thread {
 
 	private final DistanceSensor sensor;
@@ -19,6 +23,9 @@ public class AutonomousController extends Thread {
 	private long latestSensorTimeStamp = 0;
 	private boolean haveJumpedOneSensorBatch = false;
 
+	/**
+	 * @param sensor The data provider for the front distance sensor.
+	 */
 	public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
 		this.sensor = sensor;
 		currentDistance = sensor.getLatestFilteredDistance().getY();
@@ -28,7 +35,8 @@ public class AutonomousController extends Thread {
 	//Returns false if speed does not need to be altered, return true if speed has been altered.
 	private Plan generatePlan() {
 
-		// Accepted difference between current distance and goal distance (to prevent constant acceleration, this depends on the accuracy of the distance measurement)
+		// Accepted difference between current distance and goal distance (to prevent constant acceleration,
+		// this depends on the accuracy of the distance measurement)
 		int distanceMargin = 20;
 
 		//How much distance must have changed since last measurement for us to care

@@ -4,6 +4,9 @@ import com.github.ontruck.driver.IDriver;
 import com.github.ontruck.states.MopedState;
 import com.github.ontruck.states.StateFilter;
 
+/**
+ * Filters {@link com.github.ontruck.controller.DeadMansSwitch} control signals based on state.
+ */
 public class DMSFilter extends StateFilter {
 	private IDriver driver;
 

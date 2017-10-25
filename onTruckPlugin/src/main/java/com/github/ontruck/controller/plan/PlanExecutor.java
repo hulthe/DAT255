@@ -71,6 +71,10 @@ public class PlanExecutor extends Thread {
 		}
 	}
 
+	/**
+	 * Executes the given instruction as a command, most often sent to the driver.
+	 * @param instruction The given instruction.
+	 */
 	private void executeInstruction(Instruction instruction) {
 		switch (instruction.getType()) {
 			case Brake:
