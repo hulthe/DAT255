@@ -1,4 +1,4 @@
-package com.github.ontruck.states.filters;
+package com.github.ontruck.moped;
 
 import com.github.ontruck.util.Tuple;
 
