@@ -23,4 +23,4 @@ It would receive information from the main thread when a change event sent and h
 The `UDPSender` just continuously asks it for information.
 
 ## Concurrency
-(See **Concurrency** in [*MOPED design rationale*](https://github.com/hulthe/DAT255/blob/misc/design-rationale/doc/design-rationale/moped-design-rationale.md))
+(See **Concurrency > I/O** in [*MOPED design rationale*](https://github.com/hulthe/DAT255/blob/misc/design-rationale/doc/design-rationale/moped-design-rationale.md))
