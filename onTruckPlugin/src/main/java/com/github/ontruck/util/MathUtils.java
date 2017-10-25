@@ -15,6 +15,7 @@ public class MathUtils {
 		return (int)Math.round(IntStream.of(intValues).average().getAsDouble());
 	}
 
+	// Difference between Y value of first tuple and average of the rest
 	public static int getDiffFromAverage(Tuple<Long, Integer> val, Tuple<Long, Integer>... others) {
 		return Math.abs(val.getY() - average(others));
 	}
@@ -31,5 +32,30 @@ public class MathUtils {
 		}
 
 		return IntStream.of(weightedValues).sum() / IntStream.of(weights).sum();
+	}
+
+	public static Tuple<Long, Integer>[] removeMostDifferentValues(int count, Tuple<Long, Integer>... values) {
+		int mostDifferent = 0;
+		for (int i = 1; i < values.length; i++) {
+			if (getDiffFromAverage(values[i], values) > getDiffFromAverage(values[mostDifferent], values)) {
+				mostDifferent = i;
+			}
+		}
+
+		Tuple<Long, Integer>[] returning = new Tuple[values.length - 1];
+
+		int i2 = 0;
+		for (int i = 0; i < values.length; i++) {
+			if (i != mostDifferent) {
+				returning[i2] = values[i];
+				i2++;
+			}
+		}
+
+		if (count == 1) {
+			return returning;
+		} else {
+			return removeMostDifferentValues(count - 1, returning);
+		}
 	}
 }

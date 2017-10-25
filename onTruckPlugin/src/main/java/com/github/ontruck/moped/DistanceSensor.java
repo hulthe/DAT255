@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static com.github.ontruck.util.MathUtils.getDiffFromAverage;
+import static com.github.ontruck.util.MathUtils.removeMostDifferentValues;
 import static com.github.ontruck.util.MathUtils.weightedAverage;
 
 public class DistanceSensor implements IDistanceSensor {
@@ -38,31 +39,6 @@ public class DistanceSensor implements IDistanceSensor {
 			while (buffer.size() > maxBufferLength) {
 				buffer.remove(0);
 			}
-		}
-	}
-
-	private Tuple<Long, Integer>[] removeMostDifferentValues(int count, Tuple<Long, Integer>... values) {
-		int mostDifferent = 0;
-		for (int i = 1; i < values.length; i++) {
-			if (getDiffFromAverage(values[i], values) > getDiffFromAverage(values[mostDifferent], values)) {
-				mostDifferent = i;
-			}
-		}
-
-		Tuple<Long, Integer>[] returning = new Tuple[values.length - 1];
-
-		int i2 = 0;
-		for (int i = 0; i < values.length; i++) {
-			if (i != mostDifferent) {
-				returning[i2] = values[i];
-				i2++;
-			}
-		}
-
-		if (count == 1) {
-			return returning;
-		} else {
-			return removeMostDifferentValues(count - 1, returning);
 		}
 	}
 
