@@ -24,6 +24,7 @@ public class OnTruck implements Runnable {
 
 	private UDPConnection udpConnection;
 	private TCPConnection tcpConnection;
+	private CAN can;
 
 	private Driver driver;
 
@@ -32,76 +33,85 @@ public class OnTruck implements Runnable {
 	private ManualController manualController;
 	private DeadMansSwitch deadMansSwitch;
 
-	private SensorDataCollector sensorDataCollector;
 	private DistanceSensor distanceSensor;
+	private SensorDataCollector sensorDataCollector;
 
 	private AutonomousController autonomousController;
 	private PlanExecutor autonomousPlanExecutor;
 
+	private OnTruck() {
+		init();
+	}
 
-	public void init() {
-
-		// Use FilterManager to collectively set the state of every StateFilter
-		this.filterManager = new FilterManager(MopedState.Manual);
+	private void init() {
 
 		// Driver talks to the CAN-bus and drives the car.
 		try {
 			String canInterface = System.getenv("CAN_INTERFACE");
-			CAN can = new CAN(canInterface);
+			can = new CAN(canInterface);
 			driver = new Driver(can);
-			sensorDataCollector = new SensorDataCollector(can);
 		} catch (IOException e) {
 			e.printStackTrace();
 			exit(-1); // Exit application if socket couldn't create socket
 		}
 
-		{	// Set up filters & controllers
+		{ // Networking
+			// Create and setup new UDPConnection
+			try {
+				udpConnection = new UDPConnection(UDP_PORT);
+			} catch (SocketException e) {
+				System.err.printf("Could not open socket on port %d:%n%s%n", UDP_PORT, e.getMessage());
+				exit(-1); // Exit application if socket couldn't create socket
+			}
+
+			// Add data processors for state control
+			tcpConnection = new TCPConnection(TCP_PORT);
+		}
+
+
+
+		// Setup filter logic
+		{
+			// Create FilterManager
+			this.filterManager = new FilterManager(MopedState.Manual);
+
+			// Set up filters & controllers
 			/*
 				**************                       **********     **********
 				* Controller * --control commands--> * Filter * --> * Driver * --> CAN
 				**************                       **********     **********
 			 */
+
+			// Create and setup ManualController
 			ManualFilter manualFilter = new ManualFilter(driver);
 			manualController = new ManualController(manualFilter);
+			udpConnection.addDataProcessor(manualController::processEvent);
 			filterManager.addFilter(manualFilter);
 
+			// Create and setup DeadMansSwitch Controller
 			DMSFilter dmsFilter = new DMSFilter(driver);
 			deadMansSwitch = new DeadMansSwitch(dmsFilter);
+			udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
 			filterManager.addFilter(dmsFilter);
 
+			// Create and setup AutonomousFilter controller
 			AutonomousFilter autoFilter = new AutonomousFilter(driver);
 			autonomousPlanExecutor = new PlanExecutor(autoFilter);
+			autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
 			filterManager.addFilter(autoFilter);
 
+			// Use FilterManager to collectively set the state of every StateFilter
 			filterManager.setState(MopedState.Manual);
+			tcpConnection.addDataProcessor(filterManager::processStateEvent);
 		}
 
-		try {
-			// Create new socket
-			udpConnection = new UDPConnection(UDP_PORT);
-		} catch (SocketException e) {
-			System.err.printf("Could not open socket on port %d:%n%s%n", UDP_PORT, e.getMessage());
-			System.exit(-1); // Exit application if socket couldn't create socket
-		}
-
-		// Add data processors for drive control
-		udpConnection.addDataProcessor(manualController::processEvent);
-		udpConnection.addDataProcessor((a,b,c) -> deadMansSwitch.ping());
-
-		// Add data processors for state control
-		tcpConnection = new TCPConnection(TCP_PORT);
-		tcpConnection.addDataProcessor((m) -> deadMansSwitch.ping());
-		tcpConnection.addDataProcessor(filterManager::processStateEvent);
-
+		sensorDataCollector = new SensorDataCollector(can);
 		distanceSensor = new DistanceSensor();
 		sensorDataCollector.addDataProcessor(distanceSensor::process);
-
-		// create and start AI controller with executor
-		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
 	}
 
-	public void doFunction() throws InterruptedException{
-		// Random blocking call
+	private void startCLI() {
+		// Blocks the thread until the user enter some input
 		try {
 			System.out.printf("Press enter to quit.%n");
 			System.in.read();
@@ -144,18 +154,9 @@ public class OnTruck implements Runnable {
 
 	@Override
     public void run() {
-		init();
-
-		startThreads();
-
-		try {
-			doFunction();
-		} catch (InterruptedException e) {
-			System.out.println("**************** Interrupted.");
-			return;
-		}
-
-		exit(stopThreads());
+		startThreads(); // Starts up application
+		startCLI(); // Run the CLI
+		exit(stopThreads()); // Upon exiting the CLI, stop the application and exit
 	}
 
 	private void exit(int status) {

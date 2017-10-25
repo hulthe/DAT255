@@ -1,6 +1,5 @@
 package com.github.ontruck.network;
 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,7 +11,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
+/**
+ * This class opens an TCP socket and sends received messages to a set of {@link DataProcessor}s.
+ */
 public class TCPConnection extends Thread {
 
 	// Determines the end of a tcp message
@@ -28,6 +29,10 @@ public class TCPConnection extends Thread {
 
 	// Code to be executed with received message
 	private List<DataProcessor> dataProcessors = new LinkedList<>();
+
+	/**
+	 * This interface holds a process method to be called when the TCPConnection receives a message.
+	 */
 	public interface DataProcessor {
 		void process(String message);
 	}
@@ -121,7 +126,7 @@ public class TCPConnection extends Thread {
 			}
 		}
 
-		// Traverse dataprocessors
+		// Traverse data processors
 		private void process(String message) {
 			for(DataProcessor processor: dataProcessors) {
 				processor.process(message);
@@ -191,6 +196,10 @@ public class TCPConnection extends Thread {
 		super.interrupt();
 	}
 
+	/**
+	 * Send a message over the TCP connection
+	 * @param message The raw message to be sent
+	 */
 	public void send(String message) {
 		try {
 			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes("UTF-8"));
@@ -200,12 +209,20 @@ public class TCPConnection extends Thread {
 		}
 	}
 
-	public void addDataProcessor(DataProcessor processor) {
-		dataProcessors.add(processor);
+	/**
+	 * Add a {@link DataProcessor} to be called when a network message is received.
+	 * @param processor
+	 * @return Was the operation successful?
+	 */
+	public boolean addDataProcessor(DataProcessor processor) {
+		return dataProcessors.add(processor);
 	}
 
+	/**
+	 * Remove a {@link DataProcessor}.
+	 * @param processor
+	 */
 	public void removeDataProcessor(DataProcessor processor) {
 		dataProcessors.remove(processor);
 	}
-
 }

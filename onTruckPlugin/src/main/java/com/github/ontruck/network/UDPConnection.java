@@ -9,8 +9,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class opens an UDP socket and parses/sends received messages to a set of {@link DataProcessor}s.
+ */
 public class UDPConnection extends Thread {
-	public 	static final byte POWER_OP_CODE = 0x50;
+	public static final byte POWER_OP_CODE = 0x50;
 	public static final byte STEER_OP_CODE = 0x53;
 	public static final byte BRAKE_OP_CODE = 0x42;
 
@@ -21,6 +24,9 @@ public class UDPConnection extends Thread {
 	private final DatagramSocket socket;
 	private final DatagramPacket packet= new DatagramPacket(message, message.length);
 
+	/**
+	 * This interface holds a process method to be called when the UDPConnection receives a message.
+	 */
 	public interface DataProcessor{
 		void process(byte type, byte payload, byte stateGroup);
 	}
@@ -30,10 +36,23 @@ public class UDPConnection extends Thread {
 		this.setDaemon(true); // Make sure thread closes when application does.
 	}
 
+	/**
+	 * Add a {@link DataProcessor} to be called when a network message is received.
+	 * @param processor
+	 * @return Was the operation successful?
+	 */
 	public boolean addDataProcessor(DataProcessor processor){
 		synchronized (dataProcessors) {
 			return dataProcessors.add(processor);
 		}
+	}
+
+	/**
+	 * Remove a {@link DataProcessor}.
+	 * @param processor
+	 */
+	public void removeDataProcessor(DataProcessor processor) {
+		dataProcessors.remove(processor);
 	}
 
 	public void run() {

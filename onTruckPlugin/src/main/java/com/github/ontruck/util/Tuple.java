@@ -1,5 +1,8 @@
 package com.github.ontruck.util;
 
+/**
+ * Holds two connected values.
+ */
 public class Tuple<X, Y> {
 	private final X x;
 	private final Y y;

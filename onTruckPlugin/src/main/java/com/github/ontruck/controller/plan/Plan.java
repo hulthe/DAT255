@@ -18,6 +18,11 @@ public class Plan implements Cloneable {
 		this.instructions = new LinkedList<>(Arrays.asList(instructions));
 	}
 
+	/**
+	 * Add an {@link Instruction} to the Plan instruction queue
+	 * @param instruction The given instruction.
+	 * @throws IllegalStateException Exception is thrown if this method is called after {@link Plan#poll()} has been called.
+	 */
 	public void add(Instruction instruction) throws IllegalStateException {
 		if(!isExecuting) {
 			synchronized (isExecutingLock) {
@@ -30,6 +35,11 @@ public class Plan implements Cloneable {
 		throw new IllegalStateException("Instructions cannot be added to Plan after execution has begun.");
 	}
 
+	/**
+	 * Extract and removes the first {@link Instruction} from the Plan queue.
+	 * <p>This puts a lock on {@link Plan#add(Instruction)} so that no more {@link Instruction}:s can be added
+	 * @return The first {@link Instruction}
+	 */
 	public Instruction poll() {
 		if (!isExecuting) {
 			synchronized (isExecutingLock) {

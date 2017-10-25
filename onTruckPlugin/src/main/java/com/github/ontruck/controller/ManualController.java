@@ -4,6 +4,9 @@ import com.github.ontruck.driver.IDriver;
 import com.github.ontruck.network.UDPConnection;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+/**
+ * Passes commands from a data source (e.g. {@link UDPConnection}) to an {@link IDriver}.
+ */
 public class ManualController {
 
 	private final IDriver driver;
@@ -12,7 +15,9 @@ public class ManualController {
 		this.driver = driver;
 	}
 
-	// Process UDP Event
+	/**
+	 * Process driver command
+ 	 */
 	public void processEvent(byte type, byte payload, byte stateGroup) {
 		switch(type) {
 			case UDPConnection.POWER_OP_CODE:

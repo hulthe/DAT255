@@ -46,6 +46,9 @@ public class Instruction {
 		return value;
 	}
 
+	/**
+	 * Defines the types of instructions available to be executed by a {@link PlanExecutor}
+	 */
 	public enum InstructionType {
 		Brake,
 		Drive,
