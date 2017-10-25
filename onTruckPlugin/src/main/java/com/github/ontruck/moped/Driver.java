@@ -120,15 +120,12 @@ public class Driver implements IDriver {
 		if (lastPowerValue >= MAX_POWER_VALUE) {
 			newPowerValue = MAX_POWER_VALUE;
 		} else {
-
-
 			//Loop through the list of useful power values
 			for (byte usefulPowerValue : usefulPowerValues) {
 
 				//If the next useful power value is reached then stop the loop and use that value
 				if (lastPowerValue < usefulPowerValue) {
 					newPowerValue = usefulPowerValue;
-
 					break;
 				} else if (lastPowerValue < usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
@@ -146,6 +143,14 @@ public class Driver implements IDriver {
 	//This works by reading the last byte sent to the CAN and then sending a byte one step lower
 	@Override
 	public void decreaseSpeed() {
+
+
+		//Send to CAN!
+
+		rawPower(calculateDecreaseSpeed(lastPowerValue));
+	}
+	public byte calculateDecreaseSpeed(byte lastPowerValue){
+
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full reverse speed then don't accelerate (keep at -100)
@@ -154,7 +159,7 @@ public class Driver implements IDriver {
 		} else {
 
 			//Loop through the list of useful power values
-			for (int i = usefulPowerValues.length-1; i > 0; i--) {
+			for (int i = usefulPowerValues.length-1; i >= 0; i--) {
 
 				byte usefulPowerValue = usefulPowerValues[i];
 
@@ -169,8 +174,8 @@ public class Driver implements IDriver {
 			}
 		}
 
-		//Send to CAN!
-		rawPower(newPowerValue);
+
+		return newPowerValue;
 	}
 
 	@Override

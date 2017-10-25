@@ -34,14 +34,14 @@ public class DriverTest {
 				lastPL = newPL;
 			}
 
-			for(int i = usefulPVs.length; i<(-1*(usefulPVs.length+1)*2) ;i--){
-				driver.decreaseSpeed();
+			for(int i = usefulPVs.length-1; i>0 ;i--){
+				//driver.calculateDecreaseSpeed(lastPL);
 
-				newPL = driver.getLastPowerValue();
+				newPL = driver.calculateDecreaseSpeed(lastPL);
 
 				assertTrue(String.format("new PL [%d] exists in byte array (2)", newPL),
 						existsInByteArray(newPL, usefulPVs));
-				assertTrue("new PL, after increaseSpeed(), becomes lesser",
+				assertTrue("new PL, after decreaseSpeed(), becomes lesser",
 						(lastPL > newPL) || newPL == -100);
 
 				lastPL = newPL;
