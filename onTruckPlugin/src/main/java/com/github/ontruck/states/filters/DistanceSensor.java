@@ -1,4 +1,6 @@
-package com.github.ontruck;
+package com.github.ontruck.states.filters;
+
+import com.github.ontruck.util.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +11,7 @@ public class DistanceSensor {
 	/**
 	 * The maximum size of the buffer.
 	 */
-	private final int maxBufferLength = 64;
+	private static final int maxBufferLength = 64;
 
 	/**
 	 * The buffer that holds the latest sensor data.

@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.moped;
 
 import com.github.moped.jcan.CAN;
 

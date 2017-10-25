@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.controller.plan;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -6,7 +6,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * This class defines an instruction to be executed by a PlanExecutor.
  */
 
-class Instruction {
+public class Instruction {
 	private final InstructionType type;
 	private final Object value;
 
@@ -46,7 +46,7 @@ class Instruction {
 		return value;
 	}
 
-	enum InstructionType {
+	public enum InstructionType {
 		Brake,
 		Drive,
 		Steer,

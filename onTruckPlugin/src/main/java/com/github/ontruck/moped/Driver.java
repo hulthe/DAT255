@@ -1,21 +1,20 @@
-package com.github.ontruck;
+package com.github.ontruck.moped;
 
 import com.github.moped.jcan.CAN;
+import com.github.ontruck.driver.IDriver;
+import com.github.ontruck.states.MopedState;
 
 import java.io.IOException;
 
 public class Driver implements IDriver {
 
-	protected static final byte STEER_OP_CODE = 0x53;
-	protected static final byte POWER_OP_CODE = 0x50;
-	protected static final byte BRAKE_OP_CODE = 0x42;
+
 	protected static final byte MAX_POWER_VALUE = 100;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
 	};
 
-	private MopedState state = MopedState.Manual;
 	private CAN can;
 	private byte lastPowerValue = 0;
 	private byte lastSteerValue = 0;
@@ -96,9 +95,9 @@ public class Driver implements IDriver {
 			// Engine will break if engine is set to the opposite direction it was driving.
 			// Therefore, if we are driving forward, we need to set the engine in reverse.
 			brakeValue = -brakeValue;
-		} else if(lastPowerValue < 0){
+		//} else if(lastPowerValue < 0){
 			// The break value is positive, which is what we want.
-		} else {
+		//} else {
 			// TODO: needs testing
 		}
 
@@ -186,7 +185,7 @@ public class Driver implements IDriver {
 
 	//This is for testing purposes
 	public byte[] getUsefulPowerValues(){
-		return usefulPowerValues;
+		return usefulPowerValues.clone();
 	}
 
 	private byte getAppropriatePowerLevel(byte powerLevel) {

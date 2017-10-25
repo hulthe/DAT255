@@ -1,10 +1,17 @@
 package com.github.ontruck;
 
 import com.github.moped.jcan.CAN;
-import com.github.ontruck.filters.AutonomousFilter;
-import com.github.ontruck.filters.DMSFilter;
-import com.github.ontruck.filters.FilterManager;
-import com.github.ontruck.filters.ManualFilter;
+import com.github.ontruck.controller.AutonomousController;
+import com.github.ontruck.controller.DeadMansSwitch;
+import com.github.ontruck.controller.ManualController;
+import com.github.ontruck.controller.plan.PlanExecutor;
+import com.github.ontruck.moped.Driver;
+import com.github.ontruck.moped.SensorDataCollector;
+import com.github.ontruck.network.TCPConnection;
+import com.github.ontruck.network.UDPConnection;
+import com.github.ontruck.states.FilterManager;
+import com.github.ontruck.states.MopedState;
+import com.github.ontruck.states.filters.*;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -45,7 +52,7 @@ public class OnTruck implements Runnable {
 			sensorDataCollector = new SensorDataCollector(can);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1); // Exit application if socket couldn't create socket
+			exit(-1); // Exit application if socket couldn't create socket
 		}
 
 		{	// Set up filters & controllers
@@ -73,7 +80,7 @@ public class OnTruck implements Runnable {
 			// Create new socket
 			udpConnection = new UDPConnection(UDP_PORT);
 		} catch (SocketException e) {
-			System.err.printf("Could not open socket on port %d:\n%s\n", UDP_PORT, e.getMessage());
+			System.err.printf("Could not open socket on port %d:%n%s%n", UDP_PORT, e.getMessage());
 			System.exit(-1); // Exit application if socket couldn't create socket
 		}
 
@@ -88,34 +95,58 @@ public class OnTruck implements Runnable {
 
 		distanceSensor = new DistanceSensor();
 		sensorDataCollector.addDataProcessor(distanceSensor::process);
-		sensorDataCollector.start();
 
 		// create and start AI controller with executor
-		autonomousPlanExecutor.start();
 		autonomousController = new AutonomousController(distanceSensor, autonomousPlanExecutor);
-		autonomousController.start();
-
-		deadMansSwitch.start();
 	}
 
 	public void doFunction() throws InterruptedException{
 		// Random blocking call
 		try {
-			System.out.printf("Press enter to quit.\n");
+			System.out.printf("Press enter to quit.%n");
 			System.in.read();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void startThreads() {
+		udpConnection.start();
+		tcpConnection.start();
+		deadMansSwitch.start();
+
+		sensorDataCollector.start();
+		autonomousPlanExecutor.start();
+		autonomousController.start();
+	}
+
+	private int stopThreads() {
+		udpConnection.interrupt();
+		tcpConnection.interrupt();
+		deadMansSwitch.interrupt();
+		sensorDataCollector.interrupt();
+		autonomousPlanExecutor.interrupt();
+		autonomousController.interrupt();
+
+		try {
+			udpConnection.join();
+			//tcpConnection.join();
+			deadMansSwitch.join();
+			sensorDataCollector.join();
+			autonomousPlanExecutor.join();
+			autonomousController.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
+
 	@Override
     public void run() {
 		init();
 
-		// Start threads
-		udpConnection.start();
-		//deadMansSwitch.start();
-		tcpConnection.start();
+		startThreads();
 
 		try {
 			doFunction();
@@ -123,6 +154,16 @@ public class OnTruck implements Runnable {
 			System.out.println("**************** Interrupted.");
 			return;
 		}
+
+		exit(stopThreads());
 	}
 
+	private void exit(int status) {
+		System.exit(status);
+	}
+
+	public static void main(String[] args) {
+		OnTruck onTruck = new OnTruck();
+		onTruck.run();
+	}
 }

@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.network;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,6 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UDPConnection extends Thread {
+	public 	static final byte POWER_OP_CODE = 0x50;
+	public static final byte STEER_OP_CODE = 0x53;
+	public static final byte BRAKE_OP_CODE = 0x42;
+
 	private final List<DataProcessor> dataProcessors = new LinkedList<DataProcessor>();
 
 	private final byte[] message = new byte[7];
@@ -42,10 +46,10 @@ public class UDPConnection extends Thread {
 				// Clear buffer
 				for(int i = 0; i < message.length; i++) { message[i] = 0; }
 			}catch (IOException ex){
-				System.err.printf("Error while reading from socket: %s \n", ex.getMessage());
+				System.err.printf("Error while reading from socket: %s%n", ex.getMessage());
 			}
 		}
-		System.out.printf("UDP thread closed\n");
+		System.out.printf("UDP thread closed%n");
 	}
 
 	private void process(byte[] data) {
@@ -82,7 +86,7 @@ public class UDPConnection extends Thread {
 			return new byte[] {checksum[0], checksum[1]};
 		} catch (NoSuchAlgorithmException e){
 			e.printStackTrace();
-			return null;
+			return new byte[0];
 		}
 	}
 

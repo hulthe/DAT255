@@ -1,6 +1,5 @@
-package com.github.ontruck.filters;
+package com.github.ontruck.states;
 
-import com.github.ontruck.MopedState;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -26,6 +25,10 @@ public class FilterManager {
 		for (StateFilter filter : filters) {
 			filter.setState(state);
 		}
+	}
+
+	public MopedState getState() {
+		return state;
 	}
 
 	/**
@@ -67,7 +70,7 @@ public class FilterManager {
 		return this.filters.add(filter);
 	}
 
-	private boolean removeFilter(StateFilter filter) {
+	public boolean removeFilter(StateFilter filter) {
 		return filters.remove(filter);
 	}
 }

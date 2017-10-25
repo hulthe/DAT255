@@ -1,5 +1,6 @@
-package com.github.ontruck;
+package com.github.ontruck.moped;
 
+import com.github.ontruck.moped.Driver;
 import org.junit.Test;
 
 import java.io.IOException;

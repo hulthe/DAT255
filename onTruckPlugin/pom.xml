@@ -36,7 +36,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.github.ontruck.Main</mainClass>
+							<mainClass>com.github.ontruck.OnTruck</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -76,7 +76,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.github.ontruck.Main</mainClass>
+							<mainClass>com.github.ontruck.OnTruck</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

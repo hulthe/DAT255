@@ -1,9 +1,10 @@
-package com.github.ontruck;
+package com.github.ontruck.network;
 
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -18,11 +19,12 @@ public class TCPConnection extends Thread {
 	private static final char TERMINATOR = 0x04; // Default ASCI terminator
 
 	private final int PORT;           //the port is set in the constructor
-	private final int TIMEOUT = 1000; //this is in ms and is the delay between pings
-	private boolean isConnected = false;
+	private static final int TIMEOUT = 1000; //this is in ms and is the delay between pings
 
 	private OutputWorker outputWorker = null;
 	private InputWorker inputWorker = null;
+
+	private Socket socket = null;
 
 	// Code to be executed with received message
 	private List<DataProcessor> dataProcessors = new LinkedList<>();
@@ -31,10 +33,11 @@ public class TCPConnection extends Thread {
 	}
 
 	// Sends messages
-	private class OutputWorker extends Thread {
+	private static class OutputWorker extends Thread {
 
 		private DataOutputStream stream;
 		private Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
+		private boolean hasNewMessage = false;
 
 		OutputWorker(DataOutputStream stream){
 			this.stream = stream;
@@ -60,10 +63,12 @@ public class TCPConnection extends Thread {
 				try {
 					Thread.sleep(9000);
 				} catch (InterruptedException e) {
-						if (unsent() == 0 ) {
+					synchronized (stream) {
+						if (!hasNewMessage) {
 							break;
 						}
-					// Carry on
+						hasNewMessage = false;
+					}
 				}
 			}
 		}
@@ -73,6 +78,7 @@ public class TCPConnection extends Thread {
 
 			// Stop sleep
 			synchronized (stream) {
+				hasNewMessage = true;
 				interrupt();
 			}
 		}
@@ -95,7 +101,7 @@ public class TCPConnection extends Thread {
 		@Override
 		public void run(){
 			StringBuilder message = new StringBuilder();
-			while (true){ // Read all the time
+			while (!isInterrupted()){ // Read until interrupted
 				try {
 					byte b = stream.readByte(); // Read next byte
 					if (b == TERMINATOR){ // When terminator byte is reached
@@ -112,7 +118,6 @@ public class TCPConnection extends Thread {
 				}catch (IOException e){
 					break;
 				}
-
 			}
 		}
 
@@ -131,8 +136,6 @@ public class TCPConnection extends Thread {
 
 	@Override
 	public void run() {
-		Socket socket = null;
-
 		//If we get a connection related exception -> try connecting again
 		while (!isInterrupted()) { // Run until interrupted
 			try {
@@ -142,37 +145,59 @@ public class TCPConnection extends Thread {
 
 				System.out.println("TCP connection established");
 
-				isConnected = true;
-
 				outputWorker = new OutputWorker(new DataOutputStream(socket.getOutputStream()));
 				inputWorker = new InputWorker(new DataInputStream(socket.getInputStream()));
 
 				outputWorker.start();
 				inputWorker.run(); // Blocking call
 
+
 			} catch (IOException e) {
 				// Connection dropped (stuff in here will be spammed)
 			} finally {
 
 				//Close socket since it wont have been if an exception was thrown
-				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				closeSocket();
 
 				socket = null;
-				isConnected = false;
 				inputWorker = null;
 				outputWorker = null;
 			}
 		}
+
+
+		outputWorker.interrupt();
+		try {
+			outputWorker.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void closeSocket() {
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			socket = null;
+		}
+	}
+
+	@Override
+	public void interrupt() {
+		closeSocket();
+		super.interrupt();
 	}
 
 	public void send(String message) {
-		outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes());
+		try {
+			outputWorker.send(message.concat(Character.toString(TERMINATOR)).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("Unsupported character set: \"UTF-8\"");
+			e.printStackTrace();
+		}
 	}
 
 	public void addDataProcessor(DataProcessor processor) {

@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.driver;
 
 public interface IDriver {
 	void power(byte value);

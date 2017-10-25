@@ -1,4 +1,4 @@
-package com.github.ontruck;
+package com.github.ontruck.controller.plan;
 
 import java.util.*;
 
@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class Plan implements Cloneable {
 	private final Queue<Instruction> instructions;
+	private final Object isExecutingLock = new Object();
 	private Boolean isExecuting = false;
 
 	public Plan() {
@@ -19,7 +20,7 @@ public class Plan implements Cloneable {
 
 	public void add(Instruction instruction) throws IllegalStateException {
 		if(!isExecuting) {
-			synchronized (isExecuting) {
+			synchronized (isExecutingLock) {
 				if (!isExecuting) {
 					instructions.add(instruction);
 					return;
@@ -31,7 +32,7 @@ public class Plan implements Cloneable {
 
 	public Instruction poll() {
 		if (!isExecuting) {
-			synchronized (isExecuting) {
+			synchronized (isExecutingLock) {
 				isExecuting = true;
 			}
 		}

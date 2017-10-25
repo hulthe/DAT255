@@ -1,7 +1,8 @@
-package com.github.ontruck.filters;
+package com.github.ontruck.states.filters;
 
-import com.github.ontruck.IDriver;
-import com.github.ontruck.MopedState;
+import com.github.ontruck.driver.IDriver;
+import com.github.ontruck.states.MopedState;
+import com.github.ontruck.states.StateFilter;
 
 
 public class ManualFilter extends StateFilter {
