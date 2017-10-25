@@ -7,7 +7,7 @@
 |Joakim Hulthe|tux|hulthe|[hulthe](https://github.com/hulthe)|hulthe@student.chalmers.se|
 |William Levén|Gurgy|levenw|[Gurgy](https://github.com/Gurgy)|levenw@student.chalmers.se|
 |Lovisa Landgren|Lumo|lovlan|[LumoIT](https://github.com/lumoit)|lovlan@student.chalmers.se|
-|      |      |     |        |      |
+|Kevin Rudnick|Kaj|rudnick|[96kevrud](https://github.com/96kevrud)|rudnick@student.chalmers.se|
 |      |      |     |        |      |
 |      |      |     |        |      |
 |Emil Josefsson|silver|emiljos|[josefssonemil](https://github.com/josefssonemil)|emiljos@student.chalmers.se|
