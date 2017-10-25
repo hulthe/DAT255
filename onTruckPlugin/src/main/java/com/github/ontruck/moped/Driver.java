@@ -158,18 +158,29 @@ public class Driver implements IDriver {
 			newPowerValue = -MAX_POWER_VALUE;
 		} else {
 
-			//Loop through the list of useful power values
-			for (int i = usefulPowerValues.length-1; i >= 0; i--) {
 
-				byte usefulPowerValue = usefulPowerValues[i];
 
-				//If the next useful power value is reached then stop the loop and use that value
-				if (lastPowerValue > usefulPowerValue) {
-					newPowerValue = usefulPowerValue;
-					break;
-				} else if (lastPowerValue < -usefulPowerValue) {
-					newPowerValue = (byte)-usefulPowerValue;
-					break;
+			if (lastPowerValue<=0){
+				for (byte usefulPowerValue:usefulPowerValues){
+					if (lastPowerValue>-usefulPowerValue){
+						newPowerValue= (byte) -usefulPowerValue;
+						break;
+					}
+				}
+			}else {
+				//Loop through the list of useful power values
+				for (int i = usefulPowerValues.length - 1; i >= 0; i--) {
+
+					byte usefulPowerValue = usefulPowerValues[i];
+
+					//If the next useful power value is reached then stop the loop and use that value
+					if (lastPowerValue > usefulPowerValue) {
+						newPowerValue = usefulPowerValue;
+						break;
+					}/* else if (lastPowerValue < -usefulPowerValue) {
+						newPowerValue = (byte) -usefulPowerValue;
+						break;
+					}*/
 				}
 			}
 		}

@@ -34,7 +34,7 @@ public class DriverTest {
 				lastPL = newPL;
 			}
 
-			for(int i = usefulPVs.length-1; i>0 ;i--){
+			for(int i = (usefulPVs.length-1)*2; i>0 ;i--){
 				//driver.calculateDecreaseSpeed(lastPL);
 
 				newPL = driver.calculateDecreaseSpeed(lastPL);
