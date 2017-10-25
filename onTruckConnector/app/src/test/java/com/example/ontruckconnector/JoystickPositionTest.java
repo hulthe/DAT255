@@ -1,7 +1,9 @@
 package com.example.ontruckconnector;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * This is a testing class for testing the logic inside JoystickPosition
@@ -14,8 +16,8 @@ public class JoystickPositionTest {
 	@Test
 	public void testConstructor(){
 		JoystickPosition joystickPosition = new JoystickPosition();
-		assertTrue("joystickPosition.x == 0 after construction", joystickPosition.getX() == 0);
-		assertTrue("joystickPosition.y == 0 after construction", joystickPosition.getY() == 0);
+		assertEquals("joystickPosition.x == 0 after construction", joystickPosition.getX(), 0);
+		assertEquals("joystickPosition.y == 0 after construction", joystickPosition.getY(), 0);
 	}
 
 	/**
@@ -45,7 +47,8 @@ public class JoystickPositionTest {
 		int strength = 100;
 		for(int angle=0; angle<400; angle++){
 			joystickPosition.onUpdate(angle, strength);
-			assertTrue("Values: X:"+joystickPosition.getX()+" || Y:"+joystickPosition.getY(),joystickPosition.getX() == 100 || joystickPosition.getX() == -100 ||
+			assertTrue("Values: X:"+joystickPosition.getX()+" || Y:"+joystickPosition.getY(),
+					joystickPosition.getX() == 100 || joystickPosition.getX() == -100 ||
 					joystickPosition.getY() == 100 ||joystickPosition.getY() == -100);
 
 		}
@@ -60,20 +63,20 @@ public class JoystickPositionTest {
 		JoystickPosition joystickPosition = new JoystickPosition();
 
 		joystickPosition.onUpdate(45, 100);
-		assertTrue("TopRight - X = Y", joystickPosition.getX() == joystickPosition.getY());
-		assertTrue("TopRight - X = 100", joystickPosition.getX() == 100);
+		assertEquals("TopRight - X = Y", joystickPosition.getX(), joystickPosition.getY());
+		assertEquals("TopRight - X = 100", joystickPosition.getX(), 100);
 
 		joystickPosition.onUpdate(135, 100);
-		assertTrue("TopLeft - X = -Y", joystickPosition.getX() == -1 * joystickPosition.getY());
-		assertTrue("TopLeft - X = -100", joystickPosition.getX() == -100);
+		assertEquals("TopLeft - X = -Y", joystickPosition.getX(), -1 * joystickPosition.getY());
+		assertEquals("TopLeft - X = -100", joystickPosition.getX(), -100);
 
 		joystickPosition.onUpdate(225, 100);
-		assertTrue("BotLeft - X = Y", joystickPosition.getX() == joystickPosition.getY());
-		assertTrue("BotLeft - X = -100", joystickPosition.getX() == -100);
+		assertEquals("BotLeft - X = Y", joystickPosition.getX(), joystickPosition.getY());
+		assertEquals("BotLeft - X = -100", joystickPosition.getX(), -100);
 
 		joystickPosition.onUpdate(315, 100);
-		assertTrue("BotRIght - X = -Y", joystickPosition.getX() == -1 * joystickPosition.getY());
-		assertTrue("BotRight - X = 100", joystickPosition.getX() == 100);
+		assertEquals("BotRIght - X = -Y", joystickPosition.getX(), -1 * joystickPosition.getY());
+		assertEquals("BotRight - X = 100", joystickPosition.getX(), 100);
 	}
 
 	/**
