@@ -5,7 +5,9 @@ import com.github.ontruck.controller.AutonomousController;
 import com.github.ontruck.controller.DeadMansSwitch;
 import com.github.ontruck.controller.ManualController;
 import com.github.ontruck.controller.plan.PlanExecutor;
+import com.github.ontruck.moped.DistanceSensor;
 import com.github.ontruck.moped.Driver;
+import com.github.ontruck.moped.IDistanceSensor;
 import com.github.ontruck.moped.SensorDataCollector;
 import com.github.ontruck.network.TCPConnection;
 import com.github.ontruck.network.UDPConnection;
@@ -33,8 +35,8 @@ public class OnTruck implements Runnable {
 	private ManualController manualController;
 	private DeadMansSwitch deadMansSwitch;
 
-	private DistanceSensor distanceSensor;
 	private SensorDataCollector sensorDataCollector;
+	private IDistanceSensor distanceSensor;
 
 	private AutonomousController autonomousController;
 	private PlanExecutor autonomousPlanExecutor;

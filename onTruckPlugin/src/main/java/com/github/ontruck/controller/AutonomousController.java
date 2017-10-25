@@ -3,7 +3,7 @@ package com.github.ontruck.controller;
 import com.github.ontruck.controller.plan.Instruction;
 import com.github.ontruck.controller.plan.Plan;
 import com.github.ontruck.controller.plan.PlanExecutor;
-import com.github.ontruck.states.filters.DistanceSensor;
+import com.github.ontruck.moped.IDistanceSensor;
 import com.github.ontruck.util.Tuple;
 
 /**
@@ -12,12 +12,12 @@ import com.github.ontruck.util.Tuple;
  */
 public class AutonomousController extends Thread {
 
-	private final DistanceSensor sensor;
+	private final IDistanceSensor sensor;
 	private final PlanExecutor executor;
 
 	//TODO: here we need the distance to the object in front
 	private int currentDistance;
-	private static final int GOAL_DISTANCE = 40;
+	public static final int GOAL_DISTANCE = 40;
 	private static final byte MAX_POWER = 20;
 	private static final long loopDelay = 10;
 	private long latestSensorTimeStamp = 0;
@@ -26,7 +26,7 @@ public class AutonomousController extends Thread {
 	/**
 	 * @param sensor The data provider for the front distance sensor.
 	 */
-	public AutonomousController(DistanceSensor sensor, PlanExecutor executor) {
+	public AutonomousController(IDistanceSensor sensor, PlanExecutor executor) {
 		this.sensor = sensor;
 		currentDistance = sensor.getLatestFilteredDistance().getY();
 		this.executor = executor;
@@ -48,14 +48,14 @@ public class AutonomousController extends Thread {
 
 		//current distance may never be smaller than goal distance, but it can be greater to the margin.
 		if (currentDistance >= GOAL_DISTANCE && currentDistance < GOAL_DISTANCE + distanceMargin) {
-			if (relativeVelocity < -relativeVelocityLimit) { //If distance was just decreased a lot, decrease speed
+			if (relativeVelocity > relativeVelocityLimit) { //If distance was just decreased a lot, decrease speed
 				return new Plan(
 						new Instruction(
 								Instruction.InstructionType.DecreaseSpeed,
 								MAX_POWER
 						)
 				);
-			} else if (relativeVelocity > relativeVelocityLimit) { //If distance was just increased a lot, increase speed
+			} else if (relativeVelocity < -relativeVelocityLimit) { //If distance was just increased a lot, increase speed
 				return new Plan(
 						new Instruction(
 								Instruction.InstructionType.IncreaseSpeed,
@@ -67,8 +67,8 @@ public class AutonomousController extends Thread {
 			}
 			//currentDistance is greater than GOAL_DISTANCE
 		} else if (currentDistance > GOAL_DISTANCE + distanceMargin) {
-			//If difference is significantly negative, we do not need to accelerate more
-			if (relativeVelocity < -relativeVelocityLimit) {
+			// If difference is significantly negative, we do not need to accelerate more
+			if (relativeVelocity > relativeVelocityLimit) {
 				return new Plan();
 			} else {
 				return new Plan(
@@ -79,7 +79,7 @@ public class AutonomousController extends Thread {
 				);
 			}
 		} else if (currentDistance < GOAL_DISTANCE) { //currentDistance is smaller than GOAL_DISTANCE
-			if (relativeVelocity > relativeVelocityLimit) {
+			if (relativeVelocity < -relativeVelocityLimit) {
 				return new Plan();
 			} else {
 				return new Plan(
@@ -127,24 +127,29 @@ public class AutonomousController extends Thread {
 				this.interrupt();
 			}
 
-			Tuple<Long, Integer> latestSensorRead = sensor.getLatestFilteredDistance();
-			if(latestSensorRead.getX() != latestSensorTimeStamp) {
-				if(haveJumpedOneSensorBatch) {
-					currentDistance = latestSensorRead.getY();
+			makePlan();
+		}
+	}
+
+	//Creates a plan according to sensor data
+	void makePlan() {
+		Tuple<Long, Integer> latestSensorRead = sensor.getLatestFilteredDistance();
+		if(latestSensorRead.getX() != latestSensorTimeStamp) {
+			if(haveJumpedOneSensorBatch) {
+				currentDistance = latestSensorRead.getY();
 
 
-					Plan plan = generatePlan();
-					//System.out.printf(" d: [%4d] rd: [%4d] ", currentDistance, sensor.getLatestRawDistance().getY());
-					//System.out.printf("%s%n", plan.toString());
-					executor.newPlan(plan);
+				Plan plan = generatePlan();
+				//System.out.printf(" d: [%4d] rd: [%4d] ", currentDistance, sensor.getLatestRawDistance().getY());
+				//System.out.printf("%s%n", plan.toString());
+				executor.newPlan(plan);
 
-					haveJumpedOneSensorBatch = false;
-				} else {
-					haveJumpedOneSensorBatch = true;
-				}
-
-				latestSensorTimeStamp = latestSensorRead.getX();
+				haveJumpedOneSensorBatch = false;
+			} else {
+				haveJumpedOneSensorBatch = true;
 			}
+
+			latestSensorTimeStamp = latestSensorRead.getX();
 		}
 	}
 }
