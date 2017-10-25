@@ -16,4 +16,13 @@ public class Tuple<X, Y> {
 	public Y getY() {
 		return y;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof Tuple) {
+			Tuple other = (Tuple)o;
+			return x.equals(other.x) && y.equals(other.y);
+		}
+		return super.equals(o);
+	}
 }
