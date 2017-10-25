@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		// Start both UDPThread and tcpConnection.
-		UDPThread = initilizeUDPThread();
+		UDPThread = initializeUDPThread();
 		UDPThread.start();
 		tcpConnection.execute();
 
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 					updateTCP();
 
 					//Runs the new Threads
-					UDPThread = initilizeUDPThread();
+					UDPThread = initializeUDPThread();
 					UDPThread.start();
 					tcpConnection.execute();
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 	 *
 	 * @return the initialized UDPThread.
 	 */
-	private Thread initilizeUDPThread() {
+	private Thread initializeUDPThread() {
 		//This thread runs the udp sending code
 		final Thread thread = new Thread(new Runnable() {
 			@Override
