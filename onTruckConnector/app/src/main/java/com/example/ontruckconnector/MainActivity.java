@@ -20,9 +20,11 @@ import java.util.regex.Pattern;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
-
 /**
  * The starting point of the application.
+ * <p>
+ * This is from where the {@link UDPSender} and {@link TCPConnection} threads are initiated and run.
+ * It acts as a middle man between the GUI and the networking.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -44,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 	/**
-	 * Runs when the activity is being created (see android activity life cycles for more
-	 * information about this.
+	 * Creates and sets up the activity. Does all of the initialization for the UI and sets up the
+	 * network threads. It also specifies the ways to handle events sent from the GUI and how to
+	 * pass that information along to the threads.
+	 * <p>
+	 * (see android activity life cycles for more information about this)
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 		guiHolder.setBorderImage(borderImage);
 
 		//Creates the TCP/UDP clients
-		updateTCP();
-		updateUDP();
+		setTCPConnection();
+		setUDPSender();
 
 		//Sets a listener which listens when the joystick is moved to change the X and Y values in JoystickPosition
 		joystickView.setOnMoveListener(new JoystickView.OnMoveListener() {
@@ -150,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
 					UDPThread.interrupt();
 
 					//Create new threads with correct IP
-					updateUDP();
-					updateTCP();
+					setUDPSender();
+					setTCPConnection();
 
 					//Runs the new Threads
 					UDPThread = initializeUDPThread();
@@ -169,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 	}
-
 
 	/**
 	 * Initializes the UDPThread.
@@ -216,9 +220,9 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	/**
-	 * Sets the {@link MainActivity#tcpConnection} to a new
+	 * Sets the {@link MainActivity#tcpConnection} to a new TCPConnection.
 	 */
-	private void updateTCP() {
+	private void setTCPConnection() {
 		String newIP = oldIP;
 		if (isValidIP(ipInput.getText().toString())) {
 			newIP = ipInput.getText().toString();
@@ -229,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	/**
-	 * Creates a new UDPConnection.
+	 * Sets a new {@link UDPSender}.
 	 */
-	private void updateUDP() {
+	private void setUDPSender() {
 		String newIP = oldIP;
 
 		if (isValidIP(ipInput.getText().toString())) {
