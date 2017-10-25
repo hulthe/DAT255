@@ -8,6 +8,8 @@ public interface IDistanceSensor {
 
 	int getBufferSize();
 
+	public void process(int data);
+
 	Tuple<Long, Integer> getLatestFilteredDistance() throws IndexOutOfBoundsException;
 
 	Tuple<Long, Integer> getFilteredDistance(int offset) throws IndexOutOfBoundsException;

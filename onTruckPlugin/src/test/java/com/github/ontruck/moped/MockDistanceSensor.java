@@ -24,6 +24,11 @@ public class MockDistanceSensor implements IDistanceSensor {
 	}
 
 	@Override
+	public void process(int data) {
+
+	}
+
+	@Override
 	public Tuple<Long, Integer> getLatestFilteredDistance() throws IndexOutOfBoundsException {
 		return getLatestRawDistance();
 	}
