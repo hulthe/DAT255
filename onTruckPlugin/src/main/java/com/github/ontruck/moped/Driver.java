@@ -6,10 +6,11 @@ import com.github.ontruck.states.MopedState;
 
 import java.io.IOException;
 
+/**
+ * This class talks directly to the {@link CAN} interface.
+ */
 public class Driver implements IDriver {
-
-
-	protected static final byte MAX_POWER_VALUE = 100;
+	private static final byte MAX_POWER_VALUE = 100;
 
 	private static final byte[] usefulPowerValues = new byte[] {
 			0, 7, 11, 15, 19, 23, 27, 37, 41, 45, 49, 53, 57, 73, 77, 81, 85, 89, 93, 97, 100
@@ -19,7 +20,7 @@ public class Driver implements IDriver {
 	private byte lastPowerValue = 0;
 	private byte lastSteerValue = 0;
 
-	public Driver(CAN can) throws IOException {
+	public Driver(CAN can) {
 		this.can = can;
 
 	}
@@ -45,7 +46,7 @@ public class Driver implements IDriver {
 		return tmp;
 	}
 
-
+	@Override
 	public void power(byte payload) {
 		byte powerLevel = maxMinPayload(payload, MAX_POWER_VALUE, MAX_POWER_VALUE); // Over 9000?
 		// If different sign
@@ -75,6 +76,7 @@ public class Driver implements IDriver {
 		}
 	}
 
+	@Override
 	public void steer(byte payload) {
 		byte steerValue = maxMinPayload(payload, (byte)100, (byte)100);
 		if(steerValue != lastSteerValue) {
@@ -88,6 +90,7 @@ public class Driver implements IDriver {
 		}
 	}
 
+	@Override
 	public void brake(byte payload) {
 		int brakeValue = maxPayload(payload, MAX_POWER_VALUE);
 
@@ -114,21 +117,25 @@ public class Driver implements IDriver {
 	//This works by reading the last byte sent to the CAN and then sending a byte one step higher
 	@Override
 	public void increaseSpeed() {
+
+
+
+		//Send to CAN!
+		rawPower(calculateIncreaseSpeed(lastPowerValue));
+	}
+	public static byte calculateIncreaseSpeed(byte lastPowerValue){
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full speed then don't accelerate (keep at 100)
 		if (lastPowerValue >= MAX_POWER_VALUE) {
 			newPowerValue = MAX_POWER_VALUE;
 		} else {
-
-
 			//Loop through the list of useful power values
 			for (byte usefulPowerValue : usefulPowerValues) {
 
 				//If the next useful power value is reached then stop the loop and use that value
 				if (lastPowerValue < usefulPowerValue) {
 					newPowerValue = usefulPowerValue;
-
 					break;
 				} else if (lastPowerValue < usefulPowerValue * -1) {
 					newPowerValue = (byte) (usefulPowerValue * -1);
@@ -136,16 +143,21 @@ public class Driver implements IDriver {
 				}
 			}
 		}
-
-
-		//Send to CAN!
-		rawPower(newPowerValue);
+		return newPowerValue;
 	}
 
 	//This method calls the rawPower(byte) method to be able to decelerate the car
 	//This works by reading the last byte sent to the CAN and then sending a byte one step lower
 	@Override
 	public void decreaseSpeed() {
+
+
+		//Send to CAN!
+
+		rawPower(calculateDecreaseSpeed(lastPowerValue));
+	}
+	public static byte calculateDecreaseSpeed(byte lastPowerValue){
+
 		byte newPowerValue = lastPowerValue;
 
 		//If the car already is at full reverse speed then don't accelerate (keep at -100)
@@ -153,24 +165,32 @@ public class Driver implements IDriver {
 			newPowerValue = -MAX_POWER_VALUE;
 		} else {
 
-			//Loop through the list of useful power values
-			for (int i = usefulPowerValues.length-1; i > 0; i--) {
 
-				byte usefulPowerValue = usefulPowerValues[i];
 
-				//If the next useful power value is reached then stop the loop and use that value
-				if (lastPowerValue > usefulPowerValue) {
-					newPowerValue = usefulPowerValue;
-					break;
-				} else if (lastPowerValue < -usefulPowerValue) {
-					newPowerValue = (byte)-usefulPowerValue;
-					break;
+			if (lastPowerValue<=0){
+				for (byte usefulPowerValue:usefulPowerValues){
+					if (lastPowerValue>-usefulPowerValue){
+						newPowerValue= (byte) -usefulPowerValue;
+						break;
+					}
+				}
+			}else {
+				//Loop through the list of useful power values
+				for (int i = usefulPowerValues.length - 1; i >= 0; i--) {
+
+					byte usefulPowerValue = usefulPowerValues[i];
+
+					//If the next useful power value is reached then stop the loop and use that value
+					if (lastPowerValue > usefulPowerValue) {
+						newPowerValue = usefulPowerValue;
+						break;
+					}
 				}
 			}
 		}
 
-		//Send to CAN!
-		rawPower(newPowerValue);
+
+		return newPowerValue;
 	}
 
 	@Override
@@ -184,7 +204,7 @@ public class Driver implements IDriver {
 	}
 
 	//This is for testing purposes
-	public byte[] getUsefulPowerValues(){
+	public static byte[] getUsefulPowerValues(){
 		return usefulPowerValues.clone();
 	}
 

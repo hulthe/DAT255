@@ -2,6 +2,10 @@ package com.github.ontruck.states;
 
 import java.util.Locale;
 
+/**
+ * Represents a control state in the system.
+ * It is used to decide which control signals to let through the filters.
+ */
 public enum MopedState {
 	Manual,
 	CruiseControl,

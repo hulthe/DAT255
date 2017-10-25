@@ -2,7 +2,10 @@ package com.github.ontruck.controller;
 
 import com.github.ontruck.driver.IDriver;
 
-// Stops car if connection is dropped
+/**
+ * This class starts sending brake signals if {@link DeadMansSwitch#ping()} has not been called for a specified time.
+ * <p>It is used for automatically stopping the vehicle if connection with the user is lost.
+ */
 public class DeadMansSwitch extends Thread {
 
 	private static final int DELAY = 100; // Check interval
@@ -19,7 +22,9 @@ public class DeadMansSwitch extends Thread {
 		this.setDaemon(true); // Make sure thread closes when application does.
 	}
 
-	// Tell DeadMansSwitch that you're still alive
+	/**
+	 * Tell DeadMansSwitch that you're still alive.
+	 */
 	public void ping() {
 		lastTime = System.currentTimeMillis();
 	}

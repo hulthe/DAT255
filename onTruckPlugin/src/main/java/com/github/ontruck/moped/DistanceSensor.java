@@ -4,12 +4,14 @@ import com.github.ontruck.util.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.IntStream;
 
-import static com.github.ontruck.util.MathUtils.getDiffFromAverage;
 import static com.github.ontruck.util.MathUtils.removeMostDifferentValues;
 import static com.github.ontruck.util.MathUtils.weightedAverage;
 
+/**
+ * This class represents the distance sensor.
+ * It can provide both filtered and raw distance data.
+ */
 public class DistanceSensor implements IDistanceSensor {
 
 	/**
@@ -46,10 +48,19 @@ public class DistanceSensor implements IDistanceSensor {
 		return buffer.size();
 	}
 
+	/**
+	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 * @throws IndexOutOfBoundsException when there isn't enough data to generate the filtered distance.
+	 */
 	public Tuple<Long, Integer> getLatestFilteredDistance() throws IndexOutOfBoundsException {
 		return getFilteredDistance(0);
 	}
 
+	/**
+	 * @param offset the given offset from the latest filtered distance value.
+	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 * @throws IndexOutOfBoundsException when there isn't enough data to generate the filtered distance.
+	 */
 	public Tuple<Long, Integer> getFilteredDistance(int offset) throws IndexOutOfBoundsException {
 		if(buffer.size() < 3) {
 			return new Tuple<>((long)0, 0);
@@ -66,6 +77,9 @@ public class DistanceSensor implements IDistanceSensor {
 		return new Tuple<>(getRawDistance(offset).getX(), average);
 	}
 
+	/**
+	 * @return a list of {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 */
 	public Tuple<Long, Integer>[] getFilteredDistance() {
 		return getRawDistance(); // FIXME
 	}
@@ -81,10 +95,18 @@ public class DistanceSensor implements IDistanceSensor {
 		return buffer.get(buffer.size() - 1);
 	}
 
+	/**
+	 * @param offset the given offset from the latest raw distance value.
+	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the raw value.
+	 * @throws IndexOutOfBoundsException when the data isn't available.
+	 */
 	public Tuple<Long, Integer> getRawDistance(int offset) throws IndexOutOfBoundsException {
 		return buffer.get(buffer.size() - 1 - Math.abs(offset));
 	}
 
+	/**
+	 * @return a list {@link Tuple<Long, Integer>} with system unix time for the reading and the raw value.
+	 */
 	public Tuple<Long, Integer>[] getRawDistance() {
 		return buffer.toArray(new Tuple[0]);
 	}
