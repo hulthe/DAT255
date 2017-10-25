@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 
+/**
+ * The starting point of the application.
+ */
 public class MainActivity extends AppCompatActivity {
 
 	//All UI-elements. Initializes in onCreate()
@@ -40,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
 	private static final int PORT = 8721;
 
 
+	/**
+	 * Runs when the activity is being created (see android activity life cycles for more
+	 * information about this.
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,9 +79,8 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-
-
-
+		// Specifies that a ACC state message should be sent over TCP when the acc toggle button is
+		// pressed.
 		accToggle.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -93,13 +99,10 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-
-
-
-
-
+		// Reset the toggle button before first start
 		GUIHolder.getInstance().resetToggleButton();
 
+		// Tells the colors of the button to change upon being toggles either way.
 		accToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -122,12 +125,16 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
+		// Start both UDPThread and tcpConnection.
 		UDPThread = initilizeUDPThread();
 		UDPThread.start();
 		tcpConnection.execute();
 
-
+		// Specify what should happen when the text in the ip address text box is changed.
+		// It turns of the ongoing tcp connection and tries to start a new one with the entered
+		// ip-address. It checks if the ip-address entered is a valid one and if it is
 		ipInput.addTextChangedListener(new TextWatcher() {
+			// We need to implement this but we don't use it.
 			@Override
 			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
@@ -156,15 +163,18 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 
+			// We need to implement this but we don't use it.
 			@Override
 			public void afterTextChanged(Editable editable) {}
 		});
-
-
 	}
 
 
-
+	/**
+	 * Initializes the UDPThread.
+	 *
+	 * @return the initialized UDPThread.
+	 */
 	private Thread initilizeUDPThread(){
 		//This thread runs the udp sending code
 		final Thread thread = new Thread(new Runnable() {
@@ -191,6 +201,12 @@ public class MainActivity extends AppCompatActivity {
 		return thread;
 	}
 
+	/**
+	 * Checks whether the given input is a valid ip.address.
+	 *
+	 * @param input  the given input.
+	 * @return true if the given input is a valid ip-address, otherwise return false.
+	 */
 	private boolean isValidIP(String input){
 		Pattern p = Pattern.compile(
 				"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.)" +
@@ -198,8 +214,9 @@ public class MainActivity extends AppCompatActivity {
 		return p.matcher(input).matches();
 	}
 
-
-
+	/**
+	 * Sets the {@link MainActivity#tcpConnection} to a new
+	 */
 	private void updateTCP(){
 		String newIP = oldIP;
 		if(isValidIP(ipInput.getText().toString())){
@@ -210,6 +227,9 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Creates a new UDPConnection.
+	 */
 	private void updateUDP(){
 		String newIP = oldIP;
 
@@ -222,6 +242,17 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Creates a new {@link UDPSender} with the given ip-address and the given port.
+     * Note: If the given ip-address doesn't match a ip-address on the network the method will
+     * return null.
+     * Note: If the given port is already in use the method will return null.
+     *
+	 * @param ip   the given ip-address.
+	 * @param port the given port.
+     *
+	 * @return a new UDPSender with the given ip-address and port if it can, otherwise null.
+	 */
 	private UDPSender createUDPSender(String ip, int port){
 		//Creates the UDPSender object with an IP address and port number
 		UDPSender udpSender = null;
