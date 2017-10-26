@@ -49,7 +49,7 @@ public class DistanceSensor implements IDistanceSensor {
 	}
 
 	/**
-	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 * @return a {@link Tuple} with system unix time for the reading and the filtered value.
 	 * @throws IndexOutOfBoundsException when there isn't enough data to generate the filtered distance.
 	 */
 	public Tuple<Long, Integer> getLatestFilteredDistance() throws IndexOutOfBoundsException {
@@ -58,7 +58,7 @@ public class DistanceSensor implements IDistanceSensor {
 
 	/**
 	 * @param offset the given offset from the latest filtered distance value.
-	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 * @return a {@link Tuple} with system unix time for the reading and the filtered value.
 	 * @throws IndexOutOfBoundsException when there isn't enough data to generate the filtered distance.
 	 */
 	public Tuple<Long, Integer> getFilteredDistance(int offset) throws IndexOutOfBoundsException {
@@ -78,7 +78,7 @@ public class DistanceSensor implements IDistanceSensor {
 	}
 
 	/**
-	 * @return a list of {@link Tuple<Long, Integer>} with system unix time for the reading and the filtered value.
+	 * @return a list of {@link Tuple} with system unix time for the reading and the filtered value.
 	 */
 	public Tuple<Long, Integer>[] getFilteredDistance() {
 		return getRawDistance(); // FIXME
@@ -97,7 +97,7 @@ public class DistanceSensor implements IDistanceSensor {
 
 	/**
 	 * @param offset the given offset from the latest raw distance value.
-	 * @return a {@link Tuple<Long, Integer>} with system unix time for the reading and the raw value.
+	 * @return a {@link Tuple} with system unix time for the reading and the raw value.
 	 * @throws IndexOutOfBoundsException when the data isn't available.
 	 */
 	public Tuple<Long, Integer> getRawDistance(int offset) throws IndexOutOfBoundsException {
@@ -105,7 +105,7 @@ public class DistanceSensor implements IDistanceSensor {
 	}
 
 	/**
-	 * @return a list {@link Tuple<Long, Integer>} with system unix time for the reading and the raw value.
+	 * @return a list {@link Tuple} with system unix time for the reading and the raw value.
 	 */
 	public Tuple<Long, Integer>[] getRawDistance() {
 		return buffer.toArray(new Tuple[0]);
