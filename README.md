@@ -3,7 +3,7 @@
 This documents purpose is to make all material accessible to you teachers in an easy way that allow you to grade us fairly. 
  
 ## Nicknames and other names 
-Notice that we sometime refer to group members by [nickname](##contact-and-name-table). The [nickname table](##contact-and-name-table) also contains everyone's git username. 
+Notice that we sometime refer to group members by [nickname](#contact-and-name-table). The [nickname table](#contact-and-name-table) also contains everyone's git username. 
  
 ## Branches 
 This branch [`/documents`](https://github.com/hulthe/DAT255/tree/documents) contains all documentation that is not directly related to the code but needed for the course or the team. 
