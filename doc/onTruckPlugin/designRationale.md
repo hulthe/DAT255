@@ -1,5 +1,8 @@
 # MOPED design rationale
 
+## System architecture
+![dataflow](https://github.com/hulthe/DAT255/raw/master/doc/onTruckPlugin/dataFlow.png)
+
 ## State management
 The state system consists of one `state holder`, multiple `controllers` and an equal amount of `messages filters`.
 When a message is received it is sent to all `controllers` where a decision on what to do with the message is made.
@@ -22,7 +25,7 @@ Furthermore this had to be done in regard to multiple clients such as the mobile
 
 Every I/O connection was setup with a input-worker that continuously tries to receive new input and process it trough a list of registered data-processors.
 It's of outermost importance that the code in each registered data-processor is swift so that the input-worker can move on to the next data-processor and eventually the next input message as fast as possible.
-Therefor the data-processors mostly just saves the data to somewhere accessible to an [actor](###Actors) that can process it.
+Therefor the data-processors mostly just saves the data to somewhere accessible to an [actor](###actors) that can process it.
 
 Apart from the input-worker a output-worker was also setup for every I/O connection that could be used to send messages.
 This was done because in a real scenario it might take up to several seconds for a message to send, a pause not acceptable when dealing with real time planning.
@@ -35,4 +38,7 @@ The data used by the Actor is often delivered to it from a input-worker trough a
 The act of an Actor is often a message to be processed by a output-worker, as the output worker takes over the responsibility for sending the message the Actor can right away start working on the next act.
 This allows the Actor to always work on finding the appropriate action regarding to the current input data.
 Multiple Actors usually execute simultaneously as they act based on different input, for example manual control signals and sensor data for autonomous behavior.
-In the section [State Management](##State-Management) you can read about how the commands from the actors are being filtered depending on which state the software is in.
+In the section [State Management](##state-management) you can read about how the commands from the actors are being filtered depending on which state the software is in.
+
+## More
+See [javadoc](https://github.com/hulthe/DAT255/tree/master/doc/onTruckPlugin/javaDoc).
