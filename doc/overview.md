@@ -3,7 +3,7 @@
 The system consists of an Android application and a server.
 The server sits on a RC car and has a TCP and a UDP port open.
 When the application wants to connect to the server it does this by connecting to a predefined port on the server over TCP.
-After the connection has been established the application can begin to send [control messages](##Connection-protocols) to the predefined UDP port on the server.
+After the connection has been established the application can begin to send [control messages](#connection-protocols) to the predefined UDP port on the server.
 Messages that require the server to acknowledge that the command reached the server -- typically more important messages -- are sent over TCP.
 Similarly, for some messages we don't require an acknowledgment from the server since the application doesn't care whether the server received the command or not.
 These messages are typically the manual control messages of the car.
