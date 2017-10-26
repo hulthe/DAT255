@@ -44,8 +44,8 @@ Note: Tests have only been written for complex codeblocks that the group deemed 
  
 ### D5 
 * gitinspector
- * [PDF](https://github.com/hulthe/DAT255/blob/master/doc/gitinspector.pdf)
- * [HTML](https://github.com/hulthe/DAT255/blob/master/doc/gitinspector.html)
+  * [PDF](https://github.com/hulthe/DAT255/blob/master/doc/gitinspector.pdf)
+  * [HTML](https://github.com/hulthe/DAT255/blob/master/doc/gitinspector.html)
 * [Reflection report](https://github.com/hulthe/DAT255/blob/documents/Reflection_Report.pdf) 
 * [Retrospectve Documentation](https://github.com/hulthe/DAT255/tree/documents/retrospective-protocols) 
 
