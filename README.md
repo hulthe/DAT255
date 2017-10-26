@@ -1,5 +1,9 @@
 ## DAT255 - Group Smiley
 
+### Information for Teachers
+A guide to all artifacts and other documents that are essential to grading can be found in the [readme of the ´/documents´](https://github.com/hulthe/DAT255/blob/documents/README.md) so we may suggest that you start there.
+
+### General navigation guide
 The `documents` branch contains all non-code specific documentation & course-related documentation (e.g. Social contract and Reflection report)
 
 `/doc` folder contains code-specific documentation (e.g. TCP-protocol)
