@@ -25,22 +25,22 @@ Bellow you can find all artifacts related to the deliverables of the course.
  
 ### D4 
 * [Userstories](https://github.com/hulthe/DAT255/blob/documents/user_stories_product_backlog.pdf) 
-* Overview 
+* [Overview](https://github.com/hulthe/DAT255/blob/master/doc/overview.md) 
  
 #### Code 
 The group have developed two code artifacts: 
 * [onTruckPlugin](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin); the java code running on the M.O.P.E.D 
   * Findbugs report 
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin/src/test/java/com/github/ontruck) 
-  * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/design-rationale/moped-design-rationale.md) 
+  * Design Rationale
   * JavaDoc 
 * [onTruckConnector](https://github.com/hulthe/DAT255/tree/master/onTruckConnector); a android app that manuvers the M.O.P.E.D 
   * Findbugs report 
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckConnector/app/src/test/java/com/example/ontruckconnector) 
-  * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/design-rationale/app-design-rationale.md) 
+  * Design Rationale 
   * JavaDoc 
  
-Note: Tests have only been written for complex codeblocks that the group deemed nessesary to have tests for because it was hard to judge weither they were functioning on not by just looking at them. There are no tests for code the one obviously can tell works by looking at it. 
+Note: Tests have only been written for complex codeblocks that the group deemed nessesary to have tests for because it was hard to judge weither they were functioning on not by just looking at them. There are no tests for code that one obviously can tell works by looking at it. 
  
 ### D5 
 * gitinspector
