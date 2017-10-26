@@ -30,15 +30,19 @@ Bellow you can find all artifacts related to the deliverables of the course.
 #### Code 
 The group have developed two code artifacts: 
 * [onTruckPlugin](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin); the java code running on the M.O.P.E.D 
-  * Findbugs report 
+  * Findbugs report
+    * [HTML](https://github.com/hulthe/DAT255/blob/master/doc/onTruckPlugin/findBugsReport.html)
+    * [PDF](https://github.com/hulthe/DAT255/blob/master/doc/onTruckPlugin/findBugsReport.pdf)
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckPlugin/src/test/java/com/github/ontruck) 
-  * Design Rationale
-  * JavaDoc 
+  * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/onTruckPlugin/designRationale.md)
+  * JavaDoc in code | Generated [HTML](https://github.com/hulthe/DAT255/tree/master/doc/onTruckPlugin/javaDoc)
 * [onTruckConnector](https://github.com/hulthe/DAT255/tree/master/onTruckConnector); a android app that manuvers the M.O.P.E.D 
-  * Findbugs report 
+  * Findbugs report
+    * [HTML](https://github.com/hulthe/DAT255/blob/master/doc/onTruckConnector/findBugsReport.html)
+    * [PDF](https://github.com/hulthe/DAT255/blob/master/doc/onTruckConnector/findBugsReport.pdf)
   * [Unit Tests](https://github.com/hulthe/DAT255/tree/master/onTruckConnector/app/src/test/java/com/example/ontruckconnector) 
-  * Design Rationale 
-  * JavaDoc 
+  * [Design Rationale](https://github.com/hulthe/DAT255/blob/master/doc/onTruckConnector/designRationale.md)
+  * JavaDoc in code | Generated [HTML](https://github.com/hulthe/DAT255/tree/master/doc/onTruckConnector/javaDoc)
  
 Note: Tests have only been written for complex codeblocks that the group deemed nessesary to have tests for because it was hard to judge weither they were functioning on not by just looking at them. There are no tests for code that one obviously can tell works by looking at it. 
  
