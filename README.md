@@ -64,3 +64,5 @@ Note: Tests have only been written for complex codeblocks that the group deemed 
 |Oscar Carlsson|Oscar|oscca|[Coec0](https://github.com/Coec0)|oscca@student.chalmers.se|
 |Emil Josefsson|silver|emiljos|[josefssonemil](https://github.com/josefssonemil)|emiljos@student.chalmers.se|
 |John Segerstedt|Flex|sejohn|[JohnSegerstedt](https://github.com/JohnSegerstedt) & [FlexTerror](https://github.com/FlexTerror)|sejohn@student.chalmers.se|
+
+## [Trello invitation link](https://trello.com/invite/dat2555/737213825798b4941decc021dadc7ba4)
