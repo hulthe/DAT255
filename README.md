@@ -11,7 +11,9 @@ This branch [`/documents`](https://github.com/hulthe/DAT255/tree/documents) cont
 The [`/master`](https://github.com/hulthe/DAT255) branch contains all code and artifacts directly related to the code. 
  
 ## Deliverables 
-Bellow you can find all artifacts related to the deliverables of the course. 
+Bellow you can find all artifacts related to the deliverables of the course.
+
+This document links to the github page for every artifact but some of them, especially those reagrding the code are much easier to read and interact with if you download the repository.
  
 ### D1 
 * [Strategies with KPI](https://github.com/hulthe/DAT255/blob/documents/strategies.md) 
