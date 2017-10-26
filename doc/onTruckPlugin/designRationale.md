@@ -1,6 +1,6 @@
 # MOPED design rationale
 
-## System architecture
+## Application architecture
 ![dataflow](https://github.com/hulthe/DAT255/raw/master/doc/onTruckPlugin/dataFlow.png)
 
 ## State management
@@ -42,3 +42,4 @@ In the section [State Management](##state-management) you can read about how the
 
 ## More
 See [javadoc](https://github.com/hulthe/DAT255/tree/master/doc/onTruckPlugin/javaDoc).
+And [Overview](https://github.com/hulthe/DAT255/blob/master/doc/overview.md) for system wide documentation.
