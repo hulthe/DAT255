@@ -1,7 +1,6 @@
 # App design rationale
 
-## System Architecture
-![Image of Yaktocat](<insert dataflow picture here>)
+## Application Architecture
 The android application consists of a `UDPSender`, a `TCPSender`, a `JoystickPosition` and a `GUIHolder`.
 In the beginning of the program the main thread starts up one `UDPSender` and one `TCPSender`, each in its own thread.
 The two senders then continuously start to ask the `JoystickPosition` class, which holds the live position of the joystick on the UI (in a format which is ready to be sent over the protocol), for data to send.
@@ -23,4 +22,8 @@ It would receive information from the main thread when a change event sent and h
 The `UDPSender` just continuously asks it for information.
 
 ## Concurrency
-(See **Concurrency > I/O** in [*MOPED design rationale*](https://github.com/hulthe/DAT255/blob/misc/design-rationale/doc/design-rationale/moped-design-rationale.md))
+(See **Concurrency > I/O** in [*MOPED design rationale*](https://github.com/hulthe/DAT255/blob/master/doc/onTruckPlugin/designRationale.md))
+
+## More
+See [javadoc](https://github.com/hulthe/DAT255/tree/master/doc/onTruckConnector/javaDoc).
+And [Overview](https://github.com/hulthe/DAT255/blob/master/doc/overview.md) for system wide documentation.
