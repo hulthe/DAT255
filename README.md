@@ -47,6 +47,9 @@ The group have developed two code artifacts:
   * JavaDoc in code | Generated [HTML](https://github.com/hulthe/DAT255/tree/master/doc/onTruckConnector/javaDoc)
  
 Note: Tests have only been written for complex codeblocks that the group deemed nessesary to have tests for because it was hard to judge weither they were functioning on not by just looking at them. There are no tests for code that one obviously can tell works by looking at it. 
+
+#### Sprint backlogs
+If you have an intrest in seening our sprint backlogs you can find an invitation link [here](https://trello.com/invite/dat2555/737213825798b4941decc021dadc7ba4).
  
 ### D5 
 * gitinspector
@@ -70,5 +73,3 @@ Note: Tests have only been written for complex codeblocks that the group deemed 
 |Oscar Carlsson|Oscar|oscca|[Coec0](https://github.com/Coec0)|oscca@student.chalmers.se|
 |Emil Josefsson|silver|emiljos|[josefssonemil](https://github.com/josefssonemil)|emiljos@student.chalmers.se|
 |John Segerstedt|Flex|sejohn|[JohnSegerstedt](https://github.com/JohnSegerstedt) & [FlexTerror](https://github.com/FlexTerror)|sejohn@student.chalmers.se|
-
-## [Trello invitation link](https://trello.com/invite/dat2555/737213825798b4941decc021dadc7ba4)
